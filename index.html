@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Viktor Studio Flash - Cloud Connected App Hub</title>
+    
+    <!-- PWA Manifest Link -->
+    <link rel="manifest" href="data:application/manifest+json;charset=utf-8,{
+        %22name%22: %22Viktor Studio Flash%22,
+        %22short_name%22: %22ViktorStudio%22,
+        %22start_url%22: %22./%22,
+        %22display%22: %22standalone%22,
+        %22background_color%22: %22%230b0f19%22,
+        %22theme_color%22: %22%2300d2ff%22,
+        %22icons%22: [{%22src%22: %22logo.jpg%22, %22sizes%22: %22192x192%22, %22type%22: %22image/jpeg%22}]
+    }">
+    
+    <!-- QR Code Generator Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        /* --- Original Electric Blue Theme Variables --- */
+        :root {
+            --primary-color: #00d2ff;
+            --secondary-color: #3a7bd5;
+            --accent-color: #00ffcc;
+            --bg-color: #0b0f19;
+            --card-bg: #111827;
+            --border-color: #1f2937;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: #f3f4f6;
+            overflow-x: hidden;
+            padding-bottom: 90px;
+            scroll-behavior: smooth;
+        }
+
+        /* --- Offline Connection Warning Banner --- */
+        #offline-banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: #ef4444;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+            font-weight: 700;
+            display: none;
+            z-index: 10001;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            font-size: 0.9rem;
+        }
+
+        /* --- App Install Banner Prompt --- */
+        #install-app-banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+            color: #fff;
+            padding: 12px 20px;
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        #install-app-banner button {
+            background: #fff;
+            color: #0b0f19;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        /* --- Professional Intro Animation Screen --- */
+        #intro-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: #04060a;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            animation: fadeOutIntro 0.8s ease forwards;
+            animation-delay: 2.8s;
+        }
+
+        .intro-banner {
+            width: 90%;
+            max-width: 450px;
+            height: auto;
+            border-radius: 16px;
+            box-shadow: 0 0 35px rgba(0, 210, 255, 0.3);
+            border: 1px solid var(--border-color);
+            opacity: 0;
+            transform: scale(0.8);
+            animation: zoomInLogo 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        .intro-title {
+            margin-top: 24px;
+            font-size: 1.6rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            white-space: nowrap;
+            opacity: 0;
+            animation: fadeInText 1s ease forwards 0.6s;
+            text-align: center;
+            padding: 0 15px;
+        }
+
+        .loader-bar {
+            width: 180px;
+            height: 4px;
+            background: #111827;
+            margin-top: 25px;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+            opacity: 0;
+            animation: fadeInText 1s ease forwards 0.8s;
+        }
+
+        .loader-bar::before {
+            content: '';
+            position: absolute;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--primary-color), var(--accent-color), transparent);
+            animation: loadingMove 1.5s infinite linear;
+        }
+
+        @keyframes zoomInLogo {
+            0% { opacity: 0; transform: scale(0.8); filter: blur(10px); }
+            100% { opacity: 1; transform: scale(1); filter: blur(0); }
+        }
+
+        @keyframes fadeInText {
+            0% { opacity: 0; transform: translateY(15px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes loadingMove {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        @keyframes fadeOutIntro {
+            0% { opacity: 1; visibility: visible; }
+            100% { opacity: 0; visibility: hidden; }
+        }
+
+        /* --- Header Navigation Bar --- */
+        header {
+            background: rgba(11, 15, 25, 0.95);
+            backdrop-filter: blur(15px);
+            padding: 15px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #1e293b;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .header-banner {
+            height: 38px;
+            width: auto;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .brand-name {
+            font-size: 1.25rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+
+        .header-right-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+        }
+
+        .header-menu-btn {
+            background: #111827;
+            border: 1px solid var(--border-color);
+            color: var(--primary-color);
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .header-menu-btn span {
+            display: block;
+            width: 18px;
+            height: 2px;
+            background-color: var(--primary-color);
+            border-radius: 2px;
+        }
+
+        .dropdown-menu-box {
+            position: absolute;
+            right: 0;
+            top: 55px;
+            background: #111827;
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            width: 280px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 200;
+            padding: 10px;
+        }
+
+        .dropdown-menu-box.show {
+            display: flex;
+        }
+
+        .menu-widget-box {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            padding: 12px;
+            margin-top: 4px;
+            text-align: center;
+        }
+
+        .menu-widget-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .share-link-input-group {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .share-link-input {
+            width: 100%;
+            background: #07090e;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            color: #fff;
+            padding: 6px 8px;
+            font-size: 0.8rem;
+            outline: none;
+        }
+
+        .copy-link-btn {
+            background: var(--primary-color);
+            color: #0b0f19;
+            border: none;
+            border-radius: 6px;
+            padding: 0 10px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        #qrcode-container {
+            display: flex;
+            justify-content: center;
+            background: #fff;
+            padding: 8px;
+            border-radius: 8px;
+            width: fit-content;
+            margin: 0 auto;
+        }
+
+        .page-section {
+            display: none;
+            padding: 30px 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .page-section.active-page {
+            display: block;
+        }
+
+        .hero-banner-section {
+            background: linear-gradient(135deg, #111827 0%, #0f172a 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 35px 30px;
+            margin-bottom: 35px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+        }
+
+        .hero-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+            color: #fff;
+        }
+
+        .hero-title span {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-desc {
+            font-size: 1.05rem;
+            color: #9ca3af;
+            line-height: 1.6;
+            max-width: 900px;
+            margin-bottom: 25px;
+        }
+
+        .category-filter-pills {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-pill {
+            background: #1f2937;
+            border: 1px solid #374151;
+            color: #d1d5db;
+            padding: 8px 18px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-pill:hover, .filter-pill.active {
+            background: var(--primary-color);
+            color: #0b0f19;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.3);
+        }
+
+        .apk-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+        }
+
+        @media (min-width: 768px) {
+            .apk-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (min-width: 1100px) {
+            .apk-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (min-width: 1600px) {
+            .apk-grid { grid-template-columns: repeat(4, 1fr); }
+        }
+
+        .apk-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            height: 100%;
+        }
+
+        .apk-card:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 15px 35px rgba(0, 210, 255, 0.2);
+            transform: translateY(-4px);
+        }
+
+        .apk-card.highlight-target {
+            border: 2px solid var(--accent-color);
+            box-shadow: 0 0 30px rgba(0, 255, 204, 0.6);
+            animation: pulseGlow 1.5s infinite alternate;
+        }
+
+        @keyframes pulseGlow {
+            0% { transform: scale(1); box-shadow: 0 0 15px rgba(0, 255, 204, 0.4); }
+            100% { transform: scale(1.02); box-shadow: 0 0 35px rgba(0, 255, 204, 0.8); }
+        }
+
+        .card-banner-box {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background: #0f172a;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-banner-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card-badges-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+
+        .card-category-badge {
+            display: inline-block;
+            background: rgba(0, 210, 255, 0.12);
+            color: var(--primary-color);
+            border: 1px solid rgba(0, 210, 255, 0.3);
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .card-version-badge {
+            display: inline-block;
+            background: rgba(0, 255, 204, 0.12);
+            color: var(--accent-color);
+            border: 1px solid rgba(0, 255, 204, 0.3);
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .card-content-area {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            flex-grow: 1;
+        }
+
+        .app-name {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #f9fafb;
+            margin-bottom: 10px;
+        }
+
+        .app-desc {
+            font-size: 0.95rem;
+            color: #cbd5e1;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .card-links-group {
+            display: flex;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .download-btn {
+            flex: 1;
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: #0b0f19;
+            font-weight: 700;
+            padding: 12px 10px;
+            border-radius: 12px;
+            text-decoration: none;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 15px rgba(0, 210, 255, 0.25);
+            font-size: 0.9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            cursor: pointer;
+        }
+
+        .secondary-link-btn {
+            flex: 1;
+            text-align: center;
+            background: #1f2937;
+            border: 1px solid #374151;
+            color: var(--accent-color);
+            font-weight: 700;
+            padding: 12px 10px;
+            border-radius: 12px;
+            text-decoration: none;
+            transition: all 0.25s ease;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            cursor: pointer;
+        }
+
+        #section-admin-panel {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border: 2px solid var(--primary-color);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 20px 50px rgba(0, 210, 255, 0.15);
+        }
+
+        .admin-panel-title {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .admin-panel-desc {
+            color: #9ca3af;
+            font-size: 0.95rem;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #1f2937;
+            padding-bottom: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #e5e7eb;
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.2);
+        }
+
+        .image-adjust-bar {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            align-items: center;
+        }
+
+        .adjust-btn {
+            background: #1f2937;
+            border: 1px solid #374151;
+            color: #d1d5db;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .adjust-btn.active, .adjust-btn:hover {
+            background: var(--primary-color);
+            color: #0b0f19;
+            border-color: var(--primary-color);
+        }
+
+        .banner-preview-box {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background: #0f172a;
+            border: 2px dashed #334155;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            margin-top: 10px;
+            position: relative;
+        }
+
+        .banner-preview-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+
+        .banner-placeholder-text {
+            color: #64748b;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        .save-config-btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: #0b0f19;
+            font-weight: 700;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0, 210, 255, 0.3);
+            width: 100%;
+        }
+
+        .success-result-box {
+            background: #0b0f19;
+            border: 2px solid var(--accent-color);
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 25px;
+            display: none;
+        }
+
+        .success-result-box.show {
+            display: block;
+        }
+
+        .success-title {
+            color: var(--accent-color);
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 8px;
+        }
+
+        #section-search {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .search-page-header {
+            background: linear-gradient(135deg, #111827 0%, #0f172a 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+        }
+
+        .search-input-wrapper {
+            position: relative;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .search-page-input {
+            width: 100%;
+            padding: 16px 20px 16px 52px;
+            background: #0b0f19;
+            border: 2px solid var(--primary-color);
+            border-radius: 14px;
+            color: #fff;
+            font-size: 1.1rem;
+            outline: none;
+            box-shadow: 0 0 20px rgba(0, 210, 255, 0.15);
+        }
+
+        .search-page-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        .no-results-msg {
+            text-align: center;
+            color: #9ca3af;
+            font-size: 1.1rem;
+            margin-top: 40px;
+            display: none;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(11, 15, 25, 0.95);
+            backdrop-filter: blur(16px);
+            border-top: 1px solid #1e293b;
+            padding: 12px 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            z-index: 100;
+        }
+
+        .nav-btn {
+            background: #111827;
+            border: 1px solid var(--border-color);
+            color: #9ca3af;
+            padding: 10px 35px;
+            border-radius: 14px;
+            text-decoration: none;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            border-color: var(--primary-color);
+            background: #1f2937;
+            color: var(--primary-color);
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Offline Warning Banner -->
+    <div id="offline-banner">
+        ⚠️ No Internet Connection! You are currently offline.
+    </div>
+
+    <!-- App Install Banner Prompt -->
+    <div id="install-app-banner">
+        <span>📲 Get Viktor Studio App for faster experience!</span>
+        <button id="installAppBtn">Install App</button>
+    </div>
+
+    <!-- Professional Intro Animation Screen -->
+    <div id="intro-screen">
+        <img src="logo.jpg" alt="Viktor Studio Flash Banner" class="intro-banner">
+        <div class="intro-title">Viktor Studio Flash</div>
+        <div class="loader-bar"></div>
+    </div>
+
+    <!-- Header Navigation Bar -->
+    <header>
+        <div class="header-left">
+            <img src="logo.jpg" alt="Logo" class="header-banner" id="brandLogoTrigger" title="Hold for 10 seconds to open Admin">
+            <span class="brand-name">Viktor Studio Flash</span>
+        </div>
+        
+        <div class="header-right-controls">
+            <button class="header-menu-btn" id="menuToggleBtn" title="Menu Options">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <div class="dropdown-menu-box" id="dropdownMenu">
+                <div class="menu-widget-box" onclick="event.stopPropagation()">
+                    <div class="menu-widget-title">🔗 Share App Hub Link</div>
+                    <div class="share-link-input-group">
+                        <input type="text" id="shareLinkInput" class="share-link-input" readonly>
+                        <button class="copy-link-btn" onclick="copyShareLink()">Copy</button>
+                    </div>
+                </div>
+
+                <div class="menu-widget-box" onclick="event.stopPropagation()">
+                    <div class="menu-widget-title">📱 Scan QR Code</div>
+                    <div id="qrcode-container"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- SECTION 1: HOME -->
+    <div id="section-home" class="page-section active-page">
+        <div class="hero-banner-section">
+            <h1 class="hero-title">Welcome to <span>Viktor Studio Cloud Hub</span></h1>
+            <p class="hero-desc">
+                Live cloud-synchronized app hub powered by Firebase Firestore. Real-time updates across all devices.
+            </p>
+
+            <div class="category-filter-pills">
+                <button class="filter-pill active" onclick="filterCategory('all', this)">All Files</button>
+                <button class="filter-pill" onclick="filterCategory('music', this)">Music Production</button>
+                <button class="filter-pill" onclick="filterCategory('dev', this)">Development</button>
+                <button class="filter-pill" onclick="filterCategory('tools', this)">Utilities</button>
+            </div>
+        </div>
+
+        <div class="apk-grid" id="card-container">
+            <!-- Firebase से लाइव कार्ड्स यहाँ लोड होंगे -->
+        </div>
+    </div>
+
+    <!-- SECTION 2: ADMIN UPLOAD PANEL -->
+    <div id="section-admin-panel" class="page-section">
+        <h1 class="admin-panel-title">Cloud Admin Console</h1>
+        <p class="admin-panel-desc">Add new cards directly to Firebase Cloud Database.</p>
+        
+        <div class="form-group">
+            <label for="appVariantSelect">Select Category:</label>
+            <select id="appVariantSelect" class="form-control">
+                <option value="music">Music Production</option>
+                <option value="dev">Development</option>
+                <option value="tools">Utilities</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="appVersionInput">Version / Sub-Variant Tag:</label>
+            <input type="text" id="appVersionInput" class="form-control" maxlength="25" placeholder="e.g. v2.14.61">
+        </div>
+
+        <div class="form-group">
+            <label for="appNameInput">Application / File Name:</label>
+            <input type="text" id="appNameInput" class="form-control" maxlength="50" placeholder="App name...">
+        </div>
+
+        <div class="form-group">
+            <label for="appDescInput">Description:</label>
+            <input type="text" id="appDescInput" class="form-control" maxlength="100" placeholder="Short description...">
+        </div>
+
+        <div class="form-group">
+            <label for="bannerInputFile">Banner Image:</label>
+            <input type="file" id="bannerInputFile" class="form-control" accept="image/*" onchange="previewBannerImage(event)">
+            
+            <div class="image-adjust-bar" id="imageAdjustControls" style="display: none;">
+                <span style="font-size: 0.85rem; color: #9ca3af; font-weight: 600;">Image Fit:</span>
+                <button type="button" class="adjust-btn active" onclick="setImageFit('cover', this)">Cover</button>
+                <button type="button" class="adjust-btn" onclick="setImageFit('contain', this)">Contain</button>
+            </div>
+
+            <div class="banner-preview-box" id="bannerPreviewContainer">
+                <span class="banner-placeholder-text">Banner Preview</span>
+                <img id="bannerImgTag" alt="Preview">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="gdriveLinkInput">Google Drive Link:</label>
+            <input type="url" id="gdriveLinkInput" class="form-control" placeholder="https://drive.google.com/...">
+        </div>
+
+        <div class="form-group">
+            <label for="secondaryLinkInput">Video / Social Link:</label>
+            <input type="url" id="secondaryLinkInput" class="form-control" placeholder="Video link...">
+        </div>
+
+        <button class="save-config-btn" onclick="saveAdminConfigsToFirebase()">Save to Firebase Cloud & Get Deep-Link</button>
+
+        <div class="success-result-box" id="successResultBox">
+            <div class="success-title">🎉 Saved to Firebase Cloud! Copy Share Link:</div>
+            <div class="share-link-input-group">
+                <input type="text" id="publishedCardLinkInput" class="share-link-input" readonly>
+                <button class="copy-link-btn" onclick="copyPublishedLink()">Copy Link</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 3: SEARCH -->
+    <div id="section-search" class="page-section">
+        <div class="search-page-header">
+            <h1 class="hero-title">Search <span>Cloud Hub</span></h1>
+            <div class="search-input-wrapper">
+                <span class="search-page-icon">🔍</span>
+                <input type="text" id="dedicated-search-input" class="search-page-input" placeholder="Search apps...">
+            </div>
+        </div>
+        <div class="apk-grid" id="search-results-container"></div>
+        <div class="no-results-msg" id="noResultsMsg">No matching app found!</div>
+    </div>
+
+    <!-- Bottom Navigation Bar -->
+    <div class="bottom-nav">
+        <button class="nav-btn active" id="navHomeBtn" title="Home">🏠</button>
+        <button class="nav-btn" id="navSearchBtn" title="Search">🔍</button>
+    </div>
+
+    <!-- Firebase SDK Imports (Modular v10) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDXoUHLLuXBMgwc4ZPio5wML0rc5uK7JfY",
+            authDomain: "victor-studio-plus.firebaseapp.com",
+            projectId: "victor-studio-plus",
+            storageBucket: "victor-studio-plus.firebasestorage.app",
+            messagingSenderId: "506635235832",
+            appId: "1:506635235832:web:139e413c4d1c99a8d1660d",
+            measurementId: "G-F81GMBHQ43"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        window.saveAdminConfigsToFirebase = async function() {
+            const cat = document.getElementById('appVariantSelect').value;
+            const catName = document.getElementById('appVariantSelect').options[document.getElementById('appVariantSelect').selectedIndex].text;
+            const ver = document.getElementById('appVersionInput').value.trim();
+            const name = document.getElementById('appNameInput').value.trim();
+            const desc = document.getElementById('appDescInput').value.trim();
+            const dLink = document.getElementById('gdriveLinkInput').value.trim();
+            const sLink = document.getElementById('secondaryLinkInput').value.trim();
+
+            if (!name) { alert("Please enter app name!"); return; }
+            if (!currentUploadedImageSrc) { alert("Please upload banner image!"); return; }
+
+            const cardData = {
+                category: cat,
+                categoryName: catName,
+                version: ver,
+                appName: name,
+                description: desc || 'Custom cloud package.',
+                bannerImg: currentUploadedImageSrc,
+                imageFit: currentObjectFitMode,
+                gdriveLink: dLink || '#',
+                secondaryLink: sLink || '#',
+                downloadCount: 0,
+                createdAt: Date.now()
+            };
+
+            try {
+                const docRef = await addDoc(collection(db, "appCards"), cardData);
+                const cardKey = docRef.id;
+                
+                const deepLinkUrl = window.location.href.split('#')[0] + '#' + cardKey;
+                document.getElementById('publishedCardLinkInput').value = deepLinkUrl;
+                document.getElementById('successResultBox').classList.add('show');
+                alert("🎉 Card successfully saved to Firebase Cloud Database!");
+                loadCardsFromFirebase();
+            } catch (e) {
+                console.error("Error adding document: ", e);
+                alert("Error saving to Firebase: " + e.message);
+            }
+        };
+
+        window.loadCardsFromFirebase = async function() {
+            const container = document.getElementById('card-container');
+            container.innerHTML = "<p style='color:#9ca3af; text-align:center; grid-column: 1/-1;'>Loading cloud cards...</p>";
+            
+            try {
+                const q = query(collection(db, "appCards"), orderBy("createdAt", "desc"));
+                const querySnapshot = await getDocs(q);
+                container.innerHTML = "";
+                
+                if (querySnapshot.empty) {
+                    container.innerHTML = "<p style='color:#9ca3af; text-align:center; grid-column: 1/-1;'>No cards found in cloud database.</p>";
+                    return;
+                }
+
+                querySnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    const cardKey = docSnap.id;
+                    
+                    const cardDiv = document.createElement('div');
+                    cardDiv.className = 'apk-card';
+                    cardDiv.id = cardKey;
+                    cardDiv.setAttribute('data-category', data.category);
+                    cardDiv.setAttribute('data-name', (data.appName + " " + data.description + " " + data.version).toLowerCase());
+
+                    cardDiv.innerHTML = `
+                        <div class="card-banner-box"><img src="${data.bannerImg}" style="object-fit: ${data.imageFit || 'cover'};" alt="${data.appName}"></div>
+                        <div class="card-content-area">
+                            <div>
+                                <div class="card-badges-row">
+                                    <span class="card-category-badge">${data.categoryName}</span>
+                                    ${data.version ? `<span class="card-version-badge">${data.version}</span>` : ''}
+                                </div>
+                                <div class="app-name">${data.appName}</div>
+                                <p class="app-desc">${data.description}</p>
+                            </div>
+                            <div class="card-links-group">
+                                <a href="${data.gdriveLink}" target="_blank" data-key="${cardKey}" class="download-btn" onclick="handleDownloadClick(event, this, '${cardKey}')">📥 Download (<span>${data.downloadCount || 0}</span>)</a>
+                                <a href="${data.secondaryLink}" target="_blank" class="secondary-link-btn">Video Link</a>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(cardDiv);
+                });
+
+                handleUrlHashNavigation();
+            } catch (e) {
+                console.error("Error loading cards: ", e);
+                container.innerHTML = "<p style='color:#00d2ff; text-align:center; grid-column: 1/-1;'>Failed to load cloud cards. Check internet or Firebase connection.</p>";
+            }
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadCardsFromFirebase();
+            const cleanBaseUrl = window.location.href.split('#')[0];
+            document.getElementById('shareLinkInput').value = cleanBaseUrl;
+            
+            const qrContainer = document.getElementById('qrcode-container');
+            qrContainer.innerHTML = "";
+            new QRCode(qrContainer, {
+                text: cleanBaseUrl,
+                width: 110,
+                height: 110,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        });
+    </script>
+
+    <script>
+        window.addEventListener('online', () => {
+            document.getElementById('offline-banner').style.display = 'none';
+            if (typeof loadCardsFromFirebase === 'function') {
+                loadCardsFromFirebase();
+            }
+        });
+
+        window.addEventListener('offline', () => {
+            document.getElementById('offline-banner').style.display = 'block';
+        });
+
+        if (!navigator.onLine) {
+            document.getElementById('offline-banner').style.display = 'block';
+        }
+
+        let deferredPrompt;
+        const installBanner = document.getElementById('install-app-banner');
+        const installAppBtn = document.getElementById('installAppBtn');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            if (!window.matchMedia('(display-mode: standalone)').matches) {
+                installBanner.style.display = 'flex';
+            }
+        });
+
+        installAppBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    installBanner.style.display = 'none';
+                }
+                deferredPrompt = null;
+            } else {
+                alert("To install this app, tap your browser menu (3 dots) and select 'Install app' or 'Add to Home screen'.");
+            }
+        });
+
+        function handleUrlHashNavigation() {
+            const hash = window.location.hash;
+            if (hash) {
+                const targetCardId = hash.substring(1);
+                const targetCard = document.getElementById(targetCardId);
+                if (targetCard) {
+                    sectionHome.classList.add('active-page');
+                    sectionAdminPanel.classList.remove('active-page');
+                    sectionSearch.classList.remove('active-page');
+                    navHomeBtn.classList.add('active');
+                    navSearchBtn.classList.remove('active');
+
+                    setTimeout(() => {
+                        targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        targetCard.classList.add('highlight-target');
+                        setTimeout(() => { targetCard.classList.remove('highlight-target'); }, 4000);
+                    }, 500);
+                }
+            }
+        }
+
+        function copyShareLink() {
+            const shareInput = document.getElementById('shareLinkInput');
+            shareInput.select();
+            navigator.clipboard.writeText(shareInput.value);
+            alert("🔗 App Hub Link copied!");
+        }
+
+        function copyPublishedLink() {
+            const pubInput = document.getElementById('publishedCardLinkInput');
+            pubInput.select();
+            navigator.clipboard.writeText(pubInput.value);
+            alert("📋 Card Deep-Link copied!");
+        }
+
+        const menuToggleBtn = document.getElementById('menuToggleBtn');
+        const dropdownMenu = document.getElementById('dropdownMenu');
+        menuToggleBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdownMenu.classList.toggle('show');
+        });
+        window.addEventListener('click', () => { dropdownMenu.classList.remove('show'); });
+
+        setTimeout(() => {
+            const intro = document.getElementById('intro-screen');
+            if (intro) { intro.remove(); }
+        }, 3500);
+
+        function handleDownloadClick(event, btnElement, cardUniqueKey) {
+            let span = btnElement.querySelector('span');
+            if (span) {
+                let current = parseInt(span.textContent || 0) + 1;
+                span.textContent = current;
+            }
+        }
+
+        const sectionHome = document.getElementById('section-home');
+        const sectionAdminPanel = document.getElementById('section-admin-panel');
+        const sectionSearch = document.getElementById('section-search');
+        const navHomeBtn = document.getElementById('navHomeBtn');
+        const navSearchBtn = document.getElementById('navSearchBtn');
+
+        navHomeBtn.addEventListener('click', () => {
+            sectionHome.classList.add('active-page');
+            sectionAdminPanel.classList.remove('active-page');
+            sectionSearch.classList.remove('active-page');
+            navHomeBtn.classList.add('active');
+            navSearchBtn.classList.remove('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        navSearchBtn.addEventListener('click', () => {
+            sectionSearch.classList.add('active-page');
+            sectionHome.classList.remove('active-page');
+            sectionAdminPanel.classList.remove('active-page');
+            navSearchBtn.classList.add('active');
+            navHomeBtn.classList.remove('active');
+            document.getElementById('dedicated-search-input').focus();
+            renderSearchResults('');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        const brandLogoTrigger = document.getElementById('brandLogoTrigger');
+        let pressTimer;
+        const secureAdminPassword = "109888977VMJ";
+
+        brandLogoTrigger.addEventListener('mousedown', () => { pressTimer = setTimeout(openAdmin, 10000); });
+        brandLogoTrigger.addEventListener('touchstart', () => { pressTimer = setTimeout(openAdmin, 10000); }, { passive: true });
+        brandLogoTrigger.addEventListener('mouseup', () => clearTimeout(pressTimer));
+        brandLogoTrigger.addEventListener('touchend', () => clearTimeout(pressTimer));
+
+        function openAdmin() {
+            const pwd = prompt("Enter Master Administrator Password:");
+            if (pwd === secureAdminPassword) {
+                sectionHome.classList.remove('active-page');
+                sectionSearch.classList.remove('active-page');
+                sectionAdminPanel.classList.add('active-page');
+                navHomeBtn.classList.remove('active');
+                navSearchBtn.classList.remove('active');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else if (pwd !== null) {
+                alert("Incorrect Password!");
+            }
+        }
+
+        document.getElementById('dedicated-search-input').addEventListener('input', (e) => {
+            renderSearchResults(e.target.value.toLowerCase().trim());
+        });
+
+        function renderSearchResults(query) {
+            const container = document.getElementById('search-results-container');
+            const noMsg = document.getElementById('noResultsMsg');
+            container.innerHTML = '';
+            let count = 0;
+
+            document.querySelectorAll('#card-container .apk-card').forEach(card => {
+                const name = card.getAttribute('data-name') || '';
+                if (query === '' || name.includes(query)) {
+                    container.appendChild(card.cloneNode(true));
+                    count++;
+                }
+            });
+            noMsg.style.display = count === 0 ? 'block' : 'none';
+        }
+
+        function filterCategory(category, element) {
+            document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+            element.classList.add('active');
+            document.querySelectorAll('#card-container .apk-card').forEach(card => {
+                card.style.display = (category === 'all' || card.getAttribute('data-category') === category) ? 'flex' : 'none';
+            });
+        }
+
+        let currentUploadedImageSrc = "";
+        let currentObjectFitMode = "cover";
+
+        function previewBannerImage(event) {
+            const TheFile = event.target.files[0];
+            if (TheFile) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    currentUploadedImageSrc = e.target.result;
+                    const img = document.getElementById('bannerImgTag');
+                    img.src = currentUploadedImageSrc;
+                    img.style.display = 'block';
+                    document.querySelector('.banner-placeholder-text').style.display = 'none';
+                    document.getElementById('imageAdjustControls').style.display = 'flex';
+                }
+                reader.readAsDataURL(TheFile);
+            }
+        }
+
+        function setImageFit(fit, btn) {
+            currentObjectFitMode = fit;
+            document.getElementById('bannerImgTag').style.objectFit = fit;
+            document.querySelectorAll('.adjust-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+    </script>
+</body>
+</html>
