@@ -1284,6 +1284,17 @@
                 const imgPos = app.pos || '50%';
                 const imgZoom = app.zoom || '1';
 
+                // Fixed links with proper protocols and target attributes
+                let dlLink = app.link && app.link.trim() !== "" ? app.link.trim() : "#";
+                if(dlLink !== "#" && !dlLink.startsWith("http://") && !dlLink.startsWith("https://")) {
+                    dlLink = "https://" + dlLink;
+                }
+
+                let vidLink = app.videoLink && app.videoLink.trim() !== "" ? app.videoLink.trim() : "#";
+                if(vidLink !== "#" && !vidLink.startsWith("http://") && !vidLink.startsWith("https://")) {
+                    vidLink = "https://" + vidLink;
+                }
+
                 const card = document.createElement('div');
                 card.className = 'apk-card';
                 card.innerHTML = `
@@ -1305,8 +1316,8 @@
                             <p class="app-desc">${app.desc}</p>
                         </div>
                         <div class="card-links-group">
-                            <a href="${app.link}" target="_blank" class="download-btn">Download</a>
-                            <a href="${app.videoLink || '#'}" target="_blank" class="video-btn">▶ Watch Video</a>
+                            <a href="${dlLink}" target="_blank" rel="noopener noreferrer" class="download-btn">Download</a>
+                            <a href="${vidLink}" target="_blank" rel="noopener noreferrer" class="video-btn">▶ Watch Video</a>
                         </div>
                     </div>
                 `;
@@ -1351,6 +1362,16 @@
                 const imgPos = app.pos || '50%';
                 const imgZoom = app.zoom || '1';
 
+                let dlLink = app.link && app.link.trim() !== "" ? app.link.trim() : "#";
+                if(dlLink !== "#" && !dlLink.startsWith("http://") && !dlLink.startsWith("https://")) {
+                    dlLink = "https://" + dlLink;
+                }
+
+                let vidLink = app.videoLink && app.videoLink.trim() !== "" ? app.videoLink.trim() : "#";
+                if(vidLink !== "#" && !vidLink.startsWith("http://") && !vidLink.startsWith("https://")) {
+                    vidLink = "https://" + vidLink;
+                }
+
                 const card = document.createElement('div');
                 card.className = 'apk-card';
                 card.innerHTML = `
@@ -1372,8 +1393,8 @@
                             <p class="app-desc">${app.desc}</p>
                         </div>
                         <div class="card-links-group">
-                            <a href="${app.link}" target="_blank" class="download-btn">Download</a>
-                            <a href="${app.videoLink || '#'}" target="_blank" class="video-btn">▶ Watch Video</a>
+                            <a href="${dlLink}" target="_blank" rel="noopener noreferrer" class="download-btn">Download</a>
+                            <a href="${vidLink}" target="_blank" rel="noopener noreferrer" class="video-btn">▶ Watch Video</a>
                         </div>
                     </div>
                 `;
