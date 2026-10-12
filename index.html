@@ -1102,10 +1102,25 @@
         let allAppsData = [];
         let tempImageBase64 = "";
         let editingAppId = null;
+        let cardIntersectionObserver = null;
+        let isSyncingActive = false; // Prevents SHA conflict during concurrent operations
 
         const percentText = document.getElementById('loadingPercentText');
         const loaderBarFill = document.getElementById('loaderFillBar');
         const introScreen = document.getElementById('intro-screen');
+
+        // Network Status Check Listener (Fixed Offline Banner Bug)
+        window.addEventListener('online', updateNetworkStatus);
+        window.addEventListener('offline', updateNetworkStatus);
+
+        function updateNetworkStatus() {
+            const offlineBanner = document.getElementById('offline-banner');
+            if (navigator.onLine) {
+                offlineBanner.style.display = 'none';
+            } else {
+                offlineBanner.style.display = 'block';
+            }
+        }
 
         function updateLoadingUI(percentage) {
             const p = Math.min(Math.round(percentage), 100);
@@ -1124,6 +1139,9 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
+            updateNetworkStatus();
+            updateSliderVal(3, document.getElementById('photoSlider3').value);
+
             const cleanBaseUrl = window.location.href.split('#')[0];
             document.getElementById('shareLinkInput').value = cleanBaseUrl;
             
@@ -1224,9 +1242,11 @@
         }
 
         async function pushDataToGitHubSilent() {
+            if (isSyncingActive) return;
             const token = document.getElementById('githubTokenInput').value.trim();
             if(!token) return;
 
+            isSyncingActive = true;
             const updatedContentString = JSON.stringify({ apps: allAppsData }, null, 2);
             const encodedContent = btoa(unescape(encodeURIComponent(updatedContentString)));
 
@@ -1236,25 +1256,29 @@
                 });
                 const getFileData = await getFileRes.json();
 
-                const putRes = await fetch(GITHUB_API_URL, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        message: "Update stats (views/likes/dislikes)",
-                        content: encodedContent,
-                        sha: getFileData.sha
-                    })
-                });
+                if (getFileData.sha) {
+                    const putRes = await fetch(GITHUB_API_URL, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            message: "Update stats (views/likes/dislikes)",
+                            content: encodedContent,
+                            sha: getFileData.sha
+                        })
+                    });
 
-                if(putRes.ok) {
-                    const putData = await putRes.json();
-                    currentFileSHA = putData.content.sha;
+                    if(putRes.ok) {
+                        const putData = await putRes.json();
+                        currentFileSHA = putData.content.sha;
+                    }
                 }
             } catch(e) {
                 console.log("Silent stats sync omitted.");
+            } finally {
+                isSyncingActive = false;
             }
         }
 
@@ -1281,6 +1305,7 @@
                 return;
             }
 
+            isSyncingActive = true;
             const btn = document.getElementById('btnSyncGithub');
             btn.innerText = "⏳ Syncing to GitHub Live...";
             btn.disabled = true;
@@ -1378,6 +1403,7 @@
             } finally {
                 btn.innerText = "⚡ Direct Sync & Update GitHub Live";
                 btn.disabled = false;
+                isSyncingActive = false;
             }
         }
 
@@ -1426,6 +1452,7 @@
                     return;
                 }
 
+                isSyncingActive = true;
                 allAppsData = allAppsData.filter(app => app.id != appId);
                 const updatedContentString = JSON.stringify({ apps: allAppsData }, null, 2);
                 const encodedContent = btoa(unescape(encodeURIComponent(updatedContentString)));
@@ -1457,43 +1484,188 @@
                     }
                 } catch(e) {
                     alert("Error syncing deletion to GitHub.");
+                } finally {
+                    isSyncingActive = false;
                 }
             } else if (pwd !== null) {
                 alert("Incorrect Password!");
             }
         }
 
-        function incrementViews(appId) {
-            allAppsData = allAppsData.map(app => {
-                if(app.id == appId) {
-                    return { ...app, views: (app.views || 0) + 1 };
-                }
-                return app;
+        // Instagram-style Scroll Observer for Automatic View Count (Unified Home & Search View Sync)
+        function setupInstagramScrollObserver() {
+            if (cardIntersectionObserver) {
+                cardIntersectionObserver.disconnect();
+            }
+
+            cardIntersectionObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const appId = entry.target.getAttribute('data-app-id');
+                        const viewedKey = "vsf_auto_viewed_" + appId;
+
+                        if (!localStorage.getItem(viewedKey)) {
+                            localStorage.setItem(viewedKey, "true");
+                            
+                            allAppsData = allAppsData.map(app => {
+                                if(app.id == appId) {
+                                    const updatedViews = (app.views || 0) + 1;
+                                    
+                                    // Update DOM views across both Home & Search views
+                                    document.querySelectorAll(`.apk-card[data-app-id="${appId}"] .view-count-badge`).forEach(badge => {
+                                        badge.innerHTML = `👁️ ${updatedViews} Views`;
+                                    });
+
+                                    return { ...app, views: updatedViews };
+                                }
+                                return app;
+                            });
+                            pushDataToGitHubSilent();
+                        }
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            document.querySelectorAll('.apk-card').forEach(card => {
+                cardIntersectionObserver.observe(card);
             });
-            renderCards(allAppsData);
-            pushDataToGitHubSilent();
         }
 
+        // YouTube-style Like & Dislike Button Toggles
         function toggleLike(appId) {
+            const likedKey = "vsf_liked_" + appId;
+            const dislikedKey = "vsf_disliked_" + appId;
+
+            let isAlreadyLiked = localStorage.getItem(likedKey);
+            let isAlreadyDisliked = localStorage.getItem(dislikedKey);
+
             allAppsData = allAppsData.map(app => {
-                if(app.id == appId) {
-                    return { ...app, likes: (app.likes || 0) + 1 };
+                if (app.id == appId) {
+                    let currentLikes = app.likes || 0;
+                    let currentDislikes = app.dislikes || 0;
+
+                    if (isAlreadyLiked) {
+                        localStorage.removeItem(likedKey);
+                        currentLikes = Math.max(0, currentLikes - 1);
+                    } else {
+                        localStorage.setItem(likedKey, "true");
+                        currentLikes += 1;
+
+                        if (isAlreadyDisliked) {
+                            localStorage.removeItem(dislikedKey);
+                            currentDislikes = Math.max(0, currentDislikes - 1);
+                        }
+                    }
+
+                    return { ...app, likes: currentLikes, dislikes: currentDislikes };
                 }
                 return app;
             });
+
             renderCards(allAppsData);
             pushDataToGitHubSilent();
         }
 
         function toggleDislike(appId) {
+            const likedKey = "vsf_liked_" + appId;
+            const dislikedKey = "vsf_disliked_" + appId;
+
+            let isAlreadyLiked = localStorage.getItem(likedKey);
+            let isAlreadyDisliked = localStorage.getItem(dislikedKey);
+
             allAppsData = allAppsData.map(app => {
-                if(app.id == appId) {
-                    return { ...app, dislikes: (app.dislikes || 0) + 1 };
+                if (app.id == appId) {
+                    let currentLikes = app.likes || 0;
+                    let currentDislikes = app.dislikes || 0;
+
+                    if (isAlreadyDisliked) {
+                        localStorage.removeItem(dislikedKey);
+                        currentDislikes = Math.max(0, currentDislikes - 1);
+                    } else {
+                        localStorage.setItem(dislikedKey, "true");
+                        currentDislikes += 1;
+
+                        if (isAlreadyLiked) {
+                            localStorage.removeItem(likedKey);
+                            currentLikes = Math.max(0, currentLikes - 1);
+                        }
+                    }
+
+                    return { ...app, likes: currentLikes, dislikes: currentDislikes };
                 }
                 return app;
             });
+
             renderCards(allAppsData);
             pushDataToGitHubSilent();
+        }
+
+        function buildCardHTML(app) {
+            const imgPos = app.pos || '50%';
+            const imgZoom = app.zoom || '1';
+
+            let dlLink = app.link && app.link.trim() !== "" ? app.link.trim() : "#";
+            if(dlLink !== "#" && !dlLink.startsWith("http://") && !dlLink.startsWith("https://")) {
+                dlLink = "https://" + dlLink;
+            }
+
+            let vidLink = app.videoLink && app.videoLink.trim() !== "" ? app.videoLink.trim() : "#";
+            if(vidLink !== "#" && !vidLink.startsWith("http://") && !vidLink.startsWith("https://")) {
+                vidLink = "https://" + vidLink;
+            }
+
+            const viewsCount = app.views || 0;
+            const likesCount = app.likes || 0;
+            const dislikesCount = app.dislikes || 0;
+
+            const isLiked = localStorage.getItem("vsf_liked_" + app.id) ? "liked" : "";
+            const isDisliked = localStorage.getItem("vsf_disliked_" + app.id) ? "disliked" : "";
+
+            return `
+                <div class="card-banner-box">
+                    <img src="${app.banner}" alt="${app.name}" style="object-position: ${imgPos} center; transform: scale(${imgZoom});">
+                </div>
+                <div class="card-content-area">
+                    <div>
+                        <div class="card-top-header">
+                            <span class="card-category-badge">${app.category}</span>
+                            <button class="card-menu-dots" 
+                                    tabindex="0"
+                                    onmousedown="startCardHoldTimer(event, '${app.id}')" 
+                                    onmouseup="cancelCardHoldTimer(event)" 
+                                    onmouseleave="cancelCardHoldTimer(event)" 
+                                    ontouchstart="startCardHoldTimer(event, '${app.id}')" 
+                                    ontouchend="cancelCardHoldTimer(event)" 
+                                    ontouchcancel="cancelCardHoldTimer(event)" 
+                                    onkeydown="handleTVRemoteKeyDown(event, '${app.id}')"
+                                    onkeyup="cancelCardHoldTimer(event)"
+                                    title="Hold for 5 seconds for Admin Options">
+                                <span></span><span></span><span></span>
+                            </button>
+                            <div class="card-popup-menu" id="menu-${app.id}">
+                                <button class="card-popup-option" onclick="editApp('${app.id}')">✏️ Edit App</button>
+                                <button class="card-popup-option card-delete-option" onclick="deleteApp('${app.id}')">🗑️ VSF Studio</button>
+                            </div>
+                        </div>
+                        <h3 class="app-name">${app.name}</h3>
+                        
+                        <!-- Stat Row: Views + Like / Dislike Buttons -->
+                        <div class="card-stats-row">
+                            <div class="view-count-badge">👁️ ${viewsCount} Views</div>
+                            <div class="like-dislike-group">
+                                <button class="reaction-btn ${isLiked}" onclick="toggleLike('${app.id}')">👍 ${likesCount}</button>
+                                <button class="reaction-btn ${isDisliked}" onclick="toggleDislike('${app.id}')">👎 ${dislikesCount}</button>
+                            </div>
+                        </div>
+
+                        <p class="app-desc">${app.desc}</p>
+                    </div>
+                    <div class="card-links-group">
+                        <a href="${dlLink}" target="_blank" rel="noopener noreferrer" class="download-btn">Download</a>
+                        <a href="${vidLink}" target="_blank" rel="noopener noreferrer" class="video-btn">▶ Watch Video</a>
+                    </div>
+                </div>
+            `;
         }
 
         function renderCards(apps) {
@@ -1506,84 +1678,22 @@
             }
 
             apps.forEach(app => {
-                const imgPos = app.pos || '50%';
-                const imgZoom = app.zoom || '1';
-
-                let dlLink = app.link && app.link.trim() !== "" ? app.link.trim() : "#";
-                if(dlLink !== "#" && !dlLink.startsWith("http://") && !dlLink.startsWith("https://")) {
-                    dlLink = "https://" + dlLink;
-                }
-
-                let vidLink = app.videoLink && app.videoLink.trim() !== "" ? app.videoLink.trim() : "#";
-                if(vidLink !== "#" && !vidLink.startsWith("http://") && !vidLink.startsWith("https://")) {
-                    vidLink = "https://" + vidLink;
-                }
-
-                const viewsCount = app.views || 0;
-                const likesCount = app.likes || 0;
-                const dislikesCount = app.dislikes || 0;
-
                 const card = document.createElement('div');
                 card.className = 'apk-card';
-                card.innerHTML = `
-                    <div class="card-banner-box">
-                        <img src="${app.banner}" alt="${app.name}" style="object-position: ${imgPos} center; transform: scale(${imgZoom});">
-                    </div>
-                    <div class="card-content-area">
-                        <div>
-                            <div class="card-top-header">
-                                <span class="card-category-badge">${app.category}</span>
-                                <button class="card-menu-dots" 
-                                        tabindex="0"
-                                        onclick="incrementViews('${app.id}')"
-                                        onmousedown="startCardHoldTimer(event, '${app.id}')" 
-                                        onmouseup="cancelCardHoldTimer(event)" 
-                                        onmouseleave="cancelCardHoldTimer(event)" 
-                                        ontouchstart="startCardHoldTimer(event, '${app.id}')" 
-                                        ontouchend="cancelCardHoldTimer(event)" 
-                                        ontouchcancel="cancelCardHoldTimer(event)" 
-                                        onkeydown="handleTVRemoteKeyDown(event, '${app.id}')"
-                                        onkeyup="cancelCardHoldTimer(event)"
-                                        title="Click to view stats | Hold 5s for Admin Options">
-                                    <span></span><span></span><span></span>
-                                </button>
-                                <div class="card-popup-menu" id="menu-${app.id}">
-                                    <button class="card-popup-option" onclick="editApp('${app.id}')">✏️ Edit App</button>
-                                    <button class="card-popup-option card-delete-option" onclick="deleteApp('${app.id}')">🗑️ VSF Studio</button>
-                                </div>
-                            </div>
-                            <h3 class="app-name">${app.name}</h3>
-                            
-                            <!-- Stat Row: Views + Like / Dislike Buttons -->
-                            <div class="card-stats-row">
-                                <div class="view-count-badge">👁️ ${viewsCount} Views</div>
-                                <div class="like-dislike-group">
-                                    <button class="reaction-btn" onclick="toggleLike('${app.id}')">👍 ${likesCount}</button>
-                                    <button class="reaction-btn" onclick="toggleDislike('${app.id}')">👎 ${dislikesCount}</button>
-                                </div>
-                            </div>
-
-                            <p class="app-desc">${app.desc}</p>
-                        </div>
-                        <div class="card-links-group">
-                            <a href="${dlLink}" target="_blank" rel="noopener noreferrer" class="download-btn" onclick="incrementViews('${app.id}')">Download</a>
-                            <a href="${vidLink}" target="_blank" rel="noopener noreferrer" class="video-btn">▶ Watch Video</a>
-                        </div>
-                    </div>
-                `;
+                card.setAttribute('data-app-id', app.id);
+                card.innerHTML = buildCardHTML(app);
                 container.appendChild(card);
             });
+
+            setupInstagramScrollObserver();
         }
 
         let cardHoldTimer = null;
-        let isHoldTriggered = false;
 
         function startCardHoldTimer(event, appId) {
             cancelCardHoldTimer();
-            isHoldTriggered = false;
 
             cardHoldTimer = setTimeout(() => {
-                isHoldTriggered = true;
                 if (navigator.vibrate) {
                     navigator.vibrate(100);
                 }
@@ -1630,7 +1740,12 @@
         function searchAppsLocally(query) {
             const searchContainer = document.getElementById('search-results-container');
             searchContainer.innerHTML = "";
-            const q = query.toLowerCase();
+            const q = query.toLowerCase().trim();
+
+            if (!q) {
+                searchContainer.innerHTML = `<p style="color: #9ca3af; grid-column: 1/-1; text-align: center; padding: 30px;">Type app name above to search.</p>`;
+                return;
+            }
 
             const matched = allAppsData.filter(app => app.name.toLowerCase().includes(q) || app.desc.toLowerCase().includes(q));
 
@@ -1640,73 +1755,14 @@
             }
 
             matched.forEach(app => {
-                const imgPos = app.pos || '50%';
-                const imgZoom = app.zoom || '1';
-
-                let dlLink = app.link && app.link.trim() !== "" ? app.link.trim() : "#";
-                if(dlLink !== "#" && !dlLink.startsWith("http://") && !dlLink.startsWith("https://")) {
-                    dlLink = "https://" + dlLink;
-                }
-
-                let vidLink = app.videoLink && app.videoLink.trim() !== "" ? app.videoLink.trim() : "#";
-                if(vidLink !== "#" && !vidLink.startsWith("http://") && !vidLink.startsWith("https://")) {
-                    vidLink = "https://" + vidLink;
-                }
-
-                const viewsCount = app.views || 0;
-                const likesCount = app.likes || 0;
-                const dislikesCount = app.dislikes || 0;
-
                 const card = document.createElement('div');
                 card.className = 'apk-card';
-                card.innerHTML = `
-                    <div class="card-banner-box">
-                        <img src="${app.banner}" alt="${app.name}" style="object-position: ${imgPos} center; transform: scale(${imgZoom});">
-                    </div>
-                    <div class="card-content-area">
-                        <div>
-                            <div class="card-top-header">
-                                <span class="card-category-badge">${app.category}</span>
-                                <button class="card-menu-dots" 
-                                        tabindex="0"
-                                        onclick="incrementViews('${app.id}')"
-                                        onmousedown="startCardHoldTimer(event, '${app.id}')" 
-                                        onmouseup="cancelCardHoldTimer(event)" 
-                                        onmouseleave="cancelCardHoldTimer(event)" 
-                                        ontouchstart="startCardHoldTimer(event, '${app.id}')" 
-                                        ontouchend="cancelCardHoldTimer(event)" 
-                                        ontouchcancel="cancelCardHoldTimer(event)" 
-                                        onkeydown="handleTVRemoteKeyDown(event, '${app.id}')"
-                                        onkeyup="cancelCardHoldTimer(event)"
-                                        title="Click to view stats | Hold 5s for Admin Options">
-                                    <span></span><span></span><span></span>
-                                </button>
-                                <div class="card-popup-menu" id="menu-${app.id}">
-                                    <button class="card-popup-option" onclick="editApp('${app.id}')">✏️ Edit App</button>
-                                    <button class="card-popup-option card-delete-option" onclick="deleteApp('${app.id}')">🗑️ VSF Studio</button>
-                                </div>
-                            </div>
-                            <h3 class="app-name">${app.name}</h3>
-                            
-                            <!-- Stat Row: Views + Like / Dislike Buttons -->
-                            <div class="card-stats-row">
-                                <div class="view-count-badge">👁️ ${viewsCount} Views</div>
-                                <div class="like-dislike-group">
-                                    <button class="reaction-btn" onclick="toggleLike('${app.id}')">👍 ${likesCount}</button>
-                                    <button class="reaction-btn" onclick="toggleDislike('${app.id}')">👎 ${dislikesCount}</button>
-                                </div>
-                            </div>
-
-                            <p class="app-desc">${app.desc}</p>
-                        </div>
-                        <div class="card-links-group">
-                            <a href="${dlLink}" target="_blank" rel="noopener noreferrer" class="download-btn" onclick="incrementViews('${app.id}')">Download</a>
-                            <a href="${vidLink}" target="_blank" rel="noopener noreferrer" class="video-btn">▶ Watch Video</a>
-                        </div>
-                    </div>
-                `;
+                card.setAttribute('data-app-id', app.id);
+                card.innerHTML = buildCardHTML(app);
                 searchContainer.appendChild(card);
             });
+
+            setupInstagramScrollObserver();
         }
 
         function previewBannerImage(event) {
@@ -1721,7 +1777,7 @@
                     return;
                 }
                 if (fileSizeKB > maxSliderLimitKB) {
-                    alert(`⚠️ Error: Image size exceeds your limit!`);
+                    alert(`⚠️ Error: Image size exceeds your limit of ${maxSliderLimitKB >= 1024 ? (maxSliderLimitKB/1024).toFixed(1) + ' MB' : maxSliderLimitKB + ' KB'}!`);
                     event.target.value = "";
                     return;
                 }
@@ -1755,6 +1811,7 @@
         const sectionSearch = document.getElementById('section-search');
 
         navHomeBtn.addEventListener('click', () => {
+            renderCards(allAppsData); // Always refresh Home view when returning
             sectionHome.classList.add('active-page');
             sectionAdminPanel.classList.remove('active-page');
             sectionSearch.classList.remove('active-page');
