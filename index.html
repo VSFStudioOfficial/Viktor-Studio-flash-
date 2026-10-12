@@ -538,31 +538,92 @@
         }
 
         .card-content-area {
-            padding: 24px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             flex-grow: 1;
         }
 
+        /* Modified Header Bar: Category + Views + Likes + Options in ONE ROW */
         .card-top-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
             position: relative;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .card-header-left-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
         }
 
         .card-category-badge {
             display: inline-block;
             background: rgba(0, 210, 255, 0.15);
             color: var(--primary-color);
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             font-weight: 700;
-            padding: 3px 10px;
+            padding: 3px 8px;
             border-radius: 20px;
             text-transform: uppercase;
             border: 1px solid rgba(0, 210, 255, 0.3);
+        }
+
+        .card-stats-inline {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .view-count-badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            background: rgba(15, 23, 42, 0.8);
+            padding: 3px 7px;
+            border-radius: 8px;
+            border: 1px solid #1e293b;
+        }
+
+        .reaction-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #334155;
+            color: #cbd5e1;
+            padding: 3px 7px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            transition: all 0.2s ease;
+        }
+
+        .reaction-btn:hover {
+            border-color: var(--primary-color);
+            color: #fff;
+        }
+
+        .reaction-btn.liked {
+            background: rgba(0, 255, 204, 0.2);
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+
+        .reaction-btn.disliked {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: #ef4444;
+            color: #ef4444;
         }
 
         .card-menu-dots {
@@ -642,76 +703,17 @@
             background: rgba(239, 68, 68, 0.15) !important;
         }
 
-        /* Like & Dislike & Views Bar Below App Title */
-        .card-stats-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 12px;
-            background: rgba(15, 23, 42, 0.6);
-            padding: 6px 12px;
-            border-radius: 10px;
-            border: 1px solid #1e293b;
-        }
-
-        .view-count-badge {
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .like-dislike-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .reaction-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid #334155;
-            color: #cbd5e1;
-            padding: 4px 10px;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            transition: all 0.2s ease;
-        }
-
-        .reaction-btn:hover {
-            border-color: var(--primary-color);
-            color: #fff;
-        }
-
-        .reaction-btn.liked {
-            background: rgba(0, 255, 204, 0.2);
-            border-color: var(--accent-color);
-            color: var(--accent-color);
-        }
-
-        .reaction-btn.disliked {
-            background: rgba(239, 68, 68, 0.2);
-            border-color: #ef4444;
-            color: #ef4444;
-        }
-
         .app-name {
-            font-size: 1.5rem;
+            font-size: 1.35rem;
             font-weight: 800;
             color: #f9fafb;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .app-desc {
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             color: #cbd5e1;
-            margin-bottom: 15px;
+            margin-bottom: 16px;
             line-height: 1.5;
         }
 
@@ -966,7 +968,6 @@
             <span class="brand-name">VSF Studio</span>
         </div>
         <div class="header-right-controls">
-            <!-- Refresh Button -->
             <button class="header-refresh-btn" id="refreshServerBtn" title="Refresh Live Data from GitHub" onclick="refreshFromServer()">
                 🔄
             </button>
@@ -1001,9 +1002,7 @@
                 <button class="filter-pill" onclick="filterCategory('tools', this)">Utilities</button>
             </div>
         </div>
-        <div class="apk-grid" id="card-container">
-            <!-- Server se load hone wale cards yahaan dikhenge -->
-        </div>
+        <div class="apk-grid" id="card-container"></div>
     </div>
 
     <!-- SECTION 2: ADMIN PANEL -->
@@ -1041,7 +1040,6 @@
                 <img id="bannerImgTag" alt="Preview">
             </div>
 
-            <!-- Three Sliders right below Photo selection -->
             <div class="sliders-container">
                 <div class="slider-row">
                     <div class="slider-label-row">
@@ -1103,13 +1101,13 @@
         let tempImageBase64 = "";
         let editingAppId = null;
         let cardIntersectionObserver = null;
-        let isSyncingActive = false; // Prevents SHA conflict during concurrent operations
+        let isSyncingActive = false;
+        let activeCategoryFilter = 'all';
 
         const percentText = document.getElementById('loadingPercentText');
         const loaderBarFill = document.getElementById('loaderFillBar');
         const introScreen = document.getElementById('intro-screen');
 
-        // Network Status Check Listener (Fixed Offline Banner Bug)
         window.addEventListener('online', updateNetworkStatus);
         window.addEventListener('offline', updateNetworkStatus);
 
@@ -1219,8 +1217,16 @@
                 }
                 const content = decodeURIComponent(escape(atob(data.content)));
                 const jsonParsed = JSON.parse(content);
-                allAppsData = Array.isArray(jsonParsed) ? jsonParsed : (jsonParsed.apps || []);
-                renderCards(allAppsData);
+                
+                if (Array.isArray(jsonParsed)) {
+                    allAppsData = jsonParsed;
+                } else if (jsonParsed && Array.isArray(jsonParsed.apps)) {
+                    allAppsData = jsonParsed.apps;
+                } else {
+                    allAppsData = [];
+                }
+
+                filterCategory(activeCategoryFilter, document.querySelector('.filter-pill.active') || document.querySelector('.filter-pill'));
                 finishLoadingAndHide();
                 if(callback) callback();
             })
@@ -1229,8 +1235,15 @@
                 fetch(GITHUB_JSON_URL + "?t=" + Date.now())
                 .then(res => res.json())
                 .then(data => {
-                    allAppsData = Array.isArray(data) ? data : (data.apps || []);
-                    renderCards(allAppsData);
+                    if (Array.isArray(data)) {
+                        allAppsData = data;
+                    } else if (data && Array.isArray(data.apps)) {
+                        allAppsData = data.apps;
+                    } else {
+                        allAppsData = [];
+                    }
+
+                    filterCategory(activeCategoryFilter, document.querySelector('.filter-pill.active') || document.querySelector('.filter-pill'));
                     finishLoadingAndHide();
                     if(callback) callback();
                 })
@@ -1375,7 +1388,7 @@
                 if (putRes.ok) {
                     const putData = await putRes.json();
                     currentFileSHA = putData.content.sha;
-                    renderCards(allAppsData);
+                    filterCategory(activeCategoryFilter, document.querySelector('.filter-pill.active'));
                     alert(`🎉 Boom! "${name}" successfully synced DIRECTLY to GitHub Live!`);
 
                     document.getElementById('appNameInput').value = "";
@@ -1477,7 +1490,7 @@
                     });
 
                     if(putRes.ok) {
-                        renderCards(allAppsData);
+                        filterCategory(activeCategoryFilter, document.querySelector('.filter-pill.active'));
                         alert("App deleted and synced live on GitHub!");
                     } else {
                         alert("Delete Sync Failed! Check Token.");
@@ -1492,7 +1505,6 @@
             }
         }
 
-        // Instagram-style Scroll Observer for Automatic View Count (Unified Home & Search View Sync)
         function setupInstagramScrollObserver() {
             if (cardIntersectionObserver) {
                 cardIntersectionObserver.disconnect();
@@ -1511,7 +1523,6 @@
                                 if(app.id == appId) {
                                     const updatedViews = (app.views || 0) + 1;
                                     
-                                    // Update DOM views across both Home & Search views
                                     document.querySelectorAll(`.apk-card[data-app-id="${appId}"] .view-count-badge`).forEach(badge => {
                                         badge.innerHTML = `👁️ ${updatedViews} Views`;
                                     });
@@ -1531,7 +1542,6 @@
             });
         }
 
-        // YouTube-style Like & Dislike Button Toggles
         function toggleLike(appId) {
             const likedKey = "vsf_liked_" + appId;
             const dislikedKey = "vsf_disliked_" + appId;
@@ -1562,7 +1572,7 @@
                 return app;
             });
 
-            renderCards(allAppsData);
+            filterCategory(activeCategoryFilter, document.querySelector('.filter-pill.active'));
             pushDataToGitHubSilent();
         }
 
@@ -1596,10 +1606,11 @@
                 return app;
             });
 
-            renderCards(allAppsData);
+            filterCategory(activeCategoryFilter, document.querySelector('.filter-pill.active'));
             pushDataToGitHubSilent();
         }
 
+        // NEW BUILD CARD HTML: Category + Views + Likes Inline in One Row!
         function buildCardHTML(app) {
             const imgPos = app.pos || '50%';
             const imgZoom = app.zoom || '1';
@@ -1627,8 +1638,16 @@
                 </div>
                 <div class="card-content-area">
                     <div>
+                        <!-- Header Bar with Category, Views & Like/Dislike Buttons -->
                         <div class="card-top-header">
-                            <span class="card-category-badge">${app.category}</span>
+                            <div class="card-header-left-group">
+                                <span class="card-category-badge">${app.category}</span>
+                                <div class="card-stats-inline">
+                                    <div class="view-count-badge">👁️ ${viewsCount}</div>
+                                    <button class="reaction-btn ${isLiked}" onclick="toggleLike('${app.id}')">👍 ${likesCount}</button>
+                                    <button class="reaction-btn ${isDisliked}" onclick="toggleDislike('${app.id}')">👎 ${dislikesCount}</button>
+                                </div>
+                            </div>
                             <button class="card-menu-dots" 
                                     tabindex="0"
                                     onmousedown="startCardHoldTimer(event, '${app.id}')" 
@@ -1647,17 +1666,9 @@
                                 <button class="card-popup-option card-delete-option" onclick="deleteApp('${app.id}')">🗑️ VSF Studio</button>
                             </div>
                         </div>
-                        <h3 class="app-name">${app.name}</h3>
-                        
-                        <!-- Stat Row: Views + Like / Dislike Buttons -->
-                        <div class="card-stats-row">
-                            <div class="view-count-badge">👁️ ${viewsCount} Views</div>
-                            <div class="like-dislike-group">
-                                <button class="reaction-btn ${isLiked}" onclick="toggleLike('${app.id}')">👍 ${likesCount}</button>
-                                <button class="reaction-btn ${isDisliked}" onclick="toggleDislike('${app.id}')">👎 ${dislikesCount}</button>
-                            </div>
-                        </div>
 
+                        <!-- Straight App Name & Description Flow -->
+                        <h3 class="app-name">${app.name}</h3>
                         <p class="app-desc">${app.desc}</p>
                     </div>
                     <div class="card-links-group">
@@ -1726,8 +1737,9 @@
         }
 
         function filterCategory(cat, btn) {
+            activeCategoryFilter = cat;
             document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
-            btn.classList.add('active');
+            if(btn) btn.classList.add('active');
 
             if (cat === 'all') {
                 renderCards(allAppsData);
@@ -1811,7 +1823,7 @@
         const sectionSearch = document.getElementById('section-search');
 
         navHomeBtn.addEventListener('click', () => {
-            renderCards(allAppsData); // Always refresh Home view when returning
+            filterCategory(activeCategoryFilter, document.querySelector('.filter-pill.active'));
             sectionHome.classList.add('active-page');
             sectionAdminPanel.classList.remove('active-page');
             sectionSearch.classList.remove('active-page');
