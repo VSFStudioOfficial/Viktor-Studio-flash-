@@ -605,7 +605,7 @@
             box-shadow: 0 8px 20px rgba(0,0,0,0.6);
             display: none;
             z-index: 50;
-            min-width: 140px;
+            min-width: 150px;
             overflow: hidden;
         }
 
@@ -642,17 +642,76 @@
             background: rgba(239, 68, 68, 0.15) !important;
         }
 
+        /* Like & Dislike & Views Bar Below App Title */
+        .card-stats-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            background: rgba(15, 23, 42, 0.6);
+            padding: 6px 12px;
+            border-radius: 10px;
+            border: 1px solid #1e293b;
+        }
+
+        .view-count-badge {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .like-dislike-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .reaction-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #334155;
+            color: #cbd5e1;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .reaction-btn:hover {
+            border-color: var(--primary-color);
+            color: #fff;
+        }
+
+        .reaction-btn.liked {
+            background: rgba(0, 255, 204, 0.2);
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+
+        .reaction-btn.disliked {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+
         .app-name {
             font-size: 1.5rem;
             font-weight: 800;
             color: #f9fafb;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .app-desc {
             font-size: 0.95rem;
             color: #cbd5e1;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             line-height: 1.5;
         }
 
@@ -1164,6 +1223,41 @@
             });
         }
 
+        async function pushDataToGitHubSilent() {
+            const token = document.getElementById('githubTokenInput').value.trim();
+            if(!token) return;
+
+            const updatedContentString = JSON.stringify({ apps: allAppsData }, null, 2);
+            const encodedContent = btoa(unescape(encodeURIComponent(updatedContentString)));
+
+            try {
+                const getFileRes = await fetch(GITHUB_API_URL, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const getFileData = await getFileRes.json();
+
+                const putRes = await fetch(GITHUB_API_URL, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: "Update stats (views/likes/dislikes)",
+                        content: encodedContent,
+                        sha: getFileData.sha
+                    })
+                });
+
+                if(putRes.ok) {
+                    const putData = await putRes.json();
+                    currentFileSHA = putData.content.sha;
+                }
+            } catch(e) {
+                console.log("Silent stats sync omitted.");
+            }
+        }
+
         async function addAppAndPushToGitHubAPI() {
             const token = document.getElementById('githubTokenInput').value.trim();
             if(!token) {
@@ -1221,7 +1315,10 @@
                     pos: currentPos,
                     zoom: currentZoom,
                     link: link,
-                    videoLink: videoLink || "#"
+                    videoLink: videoLink || "#",
+                    views: 0,
+                    likes: 0,
+                    dislikes: 0
                 };
                 allAppsData.push(newApp);
             }
@@ -1366,6 +1463,39 @@
             }
         }
 
+        function incrementViews(appId) {
+            allAppsData = allAppsData.map(app => {
+                if(app.id == appId) {
+                    return { ...app, views: (app.views || 0) + 1 };
+                }
+                return app;
+            });
+            renderCards(allAppsData);
+            pushDataToGitHubSilent();
+        }
+
+        function toggleLike(appId) {
+            allAppsData = allAppsData.map(app => {
+                if(app.id == appId) {
+                    return { ...app, likes: (app.likes || 0) + 1 };
+                }
+                return app;
+            });
+            renderCards(allAppsData);
+            pushDataToGitHubSilent();
+        }
+
+        function toggleDislike(appId) {
+            allAppsData = allAppsData.map(app => {
+                if(app.id == appId) {
+                    return { ...app, dislikes: (app.dislikes || 0) + 1 };
+                }
+                return app;
+            });
+            renderCards(allAppsData);
+            pushDataToGitHubSilent();
+        }
+
         function renderCards(apps) {
             const container = document.getElementById('card-container');
             container.innerHTML = "";
@@ -1389,6 +1519,10 @@
                     vidLink = "https://" + vidLink;
                 }
 
+                const viewsCount = app.views || 0;
+                const likesCount = app.likes || 0;
+                const dislikesCount = app.dislikes || 0;
+
                 const card = document.createElement('div');
                 card.className = 'apk-card';
                 card.innerHTML = `
@@ -1401,6 +1535,7 @@
                                 <span class="card-category-badge">${app.category}</span>
                                 <button class="card-menu-dots" 
                                         tabindex="0"
+                                        onclick="incrementViews('${app.id}')"
                                         onmousedown="startCardHoldTimer(event, '${app.id}')" 
                                         onmouseup="cancelCardHoldTimer(event)" 
                                         onmouseleave="cancelCardHoldTimer(event)" 
@@ -1409,7 +1544,7 @@
                                         ontouchcancel="cancelCardHoldTimer(event)" 
                                         onkeydown="handleTVRemoteKeyDown(event, '${app.id}')"
                                         onkeyup="cancelCardHoldTimer(event)"
-                                        title="Hold for 5 seconds for options (TV/Mobile/PC Supported)">
+                                        title="Click to view stats | Hold 5s for Admin Options">
                                     <span></span><span></span><span></span>
                                 </button>
                                 <div class="card-popup-menu" id="menu-${app.id}">
@@ -1418,10 +1553,20 @@
                                 </div>
                             </div>
                             <h3 class="app-name">${app.name}</h3>
+                            
+                            <!-- Stat Row: Views + Like / Dislike Buttons -->
+                            <div class="card-stats-row">
+                                <div class="view-count-badge">👁️ ${viewsCount} Views</div>
+                                <div class="like-dislike-group">
+                                    <button class="reaction-btn" onclick="toggleLike('${app.id}')">👍 ${likesCount}</button>
+                                    <button class="reaction-btn" onclick="toggleDislike('${app.id}')">👎 ${dislikesCount}</button>
+                                </div>
+                            </div>
+
                             <p class="app-desc">${app.desc}</p>
                         </div>
                         <div class="card-links-group">
-                            <a href="${dlLink}" target="_blank" rel="noopener noreferrer" class="download-btn">Download</a>
+                            <a href="${dlLink}" target="_blank" rel="noopener noreferrer" class="download-btn" onclick="incrementViews('${app.id}')">Download</a>
                             <a href="${vidLink}" target="_blank" rel="noopener noreferrer" class="video-btn">▶ Watch Video</a>
                         </div>
                     </div>
@@ -1431,11 +1576,14 @@
         }
 
         let cardHoldTimer = null;
+        let isHoldTriggered = false;
 
         function startCardHoldTimer(event, appId) {
             cancelCardHoldTimer();
+            isHoldTriggered = false;
 
             cardHoldTimer = setTimeout(() => {
+                isHoldTriggered = true;
                 if (navigator.vibrate) {
                     navigator.vibrate(100);
                 }
@@ -1505,6 +1653,10 @@
                     vidLink = "https://" + vidLink;
                 }
 
+                const viewsCount = app.views || 0;
+                const likesCount = app.likes || 0;
+                const dislikesCount = app.dislikes || 0;
+
                 const card = document.createElement('div');
                 card.className = 'apk-card';
                 card.innerHTML = `
@@ -1517,6 +1669,7 @@
                                 <span class="card-category-badge">${app.category}</span>
                                 <button class="card-menu-dots" 
                                         tabindex="0"
+                                        onclick="incrementViews('${app.id}')"
                                         onmousedown="startCardHoldTimer(event, '${app.id}')" 
                                         onmouseup="cancelCardHoldTimer(event)" 
                                         onmouseleave="cancelCardHoldTimer(event)" 
@@ -1525,7 +1678,7 @@
                                         ontouchcancel="cancelCardHoldTimer(event)" 
                                         onkeydown="handleTVRemoteKeyDown(event, '${app.id}')"
                                         onkeyup="cancelCardHoldTimer(event)"
-                                        title="Hold for 5 seconds for options (TV/Mobile/PC Supported)">
+                                        title="Click to view stats | Hold 5s for Admin Options">
                                     <span></span><span></span><span></span>
                                 </button>
                                 <div class="card-popup-menu" id="menu-${app.id}">
@@ -1534,10 +1687,20 @@
                                 </div>
                             </div>
                             <h3 class="app-name">${app.name}</h3>
+                            
+                            <!-- Stat Row: Views + Like / Dislike Buttons -->
+                            <div class="card-stats-row">
+                                <div class="view-count-badge">👁️ ${viewsCount} Views</div>
+                                <div class="like-dislike-group">
+                                    <button class="reaction-btn" onclick="toggleLike('${app.id}')">👍 ${likesCount}</button>
+                                    <button class="reaction-btn" onclick="toggleDislike('${app.id}')">👎 ${dislikesCount}</button>
+                                </div>
+                            </div>
+
                             <p class="app-desc">${app.desc}</p>
                         </div>
                         <div class="card-links-group">
-                            <a href="${dlLink}" target="_blank" rel="noopener noreferrer" class="download-btn">Download</a>
+                            <a href="${dlLink}" target="_blank" rel="noopener noreferrer" class="download-btn" onclick="incrementViews('${app.id}')">Download</a>
                             <a href="${vidLink}" target="_blank" rel="noopener noreferrer" class="video-btn">▶ Watch Video</a>
                         </div>
                     </div>
