@@ -490,11 +490,25 @@
             box-shadow: 0 0 12px rgba(0, 210, 255, 0.5);
         }
 
+        /* Grid Layout - Responsive Strategy */
         .apk-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: 1fr;
             gap: 25px;
             width: 100%;
+        }
+
+        /* Responsive Breakpoint for PC / Desktop Screen: Exactly 2 Cards Per Row */
+        @media screen and (min-width: 768px) {
+            .apk-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+            .hero-title {
+                font-size: 2rem;
+            }
+            .hero-desc {
+                font-size: 1rem;
+            }
         }
 
         .apk-card {
@@ -553,12 +567,22 @@
 
         .card-menu-dots {
             background: transparent;
-            border: none;
+            border: 1px solid transparent;
+            border-radius: 6px;
             cursor: pointer;
             display: flex;
             flex-direction: column;
             gap: 3px;
             padding: 6px;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+            outline: none;
+        }
+
+        .card-menu-dots:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
         }
 
         .card-menu-dots span {
@@ -567,6 +591,7 @@
             height: 2px;
             background-color: #9ca3af;
             border-radius: 2px;
+            pointer-events: none;
         }
 
         /* Card Option Popup Menu */
@@ -580,7 +605,7 @@
             box-shadow: 0 8px 20px rgba(0,0,0,0.6);
             display: none;
             z-index: 50;
-            min-width: 120px;
+            min-width: 140px;
             overflow: hidden;
         }
 
@@ -588,10 +613,10 @@
             display: block;
         }
 
-        .card-delete-option {
+        .card-popup-option {
             background: transparent;
             border: none;
-            color: #ef4444;
+            color: #cbd5e1;
             padding: 10px 14px;
             width: 100%;
             text-align: left;
@@ -603,8 +628,18 @@
             gap: 6px;
         }
 
-        .card-delete-option:hover {
-            background: rgba(239, 68, 68, 0.15);
+        .card-popup-option:hover, .card-popup-option:focus {
+            background: rgba(0, 210, 255, 0.15);
+            color: var(--primary-color);
+            outline: none;
+        }
+
+        .card-delete-option {
+            color: #ef4444 !important;
+        }
+
+        .card-delete-option:hover, .card-delete-option:focus {
+            background: rgba(239, 68, 68, 0.15) !important;
         }
 
         .app-name {
@@ -668,6 +703,13 @@
             border-radius: 24px;
             padding: 40px;
             box-shadow: 0 0 20px rgba(0, 210, 255, 0.3);
+        }
+
+        @media screen and (max-width: 600px) {
+            #section-admin-panel {
+                padding: 20px;
+                border-radius: 16px;
+            }
         }
 
         .admin-panel-title {
@@ -907,8 +949,8 @@
 
     <!-- SECTION 2: ADMIN PANEL -->
     <div id="section-admin-panel" class="page-section">
-        <h1 class="admin-panel-title">Cloud Admin Console</h1>
-        <p style="color: #9ca3af; margin-bottom: 20px;">Direct Live Auto-Sync to GitHub Repository.</p>
+        <h1 class="admin-panel-title" id="adminPanelTitleText">Cloud Admin Console</h1>
+        <p style="color: #9ca3af; margin-bottom: 20px;" id="adminPanelSubText">Direct Live Auto-Sync to GitHub Repository.</p>
         
         <div class="form-group" style="border: 1px dashed var(--primary-color); padding: 15px; border-radius: 12px; background: rgba(0,210,255,0.05);">
             <label for="githubTokenInput" style="color: var(--accent-color);">🔑 GitHub Personal Access Token (PAT):</label>
@@ -1000,6 +1042,7 @@
         let currentFileSHA = "";
         let allAppsData = [];
         let tempImageBase64 = "";
+        let editingAppId = null;
 
         const percentText = document.getElementById('loadingPercentText');
         const loaderBarFill = document.getElementById('loaderFillBar');
@@ -1025,7 +1068,6 @@
             const cleanBaseUrl = window.location.href.split('#')[0];
             document.getElementById('shareLinkInput').value = cleanBaseUrl;
             
-            // Load saved GitHub token if available
             const savedToken = localStorage.getItem('VSF_GITHUB_TOKEN');
             if(savedToken) {
                 document.getElementById('githubTokenInput').value = savedToken;
@@ -1092,7 +1134,6 @@
         }
 
         function fetchAppsFromGitHub(callback) {
-            // Fetch directly via API to get both data and the current SHA blob
             fetch(GITHUB_API_URL + "?t=" + Date.now())
             .then(res => res.json())
             .then(data => {
@@ -1141,7 +1182,6 @@
                 return;
             }
 
-            // Google Drive Link Validation
             if (!link.includes("drive.google.com") && !link.includes("docs.google.com")) {
                 alert("⚠️ Error: Please enter a valid Google Drive link in the Google Drive Link field!");
                 return;
@@ -1154,33 +1194,48 @@
             const currentPos = document.getElementById('photoSlider1').value + '%';
             const currentZoom = (document.getElementById('photoSlider2').value / 100);
 
-            const newApp = {
-                id: Date.now(),
-                category: category,
-                name: name,
-                desc: desc,
-                banner: tempImageBase64 || "logo.jpg",
-                pos: currentPos,
-                zoom: currentZoom,
-                link: link,
-                videoLink: videoLink || "#"
-            };
+            if (editingAppId) {
+                allAppsData = allAppsData.map(app => {
+                    if (app.id === editingAppId) {
+                        return {
+                            ...app,
+                            category: category,
+                            name: name,
+                            desc: desc,
+                            banner: tempImageBase64 || app.banner,
+                            pos: currentPos,
+                            zoom: currentZoom,
+                            link: link,
+                            videoLink: videoLink || "#"
+                        };
+                    }
+                    return app;
+                });
+            } else {
+                const newApp = {
+                    id: Date.now(),
+                    category: category,
+                    name: name,
+                    desc: desc,
+                    banner: tempImageBase64 || "logo.jpg",
+                    pos: currentPos,
+                    zoom: currentZoom,
+                    link: link,
+                    videoLink: videoLink || "#"
+                };
+                allAppsData.push(newApp);
+            }
 
-            allAppsData.push(newApp);
-
-            // Prepare UTF-8 Base64 payload for GitHub API
             const updatedContentString = JSON.stringify({ apps: allAppsData }, null, 2);
             const encodedContent = btoa(unescape(encodeURIComponent(updatedContentString)));
 
             try {
-                // Get fresh SHA first
                 const getFileRes = await fetch(GITHUB_API_URL, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 const getFileData = await getFileRes.json();
                 const fileSHA = getFileData.sha || currentFileSHA;
 
-                // Push Update via PUT request
                 const putRes = await fetch(GITHUB_API_URL, {
                     method: 'PUT',
                     headers: {
@@ -1189,7 +1244,7 @@
                         'Accept': 'application/vnd.github.v3+json'
                     },
                     body: JSON.stringify({
-                        message: `Add new app: ${name}`,
+                        message: editingAppId ? `Update app: ${name}` : `Add new app: ${name}`,
                         content: encodedContent,
                         sha: fileSHA
                     })
@@ -1199,7 +1254,7 @@
                     const putData = await putRes.json();
                     currentFileSHA = putData.content.sha;
                     renderCards(allAppsData);
-                    alert(`🎉 Boom! "${name}" added and synced DIRECTLY to GitHub Live!`);
+                    alert(`🎉 Boom! "${name}" successfully synced DIRECTLY to GitHub Live!`);
 
                     document.getElementById('appNameInput').value = "";
                     document.getElementById('appDescInput').value = "";
@@ -1208,6 +1263,10 @@
                     document.getElementById('bannerImgTag').style.display = 'none';
                     document.querySelector('.banner-placeholder-text').style.display = 'block';
                     tempImageBase64 = "";
+                    editingAppId = null;
+                    document.getElementById('adminPanelTitleText').innerText = "Cloud Admin Console";
+                    document.getElementById('adminPanelSubText').innerText = "Direct Live Auto-Sync to GitHub Repository.";
+                    btn.innerText = "⚡ Direct Sync & Update GitHub Live";
 
                     document.getElementById('section-home').classList.add('active-page');
                     document.getElementById('section-admin-panel').classList.remove('active-page');
@@ -1225,6 +1284,42 @@
             }
         }
 
+        function editApp(appId) {
+            const pwd = prompt("Enter Master Password to Edit App:");
+            if (pwd === "109888977VMJ") {
+                const appToEdit = allAppsData.find(app => app.id == appId);
+                if (!appToEdit) {
+                    alert("App not found!");
+                    return;
+                }
+
+                editingAppId = appToEdit.id;
+                document.getElementById('appVariantSelect').value = appToEdit.category || 'music';
+                document.getElementById('appNameInput').value = appToEdit.name || '';
+                document.getElementById('appDescInput').value = appToEdit.desc || '';
+                document.getElementById('gdriveLinkInput').value = appToEdit.link || '';
+                document.getElementById('videoLinkInput').value = appToEdit.videoLink || '';
+
+                if (appToEdit.banner) {
+                    tempImageBase64 = appToEdit.banner;
+                    const imgTag = document.getElementById('bannerImgTag');
+                    imgTag.src = tempImageBase64;
+                    imgTag.style.display = 'block';
+                    document.querySelector('.banner-placeholder-text').style.display = 'none';
+                }
+
+                sectionHome.classList.remove('active-page');
+                sectionSearch.classList.remove('active-page');
+                sectionAdminPanel.classList.add('active-page');
+                document.getElementById('adminPanelTitleText').innerText = `Edit App: ${appToEdit.name}`;
+                document.getElementById('adminPanelSubText').innerText = "Modify details and click update to sync changes live.";
+                document.getElementById('btnSyncGithub').innerText = "⚡ Update & Sync Changes Live";
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else if (pwd !== null) {
+                alert("Incorrect Password!");
+            }
+        }
+
         async function deleteApp(appId) {
             const pwd = prompt("Enter Master Password to Delete:");
             if (pwd === "109888977VMJ") {
@@ -1234,7 +1329,7 @@
                     return;
                 }
 
-                allAppsData = allAppsData.filter(app => app.id !== appId);
+                allAppsData = allAppsData.filter(app => app.id != appId);
                 const updatedContentString = JSON.stringify({ apps: allAppsData }, null, 2);
                 const encodedContent = btoa(unescape(encodeURIComponent(updatedContentString)));
 
@@ -1284,7 +1379,6 @@
                 const imgPos = app.pos || '50%';
                 const imgZoom = app.zoom || '1';
 
-                // Fixed links with proper protocols and target attributes
                 let dlLink = app.link && app.link.trim() !== "" ? app.link.trim() : "#";
                 if(dlLink !== "#" && !dlLink.startsWith("http://") && !dlLink.startsWith("https://")) {
                     dlLink = "https://" + dlLink;
@@ -1305,11 +1399,22 @@
                         <div>
                             <div class="card-top-header">
                                 <span class="card-category-badge">${app.category}</span>
-                                <button class="card-menu-dots" onclick="toggleCardMenu(event, '${app.id}')" title="Options">
+                                <button class="card-menu-dots" 
+                                        tabindex="0"
+                                        onmousedown="startCardHoldTimer(event, '${app.id}')" 
+                                        onmouseup="cancelCardHoldTimer(event)" 
+                                        onmouseleave="cancelCardHoldTimer(event)" 
+                                        ontouchstart="startCardHoldTimer(event, '${app.id}')" 
+                                        ontouchend="cancelCardHoldTimer(event)" 
+                                        ontouchcancel="cancelCardHoldTimer(event)" 
+                                        onkeydown="handleTVRemoteKeyDown(event, '${app.id}')"
+                                        onkeyup="cancelCardHoldTimer(event)"
+                                        title="Hold for 5 seconds for options (TV/Mobile/PC Supported)">
                                     <span></span><span></span><span></span>
                                 </button>
                                 <div class="card-popup-menu" id="menu-${app.id}">
-                                    <button class="card-delete-option" onclick="deleteApp(${app.id})">🗑️ VSF Studio</button>
+                                    <button class="card-popup-option" onclick="editApp('${app.id}')">✏️ Edit App</button>
+                                    <button class="card-popup-option card-delete-option" onclick="deleteApp('${app.id}')">🗑️ VSF Studio</button>
                                 </div>
                             </div>
                             <h3 class="app-name">${app.name}</h3>
@@ -1325,13 +1430,41 @@
             });
         }
 
-        function toggleCardMenu(event, appId) {
-            event.stopPropagation();
+        let cardHoldTimer = null;
+
+        function startCardHoldTimer(event, appId) {
+            cancelCardHoldTimer();
+
+            cardHoldTimer = setTimeout(() => {
+                if (navigator.vibrate) {
+                    navigator.vibrate(100);
+                }
+                openCardMenu(event, appId);
+            }, 5000);
+        }
+
+        function cancelCardHoldTimer(event) {
+            if (cardHoldTimer) {
+                clearTimeout(cardHoldTimer);
+                cardHoldTimer = null;
+            }
+        }
+
+        function handleTVRemoteKeyDown(event, appId) {
+            if ([13, 32, 66, 23].includes(event.keyCode || event.which)) {
+                if (!cardHoldTimer) {
+                    startCardHoldTimer(event, appId);
+                }
+            }
+        }
+
+        function openCardMenu(event, appId) {
+            if (event) event.stopPropagation();
             document.querySelectorAll('.card-popup-menu').forEach(menu => {
                 if (menu.id !== 'menu-' + appId) menu.classList.remove('show');
             });
             const menu = document.getElementById('menu-' + appId);
-            if (menu) menu.classList.toggle('show');
+            if (menu) menu.classList.add('show');
         }
 
         function filterCategory(cat, btn) {
@@ -1382,11 +1515,22 @@
                         <div>
                             <div class="card-top-header">
                                 <span class="card-category-badge">${app.category}</span>
-                                <button class="card-menu-dots" onclick="toggleCardMenu(event, '${app.id}')" title="Options">
+                                <button class="card-menu-dots" 
+                                        tabindex="0"
+                                        onmousedown="startCardHoldTimer(event, '${app.id}')" 
+                                        onmouseup="cancelCardHoldTimer(event)" 
+                                        onmouseleave="cancelCardHoldTimer(event)" 
+                                        ontouchstart="startCardHoldTimer(event, '${app.id}')" 
+                                        ontouchend="cancelCardHoldTimer(event)" 
+                                        ontouchcancel="cancelCardHoldTimer(event)" 
+                                        onkeydown="handleTVRemoteKeyDown(event, '${app.id}')"
+                                        onkeyup="cancelCardHoldTimer(event)"
+                                        title="Hold for 5 seconds for options (TV/Mobile/PC Supported)">
                                     <span></span><span></span><span></span>
                                 </button>
                                 <div class="card-popup-menu" id="menu-${app.id}">
-                                    <button class="card-delete-option" onclick="deleteApp(${app.id})">🗑️ VSF Studio</button>
+                                    <button class="card-popup-option" onclick="editApp('${app.id}')">✏️ Edit App</button>
+                                    <button class="card-popup-option card-delete-option" onclick="deleteApp('${app.id}')">🗑️ VSF Studio</button>
                                 </div>
                             </div>
                             <h3 class="app-name">${app.name}</h3>
@@ -1414,7 +1558,7 @@
                     return;
                 }
                 if (fileSizeKB > maxSliderLimitKB) {
-                    alert(`⚠️ Error: Image size (${(fileSizeKB >= 1024 ? (fileSizeKB/1024).toFixed(2) + ' MB' : fileSizeKB.toFixed(0) + ' KB')}) exceeds your limit!`);
+                    alert(`⚠️ Error: Image size exceeds your limit!`);
                     event.target.value = "";
                     return;
                 }
@@ -1473,6 +1617,18 @@
         function openAdmin() {
             const pwd = prompt("Enter Master Administrator Password:");
             if (pwd === "109888977VMJ") {
+                editingAppId = null;
+                document.getElementById('appNameInput').value = "";
+                document.getElementById('appDescInput').value = "";
+                document.getElementById('gdriveLinkInput').value = "";
+                document.getElementById('videoLinkInput').value = "";
+                document.getElementById('bannerImgTag').style.display = 'none';
+                document.querySelector('.banner-placeholder-text').style.display = 'block';
+                tempImageBase64 = "";
+                document.getElementById('adminPanelTitleText').innerText = "Cloud Admin Console";
+                document.getElementById('adminPanelSubText').innerText = "Direct Live Auto-Sync to GitHub Repository.";
+                document.getElementById('btnSyncGithub').innerText = "⚡ Direct Sync & Update GitHub Live";
+
                 sectionHome.classList.remove('active-page');
                 sectionSearch.classList.remove('active-page');
                 sectionAdminPanel.classList.add('active-page');
