@@ -50,24 +50,12 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        html, body {
+        body {
             background-color: var(--bg-color);
             color: #f3f4f6;
             overflow-x: hidden;
-            padding-bottom: 25px;
+            padding-bottom: 95px;
             scroll-behavior: smooth;
-        }
-
-        /* 🔷 ALWAYS FIXED SCREEN BOTTOM BLUE GLOWING LINE */
-        .bottom-glow-line {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, var(--secondary-color), var(--primary-color), var(--accent-color), var(--primary-color), var(--secondary-color));
-            box-shadow: 0 -2px 15px var(--primary-color), 0 0 8px var(--accent-color);
-            z-index: 10000;
         }
 
         #offline-banner {
@@ -113,7 +101,7 @@
             cursor: pointer;
         }
 
-        /* Intro Screen */
+        /* Intro Screen with Flowing Blue Smoke Animation */
         #intro-screen {
             position: fixed;
             top: 0;
@@ -149,14 +137,45 @@
             animation: smokeRiseUp 6s infinite linear;
         }
 
-        .smoke-cloud:nth-child(1) { width: 300px; height: 300px; bottom: -100px; left: 10%; animation-duration: 5s; }
-        .smoke-cloud:nth-child(2) { width: 400px; height: 400px; bottom: -150px; right: 15%; animation-duration: 7s; animation-delay: 1.5s; }
-        .smoke-cloud:nth-child(3) { width: 350px; height: 350px; bottom: -120px; left: 40%; animation-duration: 6s; animation-delay: 3s; }
+        .smoke-cloud:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            bottom: -100px;
+            left: 10%;
+            animation-duration: 5s;
+            animation-delay: 0s;
+        }
+
+        .smoke-cloud:nth-child(2) {
+            width: 400px;
+            height: 400px;
+            bottom: -150px;
+            right: 15%;
+            animation-duration: 7s;
+            animation-delay: 1.5s;
+        }
+
+        .smoke-cloud:nth-child(3) {
+            width: 350px;
+            height: 350px;
+            bottom: -120px;
+            left: 40%;
+            animation-duration: 6s;
+            animation-delay: 3s;
+        }
 
         @keyframes smokeRiseUp {
-            0% { transform: translateY(0px) scale(0.8) rotate(0deg); opacity: 0.2; }
-            50% { opacity: 0.7; }
-            100% { transform: translateY(-500px) scale(1.6) rotate(45deg); opacity: 0; }
+            0% {
+                transform: translateY(0px) scale(0.8) rotate(0deg);
+                opacity: 0.2;
+            }
+            50% {
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(-500px) scale(1.6) rotate(45deg);
+                opacity: 0;
+            }
         }
 
         .intro-banner {
@@ -181,6 +200,7 @@
             letter-spacing: 2px;
             text-align: center;
             padding: 0 15px;
+            filter: drop-shadow(0 0 12px rgba(0, 210, 255, 0.7));
             position: relative;
             z-index: 2;
         }
@@ -191,6 +211,7 @@
             font-weight: 700;
             color: var(--accent-color);
             letter-spacing: 1px;
+            text-shadow: 0 0 8px rgba(0, 255, 204, 0.6);
             position: relative;
             z-index: 2;
         }
@@ -204,6 +225,7 @@
             overflow: hidden;
             position: relative;
             border: 1px solid rgba(0, 210, 255, 0.3);
+            box-shadow: 0 0 10px rgba(0, 210, 255, 0.2);
             z-index: 2;
         }
 
@@ -211,6 +233,7 @@
             width: 0%;
             height: 100%;
             background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            box-shadow: 0 0 10px var(--accent-color);
             transition: width 0.2s ease-out;
         }
 
@@ -227,30 +250,176 @@
             z-index: 100;
         }
 
-        .header-left { display: flex; align-items: center; gap: 14px; }
-        .header-banner { height: 38px; width: auto; border-radius: 8px; border: 1px solid #334155; cursor: pointer; user-select: none; }
-        .brand-name { font-size: 1.25rem; font-weight: 800; background: linear-gradient(45deg, var(--primary-color), var(--secondary-color)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px; }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
 
-        .header-right-controls { display: flex; align-items: center; gap: 10px; position: relative; }
-        .header-refresh-btn { background: #111827; border: 1px solid var(--border-color); color: var(--primary-color); width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.1rem; }
-        .header-refresh-btn.spinning { animation: spinRefresh 0.8s linear infinite; }
-        @keyframes spinRefresh { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .header-banner {
+            height: 38px;
+            width: auto;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            cursor: pointer;
+        }
 
-        .header-menu-btn { background: #111827; border: 1px solid var(--border-color); color: var(--primary-color); width: 42px; height: 42px; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; cursor: pointer; }
-        .header-menu-btn span { display: block; width: 18px; height: 2px; background-color: var(--primary-color); border-radius: 2px; }
+        .brand-name {
+            font-size: 1.25rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
 
-        .dropdown-menu-box { position: absolute; right: 0; top: 55px; background: #111827; border: 1px solid var(--border-color); border-radius: 14px; width: 280px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: none; flex-direction: column; overflow: hidden; z-index: 200; padding: 10px; }
-        .dropdown-menu-box.show { display: flex; }
-        .menu-widget-box { background: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 12px; margin-top: 4px; text-align: center; }
-        .menu-widget-title { font-size: 0.8rem; font-weight: 700; color: var(--primary-color); margin-bottom: 8px; text-transform: uppercase; }
-        .share-link-input-group { display: flex; gap: 5px; margin-bottom: 10px; }
-        .share-link-input { width: 100%; background: #07090e; border: 1px solid #334155; border-radius: 6px; color: #fff; padding: 6px 8px; font-size: 0.8rem; outline: none; }
-        .copy-link-btn { background: var(--primary-color); color: #0b0f19; border: none; border-radius: 6px; padding: 0 10px; font-weight: 700; cursor: pointer; font-size: 0.8rem; }
-        #qrcode-container { display: flex; justify-content: center; background: #fff; padding: 8px; border-radius: 8px; width: fit-content; margin: 0 auto; }
+        .header-right-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+        }
 
-        .page-section { display: none; padding: 25px 20px; max-width: 1600px; margin: 0 auto; }
-        .page-section.active-page { display: block; }
+        .header-refresh-btn {
+            background: #111827;
+            border: 1px solid var(--border-color);
+            color: var(--primary-color);
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 0 10px rgba(0, 210, 255, 0.2);
+        }
 
+        .header-refresh-btn:hover {
+            border-color: var(--primary-color);
+            background: rgba(0, 210, 255, 0.1);
+        }
+
+        .header-refresh-btn.spinning {
+            animation: spinRefresh 0.8s linear infinite;
+        }
+
+        @keyframes spinRefresh {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .header-menu-btn {
+            background: #111827;
+            border: 1px solid var(--border-color);
+            color: var(--primary-color);
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .header-menu-btn span {
+            display: block;
+            width: 18px;
+            height: 2px;
+            background-color: var(--primary-color);
+            border-radius: 2px;
+        }
+
+        .dropdown-menu-box {
+            position: absolute;
+            right: 0;
+            top: 55px;
+            background: #111827;
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            width: 280px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 200;
+            padding: 10px;
+        }
+
+        .dropdown-menu-box.show {
+            display: flex;
+        }
+
+        .menu-widget-box {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            padding: 12px;
+            margin-top: 4px;
+            text-align: center;
+        }
+
+        .menu-widget-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .share-link-input-group {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .share-link-input {
+            width: 100%;
+            background: #07090e;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            color: #fff;
+            padding: 6px 8px;
+            font-size: 0.8rem;
+            outline: none;
+        }
+
+        .copy-link-btn {
+            background: var(--primary-color);
+            color: #0b0f19;
+            border: none;
+            border-radius: 6px;
+            padding: 0 10px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        #qrcode-container {
+            display: flex;
+            justify-content: center;
+            background: #fff;
+            padding: 8px;
+            border-radius: 8px;
+            width: fit-content;
+            margin: 0 auto;
+        }
+
+        .page-section {
+            display: none;
+            padding: 25px 20px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .page-section.active-page {
+            display: block;
+        }
+
+        /* Glowing Hero Banner Section */
         .hero-banner-section {
             background: linear-gradient(135deg, rgba(0, 210, 255, 0.15) 0%, rgba(58, 123, 213, 0.2) 50%, rgba(17, 24, 39, 0.95) 100%);
             backdrop-filter: blur(16px);
@@ -258,214 +427,518 @@
             border-radius: 18px;
             padding: 20px 24px;
             margin-bottom: 25px;
-            box-shadow: 0 0 25px rgba(0, 210, 255, 0.4);
+            box-shadow: 0 0 25px rgba(0, 210, 255, 0.4), inset 0 0 15px rgba(0, 210, 255, 0.15);
+            animation: borderGlowPulse 3s infinite alternate;
         }
 
-        .hero-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 6px; color: #fff; }
-        .hero-title span { background: linear-gradient(45deg, var(--primary-color), var(--accent-color)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .hero-desc { font-size: 0.9rem; color: #cbd5e1; margin-bottom: 12px; }
+        @keyframes borderGlowPulse {
+            0% {
+                border-color: rgba(0, 210, 255, 0.5);
+                box-shadow: 0 0 15px rgba(0, 210, 255, 0.3), inset 0 0 10px rgba(0, 210, 255, 0.1);
+            }
+            100% {
+                border-color: var(--accent-color);
+                box-shadow: 0 0 35px rgba(0, 255, 204, 0.6), inset 0 0 20px rgba(0, 255, 204, 0.25);
+            }
+        }
 
-        .banner-search-box { position: relative; margin-bottom: 15px; width: 100%; max-width: 500px; }
-        .banner-search-input { width: 100%; padding: 10px 16px 10px 40px; background: rgba(15, 23, 42, 0.9); border: 1px solid var(--primary-color); border-radius: 25px; color: #fff; font-size: 0.9rem; outline: none; }
-        .banner-search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 1rem; color: var(--primary-color); }
+        .hero-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 6px;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
 
-        .category-filter-pills { display: flex; gap: 10px; flex-wrap: wrap; }
-        .filter-pill { background: rgba(17, 24, 39, 0.8); border: 1px solid #374151; color: #cbd5e1; padding: 7px 16px; border-radius: 30px; font-size: 0.85rem; font-weight: 600; cursor: pointer; }
-        .filter-pill.active { background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: #04060a; border-color: var(--accent-color); font-weight: 800; }
+        .hero-title span {
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 12px rgba(0, 210, 255, 0.7));
+        }
 
-        /* Grid Layout */
-        .apk-grid { display: grid; grid-template-columns: 1fr; gap: 25px; width: 100%; }
-        @media screen and (min-width: 768px) { .apk-grid { grid-template-columns: repeat(2, 1fr) !important; } }
+        .hero-desc {
+            font-size: 0.9rem;
+            color: #cbd5e1;
+            line-height: 1.4;
+            max-width: 900px;
+            margin-bottom: 15px;
+        }
+
+        .category-filter-pills {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-pill {
+            background: rgba(17, 24, 39, 0.8);
+            border: 1px solid #374151;
+            color: #cbd5e1;
+            padding: 7px 16px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .filter-pill.active {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: #04060a;
+            border-color: var(--accent-color);
+            font-weight: 800;
+            box-shadow: 0 0 12px rgba(0, 210, 255, 0.5);
+        }
+
+        /* Grid Layout - Responsive Strategy */
+        .apk-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+            width: 100%;
+        }
+
+        /* Responsive Breakpoint for PC / Desktop Screen: Exactly 2 Cards Per Row */
+        @media screen and (min-width: 768px) {
+            .apk-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+            .hero-title {
+                font-size: 2rem;
+            }
+            .hero-desc {
+                font-size: 1rem;
+            }
+        }
 
         .apk-card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-bottom: 3px solid var(--primary-color);
             border-radius: 20px;
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 4px 15px rgba(0, 210, 255, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            height: 100%;
             position: relative;
         }
 
-        /* PLAY STORE STYLE MEDIA HORIZONTAL SCROLL BOX WITH PLAY OVERLAY */
-        .card-media-slider {
+        .card-banner-box {
             width: 100%;
             aspect-ratio: 16 / 9;
             background: #0f172a;
-            display: flex;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            scrollbar-width: none;
-            position: relative;
-        }
-        .card-media-slider::-webkit-scrollbar { display: none; }
-
-        .media-slide-item {
-            flex: 0 0 100%;
-            width: 100%;
-            height: 100%;
-            scroll-snap-align: start;
             position: relative;
             overflow: hidden;
-            cursor: pointer;
         }
-        .media-slide-item img, .media-slide-item video {
+
+        .card-banner-box img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
 
-        /* Play Icon Overlay for Videos */
-        .video-play-overlay {
+        .card-content-area {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            flex-grow: 1;
+        }
+
+        /* Modified Header Bar: Category + Views + Likes + Options in ONE ROW */
+        .card-top-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            position: relative;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .card-header-left-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .card-category-badge {
+            display: inline-block;
+            background: rgba(0, 210, 255, 0.15);
+            color: var(--primary-color);
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            border: 1px solid rgba(0, 210, 255, 0.3);
+        }
+
+        .card-stats-inline {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .view-count-badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            background: rgba(15, 23, 42, 0.8);
+            padding: 3px 7px;
+            border-radius: 8px;
+            border: 1px solid #1e293b;
+        }
+
+        .reaction-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #334155;
+            color: #cbd5e1;
+            padding: 3px 7px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            transition: all 0.2s ease;
+        }
+
+        .reaction-btn:hover {
+            border-color: var(--primary-color);
+            color: #fff;
+        }
+
+        .reaction-btn.liked {
+            background: rgba(0, 255, 204, 0.2);
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+
+        .reaction-btn.disliked {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+
+        .card-menu-dots {
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            padding: 6px;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+            outline: none;
+        }
+
+        .card-menu-dots:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
+        }
+
+        .card-menu-dots span {
+            display: block;
+            width: 14px;
+            height: 2px;
+            background-color: #9ca3af;
+            border-radius: 2px;
+            pointer-events: none;
+        }
+
+        /* Card Option Popup Menu */
+        .card-popup-menu {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 50px;
-            height: 50px;
-            background: rgba(0, 210, 255, 0.8);
-            border-radius: 50%;
+            right: 0;
+            top: 30px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+            display: none;
+            z-index: 50;
+            min-width: 150px;
+            overflow: hidden;
+        }
+
+        .card-popup-menu.show {
+            display: block;
+        }
+
+        .card-popup-option {
+            background: transparent;
+            border: none;
+            color: #cbd5e1;
+            padding: 10px 14px;
+            width: 100%;
+            text-align: left;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .card-popup-option:hover, .card-popup-option:focus {
+            background: rgba(0, 210, 255, 0.15);
+            color: var(--primary-color);
+            outline: none;
+        }
+
+        .card-delete-option {
+            color: #ef4444 !important;
+        }
+
+        .card-delete-option:hover, .card-delete-option:focus {
+            background: rgba(239, 68, 68, 0.15) !important;
+        }
+
+        .app-name {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: #f9fafb;
+            margin-bottom: 6px;
+        }
+
+        .app-desc {
+            font-size: 0.9rem;
+            color: #cbd5e1;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        .card-links-group {
+            display: flex;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .download-btn {
+            flex: 1;
+            text-align: center;
+            font-weight: 700;
+            padding: 12px 10px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            cursor: pointer;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: #0b0f19;
+            box-shadow: 0 0 10px rgba(0, 210, 255, 0.3);
+        }
+
+        .video-btn {
+            flex: 1;
+            text-align: center;
+            font-weight: 700;
+            padding: 12px 10px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            cursor: pointer;
+            background: rgba(0, 210, 255, 0.12);
+            color: var(--primary-color);
+            border: 1px solid rgba(0, 210, 255, 0.4);
+            box-shadow: 0 0 10px rgba(0, 210, 255, 0.15);
+        }
+
+        .video-btn:hover {
+            background: rgba(0, 210, 255, 0.25);
+        }
+
+        #section-admin-panel {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border: 2px solid var(--primary-color);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 0 20px rgba(0, 210, 255, 0.3);
+        }
+
+        @media screen and (max-width: 600px) {
+            #section-admin-panel {
+                padding: 20px;
+                border-radius: 16px;
+            }
+        }
+
+        .admin-panel-title {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #e5e7eb;
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .banner-preview-box {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background: #0f172a;
+            border: 2px dashed #334155;
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #0b0f19;
-            font-size: 1.3rem;
-            font-weight: 900;
-            box-shadow: 0 0 15px rgba(0, 210, 255, 0.6);
-            pointer-events: none;
-            transition: transform 0.2s ease;
+            overflow: hidden;
+            margin-top: 10px;
+            cursor: pointer;
         }
-        .media-slide-item:hover .video-play-overlay { transform: translate(-50%, -50%) scale(1.1); }
 
-        /* Fullscreen Video Modal */
-        #video-modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
+        .banner-preview-box img {
             width: 100%;
             height: 100%;
-            background: rgba(4, 6, 10, 0.95);
+            object-fit: cover;
             display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 20000;
-            padding: 20px;
-        }
-        #video-modal-overlay.show { display: flex; }
-        .modal-video-container {
-            width: 100%;
-            max-width: 900px;
-            aspect-ratio: 16 / 9;
-            background: #000;
-            border-radius: 16px;
-            overflow: hidden;
-            border: 2px solid var(--primary-color);
-            position: relative;
-            box-shadow: 0 0 30px rgba(0, 210, 255, 0.5);
-        }
-        .modal-video-container video { width: 100%; height: 100%; object-fit: contain; }
-        .close-modal-btn {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            background: rgba(239, 68, 68, 0.9);
-            color: #fff;
-            border: none;
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            font-weight: 800;
-            font-size: 1.1rem;
-            cursor: pointer;
-            z-index: 20001;
         }
 
-        .card-content-area { padding: 20px; display: flex; flex-direction: column; justify-content: space-between; flex-grow: 1; }
-        .card-top-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
-        .card-header-left-group { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-        .card-category-badge { background: rgba(0, 210, 255, 0.15); color: var(--primary-color); font-size: 0.72rem; font-weight: 700; padding: 3px 8px; border-radius: 20px; text-transform: uppercase; border: 1px solid rgba(0, 210, 255, 0.3); }
-        .card-stats-inline { display: flex; align-items: center; gap: 6px; }
-        .view-count-badge { font-size: 0.75rem; font-weight: 700; color: var(--primary-color); background: rgba(15, 23, 42, 0.8); padding: 3px 7px; border-radius: 8px; border: 1px solid #1e293b; }
+        .banner-placeholder-text {
+            color: #64748b;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
 
-        .reaction-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid #334155; color: #cbd5e1; padding: 3px 7px; border-radius: 8px; font-size: 0.75rem; font-weight: 700; cursor: pointer; }
-        .reaction-btn.liked { background: rgba(0, 255, 204, 0.2); border-color: var(--accent-color); color: var(--accent-color); }
-        .reaction-btn.disliked { background: rgba(239, 68, 68, 0.2); border-color: #ef4444; color: #ef4444; }
+        /* Custom Sliders Box for Photo Settings */
+        .sliders-container {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 14px;
+            padding: 16px;
+            margin-top: 12px;
+        }
 
-        .card-menu-dots { background: transparent; border: none; cursor: pointer; display: none; flex-direction: column; gap: 3px; padding: 6px; }
-        .card-menu-dots.show-dots { display: flex !important; }
-        .card-menu-dots span { display: block; width: 14px; height: 2px; background-color: #9ca3af; border-radius: 2px; }
+        .slider-row {
+            margin-bottom: 14px;
+        }
 
-        .card-popup-menu { position: absolute; right: 0; top: 30px; background: #1e293b; border: 1px solid #334155; border-radius: 10px; box-shadow: 0 8px 20px rgba(0,0,0,0.6); display: none; z-index: 50; min-width: 150px; overflow: hidden; }
-        .card-popup-menu.show { display: block; }
-        .card-popup-option { background: transparent; border: none; color: #cbd5e1; padding: 10px 14px; width: 100%; text-align: left; font-size: 0.85rem; font-weight: 700; cursor: pointer; }
-        .card-popup-option:hover { background: rgba(0,210,255,0.15); color: var(--primary-color); }
-        .card-delete-option { color: #ef4444 !important; }
-        .card-delete-option:hover { background: rgba(239,68,68,0.15) !important; }
+        .slider-row:last-child {
+            margin-bottom: 0;
+        }
 
-        .app-name { font-size: 1.35rem; font-weight: 800; color: #f9fafb; margin-bottom: 6px; }
-        .app-desc { font-size: 0.9rem; color: #cbd5e1; margin-bottom: 16px; line-height: 1.5; }
-
-        .card-links-group { display: flex; gap: 12px; width: 100%; }
-        .download-btn { flex: 1; text-align: center; font-weight: 700; padding: 12px 10px; border-radius: 12px; text-decoration: none; font-size: 0.9rem; cursor: pointer; background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: #0b0f19; border: none; }
-        .video-btn { flex: 1; text-align: center; font-weight: 700; padding: 12px 10px; border-radius: 12px; text-decoration: none; font-size: 0.9rem; cursor: pointer; background: rgba(0, 210, 255, 0.12); color: var(--primary-color); border: 1px solid rgba(0, 210, 255, 0.4); }
-
-        /* DOWNLOAD PROGRESS BOX */
-        .download-details-box {
-            display: none;
-            margin-top: 14px;
-            padding: 12px;
-            background: rgba(15, 23, 42, 0.95);
-            border-radius: 8px;
-            font-size: 0.82rem;
+        .slider-label-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            font-weight: 600;
             color: #cbd5e1;
-            box-shadow: 0 4px 15px rgba(0, 210, 255, 0.25);
-        }
-        .download-details-box.show { display: block; }
-        .download-info-row { display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 6px; }
-        .download-info-row span.size { color: var(--accent-color); }
-        .download-progress-bar { width: 100%; height: 6px; background: #1e293b; border-radius: 3px; overflow: hidden; margin-top: 6px; }
-        .download-progress-fill { width: 0%; height: 100%; background: linear-gradient(90deg, var(--primary-color), var(--accent-color)); transition: width 0.1s linear; }
-
-        /* ADMIN PANEL */
-        #section-admin-panel {
-            max-width: 900px;
-            margin: 20px auto;
-            background: var(--card-bg);
-            border: 2px solid var(--primary-color);
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            display: none;
+            margin-bottom: 6px;
         }
 
-        #section-admin-panel.active-page { display: block; }
-        #section-home { display: block; }
+        .slider-label-row span.val {
+            color: var(--primary-color);
+        }
 
-        .admin-panel-title { font-size: 2rem; font-weight: 800; background: linear-gradient(45deg, var(--primary-color), var(--accent-color)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; outline: none; }
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; font-size: 0.9rem; font-weight: 600; color: #e5e7eb; margin-bottom: 8px; }
-        .form-control { width: 100%; padding: 12px 16px; background: #0f172a; border: 1px solid #334155; border-radius: 12px; color: #fff; font-size: 1rem; outline: none; }
+        .custom-slider {
+            width: 100%;
+            height: 6px;
+            background: #1e293b;
+            border-radius: 3px;
+            outline: none;
+            appearance: none;
+            cursor: pointer;
+        }
 
-        .banner-preview-box { width: 100%; aspect-ratio: 16 / 9; background: #0f172a; border: 2px dashed #334155; border-radius: 14px; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-top: 10px; cursor: pointer; position: relative; }
-        .banner-preview-box img, .banner-preview-box video { width: 100%; height: 100%; object-fit: cover; display: none; }
-        .banner-placeholder-text { color: #64748b; font-size: 0.95rem; font-weight: 600; }
+        .custom-slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            box-shadow: 0 0 8px var(--primary-color);
+            cursor: pointer;
+        }
 
-        .sliders-container { background: #0f172a; border: 1px solid #334155; border-radius: 14px; padding: 16px; margin-top: 12px; }
-        .slider-row { margin-bottom: 14px; }
-        .slider-label-row { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 600; color: #cbd5e1; margin-bottom: 6px; }
-        .slider-label-row span.val { color: var(--primary-color); }
-        .custom-slider { width: 100%; height: 6px; background: #1e293b; border-radius: 3px; outline: none; appearance: none; cursor: pointer; }
-        .custom-slider::-webkit-slider-thumb { appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--primary-color); cursor: pointer; }
+        .save-config-btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: #0b0f19;
+            font-weight: 700;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
+        }
 
-        .save-config-btn { background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: #0b0f19; font-weight: 700; padding: 14px 28px; border: none; border-radius: 12px; font-size: 1rem; cursor: pointer; width: 100%; box-shadow: 0 0 15px rgba(0, 210, 255, 0.4); }
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(11, 15, 25, 0.95);
+            backdrop-filter: blur(16px);
+            border-top: 1px solid #1e293b;
+            padding: 12px 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            z-index: 100;
+        }
+
+        .nav-btn {
+            background: #111827;
+            border: 1px solid var(--border-color);
+            color: #9ca3af;
+            padding: 10px 20px;
+            border-radius: 14px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-btn span.nav-icon {
+            color: var(--primary-color);
+            font-size: 1.1rem;
+            filter: drop-shadow(0 0 6px rgba(0, 210, 255, 0.6));
+        }
+
+        .nav-btn.active {
+            border-color: var(--primary-color);
+            background: linear-gradient(135deg, rgba(0, 210, 255, 0.2), rgba(58, 123, 213, 0.3));
+            color: var(--primary-color);
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
+        }
     </style>
 </head>
 <body>
-
-    <!-- 🔷 FIXED BOTTOM SCREEN BLUE LINE -->
-    <div class="bottom-glow-line"></div>
 
     <div id="offline-banner">⚠️ No Internet Connection! You are currently offline.</div>
 
@@ -474,15 +947,7 @@
         <button id="installAppBtn">Install App</button>
     </div>
 
-    <!-- Fullscreen Video Player Modal -->
-    <div id="video-modal-overlay" onclick="closeVideoModal()">
-        <button class="close-modal-btn" onclick="closeVideoModal()">✕</button>
-        <div class="modal-video-container" onclick="event.stopPropagation()">
-            <video id="modalPlayerVideo" controls autoplay></video>
-        </div>
-    </div>
-
-    <!-- Intro Screen -->
+    <!-- Intro / Loading Screen with Flowing Blue Smoke Animation -->
     <div id="intro-screen">
         <div class="smoke-container">
             <div class="smoke-cloud"></div>
@@ -499,11 +964,13 @@
 
     <header>
         <div class="header-left">
-            <img src="logo.jpg" alt="Logo" class="header-banner" id="brandLogoTrigger" title="Hold 2s for dots / Hold 10s for Admin">
+            <img src="logo.jpg" alt="Logo" class="header-banner" id="brandLogoTrigger" title="Hold for 10 seconds to open Admin">
             <span class="brand-name">VSF Studio</span>
         </div>
         <div class="header-right-controls">
-            <button class="header-refresh-btn" id="refreshServerBtn" onclick="refreshFromServer()">🔄</button>
+            <button class="header-refresh-btn" id="refreshServerBtn" title="Refresh Live Data from GitHub" onclick="refreshFromServer()">
+                🔄
+            </button>
             <button class="header-menu-btn" id="menuToggleBtn">
                 <span></span><span></span><span></span>
             </button>
@@ -528,12 +995,6 @@
         <div class="hero-banner-section">
             <h1 class="hero-title">Welcome to <span>VSF Studio Cloud Hub</span></h1>
             <p class="hero-desc">Cloud hub providing APK files, AI assistants, battle royale games, and custom software.</p>
-            
-            <div class="banner-search-box">
-                <span class="banner-search-icon">🔍</span>
-                <input type="text" class="banner-search-input" placeholder="Search apps, files..." oninput="searchAppsLocally(this.value)">
-            </div>
-
             <div class="category-filter-pills">
                 <button class="filter-pill active" onclick="filterCategory('all', this)">All Files</button>
                 <button class="filter-pill" onclick="filterCategory('music', this)">Music Production</button>
@@ -546,12 +1007,13 @@
 
     <!-- SECTION 2: ADMIN PANEL -->
     <div id="section-admin-panel" class="page-section">
-        <h1 class="admin-panel-title" id="adminPanelTitleText" tabindex="-1">Cloud Admin Console</h1>
+        <h1 class="admin-panel-title" id="adminPanelTitleText">Cloud Admin Console</h1>
         <p style="color: #9ca3af; margin-bottom: 20px;" id="adminPanelSubText">Direct Live Auto-Sync to GitHub Repository.</p>
         
         <div class="form-group" style="border: 1px dashed var(--primary-color); padding: 15px; border-radius: 12px; background: rgba(0,210,255,0.05);">
             <label for="githubTokenInput" style="color: var(--accent-color);">🔑 GitHub Personal Access Token (PAT):</label>
             <input type="password" id="githubTokenInput" class="form-control" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" onchange="saveGithubToken(this.value)">
+            <small style="color: #64748b; font-size: 0.75rem; margin-top: 4px; display: block;">Requires repo write access. Saved securely in local storage.</small>
         </div>
 
         <div class="form-group">
@@ -570,26 +1032,18 @@
             <label for="appDescInput">Description:</label>
             <input type="text" id="appDescInput" class="form-control" placeholder="Short description...">
         </div>
-
-        <!-- EXACT FILE SIZE INPUT -->
         <div class="form-group">
-            <label for="appSizeInput">Exact File Size (e.g. 15.4 MB / 450 KB):</label>
-            <input type="text" id="appSizeInput" class="form-control" placeholder="15.4 MB">
-        </div>
-
-        <!-- PHOTO UPLOAD -->
-        <div class="form-group">
-            <label>1. Banner Image (1 KB to 2 MB):</label>
+            <label>Banner Image (1 KB to 2 MB):</label>
             <input type="file" id="bannerInputFile" class="form-control" accept="image/*" style="display: none;" onchange="previewBannerImage(event)">
             <div class="banner-preview-box" onclick="document.getElementById('bannerInputFile').click()">
-                <span class="banner-placeholder-text" id="photoPlaceholderText">📁 Tap here to select Photo</span>
+                <span class="banner-placeholder-text">📁 Tap here to select Image</span>
                 <img id="bannerImgTag" alt="Preview">
             </div>
 
             <div class="sliders-container">
                 <div class="slider-row">
                     <div class="slider-label-row">
-                        <span>📍 Image Position Offset</span>
+                        <span>📍 Image Address / Position Offset</span>
                         <span class="val" id="valSlider1">50%</span>
                     </div>
                     <input type="range" min="0" max="100" value="50" class="custom-slider" id="photoSlider1" oninput="applyImageTransform()">
@@ -603,50 +1057,36 @@
                 </div>
                 <div class="slider-row">
                     <div class="slider-label-row">
-                        <span>📦 Max Photo Limit (1KB - 2MB)</span>
+                        <span>📦 Max Size Limit Control (1KB - 2MB)</span>
                         <span class="val" id="valSlider3">2.0 MB Limit</span>
                     </div>
                     <input type="range" min="1" max="2048" value="2048" class="custom-slider" id="photoSlider3" oninput="updateSliderVal(3, this.value)">
                 </div>
             </div>
         </div>
-
-        <!-- VIDEO UPLOAD (1 KB - 3 MB LIMIT WITH POSITION & ZOOM SLIDERS) -->
         <div class="form-group">
-            <label>2. Preview Video (1 KB to 3 MB Max):</label>
-            <input type="file" id="videoInputFile" class="form-control" accept="video/*" style="display: none;" onchange="previewVideoFile(event)">
-            <div class="banner-preview-box" onclick="document.getElementById('videoInputFile').click()">
-                <span class="banner-placeholder-text" id="videoPlaceholderText">🎬 Tap to Select Video (1KB - 3MB)</span>
-                <video id="bannerVideoTag" autoplay loop muted playsinline controls></video>
-            </div>
-
-            <div class="sliders-container">
-                <div class="slider-row">
-                    <div class="slider-label-row">
-                        <span>📍 Video Position Offset</span>
-                        <span class="val" id="vidValSlider1">50%</span>
-                    </div>
-                    <input type="range" min="0" max="100" value="50" class="custom-slider" id="vidSlider1" oninput="applyVideoTransform()">
-                </div>
-                <div class="slider-row">
-                    <div class="slider-label-row">
-                        <span>🎞️ Video Zoom / Scale</span>
-                        <span class="val" id="vidValSlider2">100%</span>
-                    </div>
-                    <input type="range" min="50" max="200" value="100" class="custom-slider" id="vidSlider2" oninput="applyVideoTransform()">
-                </div>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label for="gdriveLinkInput">Google Drive Download Link:</label>
+            <label for="gdriveLinkInput">Google Drive Link:</label>
             <input type="url" id="gdriveLinkInput" class="form-control" placeholder="https://drive.google.com/...">
         </div>
         <div class="form-group">
-            <label for="videoLinkInput">External Video Link (YouTube / Web Link):</label>
-            <input type="url" id="videoLinkInput" class="form-control" placeholder="https://youtube.com/...">
+            <label for="videoLinkInput">Video Link (YouTube / Any Video URL):</label>
+            <input type="url" id="videoLinkInput" class="form-control" placeholder="https://youtube.com/... or any video link">
         </div>
         <button type="button" class="save-config-btn" id="btnSyncGithub" onclick="addAppAndPushToGitHubAPI()">⚡ Direct Sync & Update GitHub Live</button>
+    </div>
+
+    <!-- SECTION 3: SEARCH -->
+    <div id="section-search" class="page-section">
+        <div class="hero-banner-section">
+            <h1 class="hero-title">Search <span>App Hub</span></h1>
+            <input type="text" id="dedicated-search-input" class="form-control" placeholder="Type app name..." style="margin-top: 15px;" oninput="searchAppsLocally(this.value)">
+        </div>
+        <div class="apk-grid" id="search-results-container"></div>
+    </div>
+
+    <div class="bottom-nav">
+        <button class="nav-btn active" id="navHomeBtn"><span class="nav-icon">🏠</span> Home Section</button>
+        <button class="nav-btn" id="navSearchBtn"><span class="nav-icon">🔍</span> Search Section</button>
     </div>
 
     <script>
@@ -659,12 +1099,10 @@
         let currentFileSHA = "";
         let allAppsData = [];
         let tempImageBase64 = "";
-        let tempVideoBase64 = "";
         let editingAppId = null;
         let cardIntersectionObserver = null;
         let isSyncingActive = false;
         let activeCategoryFilter = 'all';
-        let areCardDotsVisible = false;
 
         const percentText = document.getElementById('loadingPercentText');
         const loaderBarFill = document.getElementById('loaderFillBar');
@@ -675,7 +1113,11 @@
 
         function updateNetworkStatus() {
             const offlineBanner = document.getElementById('offline-banner');
-            offlineBanner.style.display = navigator.onLine ? 'none' : 'block';
+            if (navigator.onLine) {
+                offlineBanner.style.display = 'none';
+            } else {
+                offlineBanner.style.display = 'block';
+            }
         }
 
         function updateLoadingUI(percentage) {
@@ -688,7 +1130,9 @@
             updateLoadingUI(100);
             setTimeout(() => {
                 introScreen.style.opacity = '0';
-                setTimeout(() => { introScreen.style.display = 'none'; }, 400);
+                setTimeout(() => {
+                    introScreen.style.display = 'none';
+                }, 400);
             }, 200);
         }
 
@@ -700,11 +1144,20 @@
             document.getElementById('shareLinkInput').value = cleanBaseUrl;
             
             const savedToken = localStorage.getItem('VSF_GITHUB_TOKEN');
-            if(savedToken) document.getElementById('githubTokenInput').value = savedToken;
+            if(savedToken) {
+                document.getElementById('githubTokenInput').value = savedToken;
+            }
 
             const qrContainer = document.getElementById('qrcode-container');
             qrContainer.innerHTML = "";
-            new QRCode(qrContainer, { text: cleanBaseUrl, width: 110, height: 110 });
+            new QRCode(qrContainer, {
+                text: cleanBaseUrl,
+                width: 110,
+                height: 110,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
 
             updateLoadingUI(30);
             fetchAppsFromGitHub();
@@ -714,16 +1167,27 @@
             });
         });
 
-        function saveGithubToken(val) { localStorage.setItem('VSF_GITHUB_TOKEN', val.trim()); }
+        function saveGithubToken(val) {
+            localStorage.setItem('VSF_GITHUB_TOKEN', val.trim());
+        }
 
         function updateSliderVal(id, val) {
             const span = document.getElementById('valSlider' + id);
-            span.innerText = id === 3 ? (val >= 1024 ? (val / 1024).toFixed(1) + ' MB Limit' : val + ' KB Limit') : val + '%';
+            if(id === 3) {
+                if(val >= 1024) {
+                    span.innerText = (val / 1024).toFixed(1) + ' MB Limit';
+                } else {
+                    span.innerText = val + ' KB Limit';
+                }
+            } else {
+                span.innerText = val + '%';
+            }
         }
 
         function applyImageTransform() {
             const s1 = document.getElementById('photoSlider1').value;
             const s2 = document.getElementById('photoSlider2').value;
+            
             document.getElementById('valSlider1').innerText = s1 + '%';
             document.getElementById('valSlider2').innerText = s2 + '%';
 
@@ -734,22 +1198,10 @@
             }
         }
 
-        function applyVideoTransform() {
-            const vs1 = document.getElementById('vidSlider1').value;
-            const vs2 = document.getElementById('vidSlider2').value;
-            document.getElementById('vidValSlider1').innerText = vs1 + '%';
-            document.getElementById('vidValSlider2').innerText = vs2 + '%';
-
-            const vidTag = document.getElementById('bannerVideoTag');
-            if (vidTag.style.display === 'block') {
-                vidTag.style.objectPosition = vs1 + '% center';
-                vidTag.style.transform = `scale(${vs2 / 100})`;
-            }
-        }
-
         function refreshFromServer() {
             const refreshBtn = document.getElementById('refreshServerBtn');
             refreshBtn.classList.add('spinning');
+
             fetchAppsFromGitHub(() => {
                 alert("Data successfully refreshed live from GitHub!");
                 refreshBtn.classList.remove('spinning');
@@ -760,24 +1212,45 @@
             fetch(GITHUB_API_URL + "?t=" + Date.now())
             .then(res => res.json())
             .then(data => {
-                if(data.sha) currentFileSHA = data.sha;
+                if(data.sha) {
+                    currentFileSHA = data.sha;
+                }
                 const content = decodeURIComponent(escape(atob(data.content)));
                 const jsonParsed = JSON.parse(content);
-                allAppsData = Array.isArray(jsonParsed) ? jsonParsed : (jsonParsed.apps || []);
-                filterCategory(activeCategoryFilter, document.querySelector('.filter-pill.active'));
+                
+                if (Array.isArray(jsonParsed)) {
+                    allAppsData = jsonParsed;
+                } else if (jsonParsed && Array.isArray(jsonParsed.apps)) {
+                    allAppsData = jsonParsed.apps;
+                } else {
+                    allAppsData = [];
+                }
+
+                filterCategory(activeCategoryFilter, document.querySelector('.filter-pill.active') || document.querySelector('.filter-pill'));
                 finishLoadingAndHide();
                 if(callback) callback();
             })
-            .catch(() => {
+            .catch(err => {
+                console.error("Error fetching data via API, falling back to RAW URL:", err);
                 fetch(GITHUB_JSON_URL + "?t=" + Date.now())
                 .then(res => res.json())
                 .then(data => {
-                    allAppsData = Array.isArray(data) ? data : (data.apps || []);
-                    filterCategory(activeCategoryFilter, document.querySelector('.filter-pill.active'));
+                    if (Array.isArray(data)) {
+                        allAppsData = data;
+                    } else if (data && Array.isArray(data.apps)) {
+                        allAppsData = data.apps;
+                    } else {
+                        allAppsData = [];
+                    }
+
+                    filterCategory(activeCategoryFilter, document.querySelector('.filter-pill.active') || document.querySelector('.filter-pill'));
                     finishLoadingAndHide();
                     if(callback) callback();
                 })
-                .catch(() => { finishLoadingAndHide(); if(callback) callback(); });
+                .catch(e => {
+                    finishLoadingAndHide();
+                    if(callback) callback();
+                });
             });
         }
 
@@ -791,56 +1264,59 @@
             const encodedContent = btoa(unescape(encodeURIComponent(updatedContentString)));
 
             try {
-                const getFileRes = await fetch(GITHUB_API_URL, { headers: { 'Authorization': `Bearer ${token}` } });
+                const getFileRes = await fetch(GITHUB_API_URL, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
                 const getFileData = await getFileRes.json();
 
                 if (getFileData.sha) {
                     const putRes = await fetch(GITHUB_API_URL, {
                         method: 'PUT',
-                        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        },
                         body: JSON.stringify({
                             message: "Update stats (views/likes/dislikes)",
                             content: encodedContent,
                             sha: getFileData.sha
                         })
                     });
+
                     if(putRes.ok) {
                         const putData = await putRes.json();
                         currentFileSHA = putData.content.sha;
                     }
                 }
-            } catch(e) {} finally { isSyncingActive = false; }
-        }
-
-        function convertToDirectDownload(url) {
-            if (!url) return "#";
-            let cleanUrl = url.trim();
-            if (cleanUrl.includes("drive.google.com") || cleanUrl.includes("docs.google.com")) {
-                let fileId = "";
-                if (cleanUrl.includes("/file/d/")) {
-                    fileId = cleanUrl.split("/file/d/")[1].split("/")[0];
-                } else if (cleanUrl.includes("id=")) {
-                    fileId = new URLSearchParams(cleanUrl.split('?')[1]).get('id');
-                }
-                if (fileId) return `https://drive.google.com/uc?export=download&id=${fileId}`;
+            } catch(e) {
+                console.log("Silent stats sync omitted.");
+            } finally {
+                isSyncingActive = false;
             }
-            return cleanUrl;
         }
 
         async function addAppAndPushToGitHubAPI() {
             const token = document.getElementById('githubTokenInput').value.trim();
-            if(!token) { alert("⚠️ Please enter your GitHub Personal Access Token (PAT)!"); return; }
+            if(!token) {
+                alert("⚠️ Please enter your GitHub Personal Access Token (PAT) first!");
+                return;
+            }
 
             const category = document.getElementById('appVariantSelect').value;
             const name = document.getElementById('appNameInput').value.trim();
             const desc = document.getElementById('appDescInput').value.trim();
-            const fileSize = document.getElementById('appSizeInput').value.trim() || "15.0 MB";
-            const rawLink = document.getElementById('gdriveLinkInput').value.trim();
+            const link = document.getElementById('gdriveLinkInput').value.trim();
             const videoLink = document.getElementById('videoLinkInput').value.trim();
 
-            if (!name || !rawLink) { alert("Please fill App Name and Google Drive Link!"); return; }
+            if (!name || !link) {
+                alert("Please fill App Name and Google Drive Link!");
+                return;
+            }
 
-            const link = convertToDirectDownload(rawLink);
+            if (!link.includes("drive.google.com") && !link.includes("docs.google.com")) {
+                alert("⚠️ Error: Please enter a valid Google Drive link in the Google Drive Link field!");
+                return;
+            }
 
             isSyncingActive = true;
             const btn = document.getElementById('btnSyncGithub');
@@ -850,114 +1326,97 @@
             const currentPos = document.getElementById('photoSlider1').value + '%';
             const currentZoom = (document.getElementById('photoSlider2').value / 100);
 
-            const currentVidPos = document.getElementById('vidSlider1').value + '%';
-            const currentVidZoom = (document.getElementById('vidSlider2').value / 100);
-
             if (editingAppId) {
                 allAppsData = allAppsData.map(app => {
                     if (app.id === editingAppId) {
                         return {
-                            ...app, category, name, desc, fileSize,
+                            ...app,
+                            category: category,
+                            name: name,
+                            desc: desc,
                             banner: tempImageBase64 || app.banner,
-                            previewVideo: tempVideoBase64 || app.previewVideo || "",
-                            pos: currentPos, zoom: currentZoom,
-                            vidPos: currentVidPos, vidZoom: currentVidZoom,
-                            link, videoLink: videoLink || "#"
+                            pos: currentPos,
+                            zoom: currentZoom,
+                            link: link,
+                            videoLink: videoLink || "#"
                         };
                     }
                     return app;
                 });
             } else {
-                // 🔥 NEW APP ADDED AT THE VERY TOP (UNSHIFT)
-                allAppsData.unshift({
-                    id: Date.now(), category, name, desc, fileSize,
+                const newApp = {
+                    id: Date.now(),
+                    category: category,
+                    name: name,
+                    desc: desc,
                     banner: tempImageBase64 || "logo.jpg",
-                    previewVideo: tempVideoBase64 || "",
-                    pos: currentPos, zoom: currentZoom,
-                    vidPos: currentVidPos, vidZoom: currentVidZoom,
-                    link, videoLink: videoLink || "#",
-                    views: 0, likes: 0, dislikes: 0
-                });
+                    pos: currentPos,
+                    zoom: currentZoom,
+                    link: link,
+                    videoLink: videoLink || "#",
+                    views: 0,
+                    likes: 0,
+                    dislikes: 0
+                };
+                allAppsData.push(newApp);
             }
 
             const updatedContentString = JSON.stringify({ apps: allAppsData }, null, 2);
             const encodedContent = btoa(unescape(encodeURIComponent(updatedContentString)));
 
             try {
-                const getFileRes = await fetch(GITHUB_API_URL, { headers: { 'Authorization': `Bearer ${token}` } });
+                const getFileRes = await fetch(GITHUB_API_URL, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
                 const getFileData = await getFileRes.json();
                 const fileSHA = getFileData.sha || currentFileSHA;
 
                 const putRes = await fetch(GITHUB_API_URL, {
                     method: 'PUT',
-                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: `Update app: ${name}`, content: encodedContent, sha: fileSHA })
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/vnd.github.v3+json'
+                    },
+                    body: JSON.stringify({
+                        message: editingAppId ? `Update app: ${name}` : `Add new app: ${name}`,
+                        content: encodedContent,
+                        sha: fileSHA
+                    })
                 });
 
                 if (putRes.ok) {
-                    alert(`🎉 Boom! "${name}" synced to GitHub Live!`);
+                    const putData = await putRes.json();
+                    currentFileSHA = putData.content.sha;
+                    filterCategory(activeCategoryFilter, document.querySelector('.filter-pill.active'));
+                    alert(`🎉 Boom! "${name}" successfully synced DIRECTLY to GitHub Live!`);
+
                     document.getElementById('appNameInput').value = "";
                     document.getElementById('appDescInput').value = "";
-                    document.getElementById('appSizeInput').value = "";
                     document.getElementById('gdriveLinkInput').value = "";
                     document.getElementById('videoLinkInput').value = "";
                     document.getElementById('bannerImgTag').style.display = 'none';
-                    document.getElementById('bannerVideoTag').style.display = 'none';
-                    document.getElementById('photoPlaceholderText').style.display = 'block';
-                    document.getElementById('videoPlaceholderText').style.display = 'block';
-                    tempImageBase64 = ""; tempVideoBase64 = ""; editingAppId = null;
+                    document.querySelector('.banner-placeholder-text').style.display = 'block';
+                    tempImageBase64 = "";
+                    editingAppId = null;
+                    document.getElementById('adminPanelTitleText').innerText = "Cloud Admin Console";
+                    document.getElementById('adminPanelSubText').innerText = "Direct Live Auto-Sync to GitHub Repository.";
+                    btn.innerText = "⚡ Direct Sync & Update GitHub Live";
 
                     document.getElementById('section-home').classList.add('active-page');
                     document.getElementById('section-admin-panel').classList.remove('active-page');
-                    
-                    window.scrollTo(0, 0);
-                    fetchAppsFromGitHub();
-                } else { alert("❌ GitHub Sync Failed!"); }
-            } catch (err) { alert("❌ Network Error!"); }
-            finally { btn.innerText = "⚡ Direct Sync & Update GitHub Live"; btn.disabled = false; isSyncingActive = false; }
-        }
-
-        function previewBannerImage(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const fileSizeKB = file.size / 1024;
-                const maxSliderLimitKB = parseInt(document.getElementById('photoSlider3').value);
-
-                if (fileSizeKB < 1) { alert("⚠️ Image too small (Less than 1 KB)!"); return; }
-                if (fileSizeKB > maxSliderLimitKB) { alert("⚠️ Image exceeds selected limit!"); return; }
-
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    tempImageBase64 = e.target.result;
-                    const img = document.getElementById('bannerImgTag');
-                    img.src = tempImageBase64; img.style.display = 'block';
-                    document.getElementById('photoPlaceholderText').style.display = 'none';
-                    applyImageTransform();
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        function previewVideoFile(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const fileSizeKB = file.size / 1024;
-                const fileSizeMB = file.size / (1024 * 1024);
-
-                if (fileSizeKB < 1) { alert("⚠️ Video too small (Less than 1 KB)!"); event.target.value = ""; return; }
-                if (fileSizeMB > 3.0) { alert("⚠️ Video limit exceeded! Maximum allowed size is 3 MB."); event.target.value = ""; return; }
-
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    tempVideoBase64 = e.target.result;
-                    const vid = document.getElementById('bannerVideoTag');
-                    vid.src = tempVideoBase64; 
-                    vid.style.display = 'block';
-                    vid.play(); // 🔥 Force autoplay preview in admin panel
-                    document.getElementById('videoPlaceholderText').style.display = 'none';
-                    applyVideoTransform();
-                };
-                reader.readAsDataURL(file);
+                    document.getElementById('navHomeBtn').classList.add('active');
+                } else {
+                    const errData = await putRes.json();
+                    alert("❌ GitHub Sync Failed: " + (errData.message || "Invalid Token or Permissions"));
+                }
+            } catch (err) {
+                console.error("Direct sync error:", err);
+                alert("❌ Network Error: Could not connect to GitHub API.");
+            } finally {
+                btn.innerText = "⚡ Direct Sync & Update GitHub Live";
+                btn.disabled = false;
+                isSyncingActive = false;
             }
         }
 
@@ -965,45 +1424,38 @@
             const pwd = prompt("Enter Master Password to Edit App:");
             if (pwd === "109888977VMJ") {
                 const appToEdit = allAppsData.find(app => app.id == appId);
-                if (!appToEdit) return;
+                if (!appToEdit) {
+                    alert("App not found!");
+                    return;
+                }
 
                 editingAppId = appToEdit.id;
                 document.getElementById('appVariantSelect').value = appToEdit.category || 'music';
                 document.getElementById('appNameInput').value = appToEdit.name || '';
                 document.getElementById('appDescInput').value = appToEdit.desc || '';
-                document.getElementById('appSizeInput').value = appToEdit.fileSize || '';
                 document.getElementById('gdriveLinkInput').value = appToEdit.link || '';
                 document.getElementById('videoLinkInput').value = appToEdit.videoLink || '';
 
                 if (appToEdit.banner) {
                     tempImageBase64 = appToEdit.banner;
                     const imgTag = document.getElementById('bannerImgTag');
-                    imgTag.src = tempImageBase64; imgTag.style.display = 'block';
-                    document.getElementById('photoPlaceholderText').style.display = 'none';
+                    imgTag.src = tempImageBase64;
+                    imgTag.style.display = 'block';
+                    document.querySelector('.banner-placeholder-text').style.display = 'none';
                 }
 
-                if (appToEdit.previewVideo) {
-                    tempVideoBase64 = appToEdit.previewVideo;
-                    const vidTag = document.getElementById('bannerVideoTag');
-                    vidTag.src = tempVideoBase64; 
-                    vidTag.style.display = 'block';
-                    vidTag.play();
-                    document.getElementById('videoPlaceholderText').style.display = 'none';
-                }
-
-                document.getElementById('section-home').classList.remove('active-page');
-                document.getElementById('section-admin-panel').classList.add('active-page');
-                
-                window.scrollTo(0, 0);
-                const titleElem = document.getElementById('adminPanelTitleText');
-                if (titleElem) {
-                    titleElem.focus();
-                    titleElem.scrollIntoView({ behavior: 'instant', block: 'start' });
-                }
+                sectionHome.classList.remove('active-page');
+                sectionSearch.classList.remove('active-page');
+                sectionAdminPanel.classList.add('active-page');
+                document.getElementById('adminPanelTitleText').innerText = `Edit App: ${appToEdit.name}`;
+                document.getElementById('adminPanelSubText').innerText = "Modify details and click update to sync changes live.";
+                document.getElementById('btnSyncGithub').innerText = "⚡ Update & Sync Changes Live";
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else if (pwd !== null) {
+                alert("Incorrect Password!");
             }
         }
 
-        /* 🗑️ DELETE APP FUNCTIONALITY */
         async function deleteApp(appId) {
             const pwd = prompt("Enter Master Password to Delete:");
             if (pwd === "109888977VMJ") {
@@ -1019,12 +1471,17 @@
                 const encodedContent = btoa(unescape(encodeURIComponent(updatedContentString)));
 
                 try {
-                    const getFileRes = await fetch(GITHUB_API_URL, { headers: { 'Authorization': `Bearer ${token}` } });
+                    const getFileRes = await fetch(GITHUB_API_URL, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
                     const getFileData = await getFileRes.json();
 
                     const putRes = await fetch(GITHUB_API_URL, {
                         method: 'PUT',
-                        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        },
                         body: JSON.stringify({
                             message: `Delete app ID: ${appId}`,
                             content: encodedContent,
@@ -1035,14 +1492,23 @@
                     if(putRes.ok) {
                         filterCategory(activeCategoryFilter, document.querySelector('.filter-pill.active'));
                         alert("App deleted and synced live on GitHub!");
-                    } else { alert("Delete Sync Failed! Check Token."); }
-                } catch(e) { alert("Error syncing deletion to GitHub."); }
-                finally { isSyncingActive = false; }
-            } else if (pwd !== null) { alert("Incorrect Password!"); }
+                    } else {
+                        alert("Delete Sync Failed! Check Token.");
+                    }
+                } catch(e) {
+                    alert("Error syncing deletion to GitHub.");
+                } finally {
+                    isSyncingActive = false;
+                }
+            } else if (pwd !== null) {
+                alert("Incorrect Password!");
+            }
         }
 
         function setupInstagramScrollObserver() {
-            if (cardIntersectionObserver) cardIntersectionObserver.disconnect();
+            if (cardIntersectionObserver) {
+                cardIntersectionObserver.disconnect();
+            }
 
             cardIntersectionObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
@@ -1056,9 +1522,11 @@
                             allAppsData = allAppsData.map(app => {
                                 if(app.id == appId) {
                                     const updatedViews = (app.views || 0) + 1;
+                                    
                                     document.querySelectorAll(`.apk-card[data-app-id="${appId}"] .view-count-badge`).forEach(badge => {
-                                        badge.innerHTML = `👁️ ${updatedViews}`;
+                                        badge.innerHTML = `👁️ ${updatedViews} Views`;
                                     });
+
                                     return { ...app, views: updatedViews };
                                 }
                                 return app;
@@ -1069,10 +1537,11 @@
                 });
             }, { threshold: 0.5 });
 
-            document.querySelectorAll('.apk-card').forEach(card => cardIntersectionObserver.observe(card));
+            document.querySelectorAll('.apk-card').forEach(card => {
+                cardIntersectionObserver.observe(card);
+            });
         }
 
-        /* LIKE & DISLIKE FUNCTIONS */
         function toggleLike(appId) {
             const likedKey = "vsf_liked_" + appId;
             const dislikedKey = "vsf_disliked_" + appId;
@@ -1091,11 +1560,13 @@
                     } else {
                         localStorage.setItem(likedKey, "true");
                         currentLikes += 1;
+
                         if (isAlreadyDisliked) {
                             localStorage.removeItem(dislikedKey);
                             currentDislikes = Math.max(0, currentDislikes - 1);
                         }
                     }
+
                     return { ...app, likes: currentLikes, dislikes: currentDislikes };
                 }
                 return app;
@@ -1123,11 +1594,13 @@
                     } else {
                         localStorage.setItem(dislikedKey, "true");
                         currentDislikes += 1;
+
                         if (isAlreadyLiked) {
                             localStorage.removeItem(likedKey);
                             currentLikes = Math.max(0, currentLikes - 1);
                         }
                     }
+
                     return { ...app, likes: currentLikes, dislikes: currentDislikes };
                 }
                 return app;
@@ -1137,131 +1610,70 @@
             pushDataToGitHubSilent();
         }
 
-        /* 🎬 FULLSCREEN VIDEO MODAL PLAYER */
-        function openVideoModal(videoUrl) {
-            const modal = document.getElementById('video-modal-overlay');
-            const player = document.getElementById('modalPlayerVideo');
-            player.src = videoUrl;
-            modal.classList.add('show');
-            player.play();
-        }
-
-        function closeVideoModal() {
-            const modal = document.getElementById('video-modal-overlay');
-            const player = document.getElementById('modalPlayerVideo');
-            player.pause();
-            player.src = "";
-            modal.classList.remove('show');
-        }
-
-        /* LIVE PROGRESS & EXACT PRE-DEFINED SIZE DOWNLOAD */
-        function startRealDownload(appId, dlUrl, exactSize) {
-            const detailsBox = document.getElementById(`dl-box-${appId}`);
-            const sizeSpan = document.getElementById(`dl-size-${appId}`);
-            const percentSpan = document.getElementById(`dl-percent-${appId}`);
-            const progressFill = document.getElementById(`dl-fill-${appId}`);
-
-            if (!detailsBox) return;
-            detailsBox.classList.add('show');
-            percentSpan.innerText = "0%";
-            sizeSpan.innerText = exactSize || "15.0 MB";
-            progressFill.style.width = "0%";
-
-            const link = document.createElement('a');
-            link.href = dlUrl;
-            link.target = "_blank";
-            link.download = "";
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-
-            let progress = 0;
-            let downloadTimer = setInterval(() => {
-                progress += Math.floor(Math.random() * 12) + 8;
-                if (progress >= 100) {
-                    progress = 100;
-                    clearInterval(downloadTimer);
-                    percentSpan.innerText = "100% (Completed)";
-                    progressFill.style.width = "100%";
-                    setTimeout(() => { detailsBox.classList.remove('show'); }, 4000);
-                } else {
-                    percentSpan.innerText = progress + "%";
-                    progressFill.style.width = progress + "%";
-                }
-            }, 180);
-        }
-
+        // NEW BUILD CARD HTML: Category + Views + Likes Inline in One Row!
         function buildCardHTML(app) {
             const imgPos = app.pos || '50%';
             const imgZoom = app.zoom || '1';
-            const vidPos = app.vidPos || '50%';
-            const vidZoom = app.vidZoom || '1';
 
-            let dlLink = app.link || "#";
-            let vidLink = app.videoLink || "#";
-            let fSize = app.fileSize || "15.0 MB";
+            let dlLink = app.link && app.link.trim() !== "" ? app.link.trim() : "#";
+            if(dlLink !== "#" && !dlLink.startsWith("http://") && !dlLink.startsWith("https://")) {
+                dlLink = "https://" + dlLink;
+            }
+
+            let vidLink = app.videoLink && app.videoLink.trim() !== "" ? app.videoLink.trim() : "#";
+            if(vidLink !== "#" && !vidLink.startsWith("http://") && !vidLink.startsWith("https://")) {
+                vidLink = "https://" + vidLink;
+            }
+
+            const viewsCount = app.views || 0;
+            const likesCount = app.likes || 0;
+            const dislikesCount = app.dislikes || 0;
 
             const isLiked = localStorage.getItem("vsf_liked_" + app.id) ? "liked" : "";
             const isDisliked = localStorage.getItem("vsf_disliked_" + app.id) ? "disliked" : "";
-            const dotsShowClass = areCardDotsVisible ? "show-dots" : "";
-
-            /* 📸 PLAY STORE STYLE: FIRST SLIDE IS PHOTO, SECOND SLIDE IS VIDEO WITH PLAY ICON OVERLAY */
-            let sliderContent = `
-                <div class="media-slide-item">
-                    <img src="${app.banner}" alt="${app.name}" style="object-position: ${imgPos} center; transform: scale(${imgZoom});">
-                </div>
-            `;
-
-            if (app.previewVideo && app.previewVideo.trim() !== "") {
-                sliderContent += `
-                    <div class="media-slide-item" onclick="openVideoModal('${app.previewVideo}')">
-                        <video src="${app.previewVideo}" muted loop playsinline style="object-position: ${vidPos} center; transform: scale(${vidZoom});"></video>
-                        <div class="video-play-overlay">▶</div>
-                    </div>
-                `;
-            }
 
             return `
-                <div class="card-media-slider">
-                    ${sliderContent}
+                <div class="card-banner-box">
+                    <img src="${app.banner}" alt="${app.name}" style="object-position: ${imgPos} center; transform: scale(${imgZoom});">
                 </div>
                 <div class="card-content-area">
                     <div>
+                        <!-- Header Bar with Category, Views & Like/Dislike Buttons -->
                         <div class="card-top-header">
                             <div class="card-header-left-group">
                                 <span class="card-category-badge">${app.category}</span>
                                 <div class="card-stats-inline">
-                                    <div class="view-count-badge">👁️ ${app.views || 0}</div>
-                                    <button class="reaction-btn ${isLiked}" onclick="toggleLike('${app.id}')">👍 ${app.likes || 0}</button>
-                                    <button class="reaction-btn ${isDisliked}" onclick="toggleDislike('${app.id}')">👎 ${app.dislikes || 0}</button>
+                                    <div class="view-count-badge">👁️ ${viewsCount}</div>
+                                    <button class="reaction-btn ${isLiked}" onclick="toggleLike('${app.id}')">👍 ${likesCount}</button>
+                                    <button class="reaction-btn ${isDisliked}" onclick="toggleDislike('${app.id}')">👎 ${dislikesCount}</button>
                                 </div>
                             </div>
-                            <button class="card-menu-dots ${dotsShowClass}" onclick="openCardMenu(event, '${app.id}')">
+                            <button class="card-menu-dots" 
+                                    tabindex="0"
+                                    onmousedown="startCardHoldTimer(event, '${app.id}')" 
+                                    onmouseup="cancelCardHoldTimer(event)" 
+                                    onmouseleave="cancelCardHoldTimer(event)" 
+                                    ontouchstart="startCardHoldTimer(event, '${app.id}')" 
+                                    ontouchend="cancelCardHoldTimer(event)" 
+                                    ontouchcancel="cancelCardHoldTimer(event)" 
+                                    onkeydown="handleTVRemoteKeyDown(event, '${app.id}')"
+                                    onkeyup="cancelCardHoldTimer(event)"
+                                    title="Hold for 5 seconds for Admin Options">
                                 <span></span><span></span><span></span>
                             </button>
                             <div class="card-popup-menu" id="menu-${app.id}">
                                 <button class="card-popup-option" onclick="editApp('${app.id}')">✏️ Edit App</button>
-                                <button class="card-popup-option card-delete-option" onclick="deleteApp('${app.id}')">🗑️ VSF Studio (Delete)</button>
+                                <button class="card-popup-option card-delete-option" onclick="deleteApp('${app.id}')">🗑️ VSF Studio</button>
                             </div>
                         </div>
 
+                        <!-- Straight App Name & Description Flow -->
                         <h3 class="app-name">${app.name}</h3>
                         <p class="app-desc">${app.desc}</p>
                     </div>
                     <div class="card-links-group">
-                        <button class="download-btn" onclick="startRealDownload('${app.id}', '${dlLink}', '${fSize}')">Download</button>
+                        <a href="${dlLink}" target="_blank" rel="noopener noreferrer" class="download-btn">Download</a>
                         <a href="${vidLink}" target="_blank" rel="noopener noreferrer" class="video-btn">▶ Watch Video</a>
-                    </div>
-
-                    <!-- EXACT SIZE & PERCENTAGE PROGRESS BOX -->
-                    <div class="download-details-box" id="dl-box-${app.id}">
-                        <div class="download-info-row">
-                            <span>📦 File Size: <span class="size" id="dl-size-${app.id}">${fSize}</span></span>
-                            <span id="dl-percent-${app.id}" style="color: var(--primary-color);">0%</span>
-                        </div>
-                        <div class="download-progress-bar">
-                            <div class="download-progress-fill" id="dl-fill-${app.id}"></div>
-                        </div>
                     </div>
                 </div>
             `;
@@ -1270,10 +1682,12 @@
         function renderCards(apps) {
             const container = document.getElementById('card-container');
             container.innerHTML = "";
+
             if (!apps || apps.length === 0) {
-                container.innerHTML = `<p style="color: #9ca3af; grid-column: 1/-1; text-align: center; padding: 30px;">No apps found.</p>`;
+                container.innerHTML = `<p style="color: #9ca3af; grid-column: 1/-1; text-align: center; padding: 30px;">No apps found in cloud hub.</p>`;
                 return;
             }
+
             apps.forEach(app => {
                 const card = document.createElement('div');
                 card.className = 'apk-card';
@@ -1281,54 +1695,156 @@
                 card.innerHTML = buildCardHTML(app);
                 container.appendChild(card);
             });
+
             setupInstagramScrollObserver();
+        }
+
+        let cardHoldTimer = null;
+
+        function startCardHoldTimer(event, appId) {
+            cancelCardHoldTimer();
+
+            cardHoldTimer = setTimeout(() => {
+                if (navigator.vibrate) {
+                    navigator.vibrate(100);
+                }
+                openCardMenu(event, appId);
+            }, 5000);
+        }
+
+        function cancelCardHoldTimer(event) {
+            if (cardHoldTimer) {
+                clearTimeout(cardHoldTimer);
+                cardHoldTimer = null;
+            }
+        }
+
+        function handleTVRemoteKeyDown(event, appId) {
+            if ([13, 32, 66, 23].includes(event.keyCode || event.which)) {
+                if (!cardHoldTimer) {
+                    startCardHoldTimer(event, appId);
+                }
+            }
         }
 
         function openCardMenu(event, appId) {
             if (event) event.stopPropagation();
+            document.querySelectorAll('.card-popup-menu').forEach(menu => {
+                if (menu.id !== 'menu-' + appId) menu.classList.remove('show');
+            });
             const menu = document.getElementById('menu-' + appId);
-            if (menu) menu.classList.toggle('show');
+            if (menu) menu.classList.add('show');
         }
 
         function filterCategory(cat, btn) {
             activeCategoryFilter = cat;
             document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
             if(btn) btn.classList.add('active');
-            renderCards(cat === 'all' ? allAppsData : allAppsData.filter(a => a.category === cat));
+
+            if (cat === 'all') {
+                renderCards(allAppsData);
+            } else {
+                const filtered = allAppsData.filter(app => app.category === cat);
+                renderCards(filtered);
+            }
         }
 
         function searchAppsLocally(query) {
+            const searchContainer = document.getElementById('search-results-container');
+            searchContainer.innerHTML = "";
             const q = query.toLowerCase().trim();
-            if (!q) { filterCategory(activeCategoryFilter, document.querySelector('.filter-pill.active')); return; }
-            renderCards(allAppsData.filter(app => app.name.toLowerCase().includes(q) || app.desc.toLowerCase().includes(q)));
+
+            if (!q) {
+                searchContainer.innerHTML = `<p style="color: #9ca3af; grid-column: 1/-1; text-align: center; padding: 30px;">Type app name above to search.</p>`;
+                return;
+            }
+
+            const matched = allAppsData.filter(app => app.name.toLowerCase().includes(q) || app.desc.toLowerCase().includes(q));
+
+            if (matched.length === 0) {
+                searchContainer.innerHTML = `<p style="color: #9ca3af; grid-column: 1/-1; text-align: center; padding: 30px;">No matching apps found.</p>`;
+                return;
+            }
+
+            matched.forEach(app => {
+                const card = document.createElement('div');
+                card.className = 'apk-card';
+                card.setAttribute('data-app-id', app.id);
+                card.innerHTML = buildCardHTML(app);
+                searchContainer.appendChild(card);
+            });
+
+            setupInstagramScrollObserver();
         }
+
+        function previewBannerImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const fileSizeKB = file.size / 1024;
+                const maxSliderLimitKB = parseInt(document.getElementById('photoSlider3').value);
+
+                if (fileSizeKB < 1) {
+                    alert("⚠️ Error: Image size is too small (Less than 1 KB)!");
+                    event.target.value = "";
+                    return;
+                }
+                if (fileSizeKB > maxSliderLimitKB) {
+                    alert(`⚠️ Error: Image size exceeds your limit of ${maxSliderLimitKB >= 1024 ? (maxSliderLimitKB/1024).toFixed(1) + ' MB' : maxSliderLimitKB + ' KB'}!`);
+                    event.target.value = "";
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    tempImageBase64 = e.target.result;
+                    const img = document.getElementById('bannerImgTag');
+                    img.src = tempImageBase64;
+                    img.style.display = 'block';
+                    document.querySelector('.banner-placeholder-text').style.display = 'none';
+                    applyImageTransform();
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        const menuToggleBtn = document.getElementById('menuToggleBtn');
+        const dropdownMenu = document.getElementById('dropdownMenu');
+        menuToggleBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdownMenu.classList.toggle('show');
+        });
+
+        document.addEventListener('click', () => dropdownMenu.classList.remove('show'));
+
+        const navHomeBtn = document.getElementById('navHomeBtn');
+        const navSearchBtn = document.getElementById('navSearchBtn');
+        const sectionHome = document.getElementById('section-home');
+        const sectionAdminPanel = document.getElementById('section-admin-panel');
+        const sectionSearch = document.getElementById('section-search');
+
+        navHomeBtn.addEventListener('click', () => {
+            filterCategory(activeCategoryFilter, document.querySelector('.filter-pill.active'));
+            sectionHome.classList.add('active-page');
+            sectionAdminPanel.classList.remove('active-page');
+            sectionSearch.classList.remove('active-page');
+            navHomeBtn.classList.add('active');
+            navSearchBtn.classList.remove('active');
+        });
+
+        navSearchBtn.addEventListener('click', () => {
+            sectionSearch.classList.add('active-page');
+            sectionHome.classList.remove('active-page');
+            sectionAdminPanel.classList.remove('active-page');
+            navSearchBtn.classList.add('active');
+            navHomeBtn.classList.remove('active');
+        });
 
         const brandLogoTrigger = document.getElementById('brandLogoTrigger');
-        let logoPressTimer = null, adminPressTimer = null, hasAdminTriggered = false;
-
-        function handleLogoHoldStart() {
-            hasAdminTriggered = false;
-            logoPressTimer = setTimeout(() => {
-                if (!hasAdminTriggered) {
-                    areCardDotsVisible = !areCardDotsVisible;
-                    document.querySelectorAll('.card-menu-dots').forEach(dot => dot.classList.toggle('show-dots', areCardDotsVisible));
-                    if (navigator.vibrate) navigator.vibrate(60);
-                }
-            }, 2000);
-
-            adminPressTimer = setTimeout(() => {
-                hasAdminTriggered = true;
-                openAdmin();
-                if (navigator.vibrate) navigator.vibrate(120);
-            }, 10000);
-        }
-
-        function handleLogoHoldEnd() { clearTimeout(logoPressTimer); clearTimeout(adminPressTimer); }
-
-        brandLogoTrigger.addEventListener('mousedown', handleLogoHoldStart);
-        brandLogoTrigger.addEventListener('touchstart', handleLogoHoldStart, { passive: true });
-        brandLogoTrigger.addEventListener('mouseup', handleLogoHoldEnd);
-        brandLogoTrigger.addEventListener('touchend', handleLogoHoldEnd);
+        let pressTimer;
+        brandLogoTrigger.addEventListener('mousedown', () => { pressTimer = setTimeout(openAdmin, 10000); });
+        brandLogoTrigger.addEventListener('touchstart', () => { pressTimer = setTimeout(openAdmin, 10000); }, { passive: true });
+        brandLogoTrigger.addEventListener('mouseup', () => clearTimeout(pressTimer));
+        brandLogoTrigger.addEventListener('touchend', () => clearTimeout(pressTimer));
 
         function openAdmin() {
             const pwd = prompt("Enter Master Administrator Password:");
@@ -1336,37 +1852,27 @@
                 editingAppId = null;
                 document.getElementById('appNameInput').value = "";
                 document.getElementById('appDescInput').value = "";
-                document.getElementById('appSizeInput').value = "";
                 document.getElementById('gdriveLinkInput').value = "";
                 document.getElementById('videoLinkInput').value = "";
                 document.getElementById('bannerImgTag').style.display = 'none';
-                document.getElementById('bannerVideoTag').style.display = 'none';
-                document.getElementById('photoPlaceholderText').style.display = 'block';
-                document.getElementById('videoPlaceholderText').style.display = 'block';
-                tempImageBase64 = ""; tempVideoBase64 = "";
+                document.querySelector('.banner-placeholder-text').style.display = 'block';
+                tempImageBase64 = "";
+                document.getElementById('adminPanelTitleText').innerText = "Cloud Admin Console";
+                document.getElementById('adminPanelSubText').innerText = "Direct Live Auto-Sync to GitHub Repository.";
+                document.getElementById('btnSyncGithub').innerText = "⚡ Direct Sync & Update GitHub Live";
 
-                document.getElementById('section-home').classList.remove('active-page');
-                document.getElementById('section-admin-panel').classList.add('active-page');
-
-                window.scrollTo(0, 0);
-                const titleElem = document.getElementById('adminPanelTitleText');
-                if (titleElem) {
-                    titleElem.focus();
-                    titleElem.scrollIntoView({ behavior: 'instant', block: 'start' });
-                }
+                sectionHome.classList.remove('active-page');
+                sectionSearch.classList.remove('active-page');
+                sectionAdminPanel.classList.add('active-page');
             } else if (pwd !== null) { alert("Incorrect Password!"); }
         }
 
         function copyShareLink() {
             const input = document.getElementById('shareLinkInput');
-            input.select(); document.execCommand('copy');
+            input.select();
+            document.execCommand('copy');
             alert("Hub link copied to clipboard!");
         }
-
-        const menuToggleBtn = document.getElementById('menuToggleBtn');
-        const dropdownMenu = document.getElementById('dropdownMenu');
-        menuToggleBtn.addEventListener('click', (e) => { e.stopPropagation(); dropdownMenu.classList.toggle('show'); });
-        document.addEventListener('click', () => dropdownMenu.classList.remove('show'));
     </script>
 </body>
 </html>
