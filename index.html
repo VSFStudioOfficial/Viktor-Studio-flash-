@@ -113,7 +113,7 @@
             width: 90%;
             max-width: 450px;
             height: auto;
-            border-radius: 16px;
+            border-radius: 8px;
             box-shadow: 0 0 35px rgba(0, 210, 255, 0.4);
             border: 1px solid var(--primary-color);
             position: relative;
@@ -148,7 +148,7 @@
             height: 6px;
             background: #111827;
             margin-top: 12px;
-            border-radius: 6px;
+            border-radius: 4px;
             overflow: hidden;
             position: relative;
             border: 1px solid rgba(0, 210, 255, 0.3);
@@ -176,25 +176,25 @@
         }
 
         .header-left { display: flex; align-items: center; gap: 14px; }
-        .header-banner { height: 38px; width: auto; border-radius: 8px; border: 1px solid #334155; cursor: pointer; }
+        .header-banner { height: 38px; width: auto; border-radius: 6px; border: 1px solid #334155; cursor: pointer; }
         .brand-name { font-size: 1.25rem; font-weight: 800; background: linear-gradient(45deg, var(--primary-color), var(--secondary-color)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px; }
 
         .header-right-controls { display: flex; align-items: center; gap: 10px; position: relative; }
-        .header-refresh-btn { background: #111827; border: 1px solid var(--border-color); color: var(--primary-color); width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.1rem; }
+        .header-refresh-btn { background: #111827; border: 1px solid var(--border-color); color: var(--primary-color); width: 42px; height: 42px; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.1rem; }
         .header-refresh-btn.spinning { animation: spinRefresh 0.8s linear infinite; }
         @keyframes spinRefresh { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        .header-menu-btn { background: #111827; border: 1px solid var(--border-color); color: var(--primary-color); width: 42px; height: 42px; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; cursor: pointer; }
-        .header-menu-btn span { display: block; width: 18px; height: 2px; background-color: var(--primary-color); border-radius: 2px; }
+        .header-menu-btn { background: #111827; border: 1px solid var(--border-color); color: var(--primary-color); width: 42px; height: 42px; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; cursor: pointer; }
+        .header-menu-btn span { display: block; width: 18px; height: 2px; background-color: var(--primary-color); border-radius: 1px; }
 
-        .dropdown-menu-box { position: absolute; right: 0; top: 55px; background: #111827; border: 1px solid var(--border-color); border-radius: 14px; width: 280px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: none; flex-direction: column; overflow: hidden; z-index: 200; padding: 10px; }
+        .dropdown-menu-box { position: absolute; right: 0; top: 55px; background: #111827; border: 1px solid var(--border-color); border-radius: 8px; width: 280px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: none; flex-direction: column; overflow: hidden; z-index: 200; padding: 10px; }
         .dropdown-menu-box.show { display: flex; }
-        .menu-widget-box { background: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 12px; margin-top: 4px; text-align: center; }
+        .menu-widget-box { background: #0f172a; border: 1px solid #334155; border-radius: 6px; padding: 12px; margin-top: 4px; text-align: center; }
         .menu-widget-title { font-size: 0.8rem; font-weight: 700; color: var(--primary-color); margin-bottom: 8px; text-transform: uppercase; }
         .share-link-input-group { display: flex; gap: 5px; margin-bottom: 10px; }
-        .share-link-input { width: 100%; background: #07090e; border: 1px solid #334155; border-radius: 6px; color: #fff; padding: 6px 8px; font-size: 0.8rem; outline: none; }
-        .copy-link-btn { background: var(--primary-color); color: #0b0f19; border: none; border-radius: 6px; padding: 0 10px; font-weight: 700; cursor: pointer; font-size: 0.8rem; }
-        #qrcode-container { display: flex; justify-content: center; background: #fff; padding: 8px; border-radius: 8px; width: fit-content; margin: 0 auto; }
+        .share-link-input { width: 100%; background: #07090e; border: 1px solid #334155; border-radius: 4px; color: #fff; padding: 6px 8px; font-size: 0.8rem; outline: none; }
+        .copy-link-btn { background: var(--primary-color); color: #0b0f19; border: none; border-radius: 4px; padding: 0 10px; font-weight: 700; cursor: pointer; font-size: 0.8rem; }
+        #qrcode-container { display: flex; justify-content: center; background: #fff; padding: 8px; border-radius: 6px; width: fit-content; margin: 0 auto; }
 
         .page-section { display: none; padding: 25px 20px; max-width: 1600px; margin: 0 auto; }
         .page-section.active-page { display: block; }
@@ -204,7 +204,7 @@
             background: linear-gradient(135deg, rgba(0, 210, 255, 0.15) 0%, rgba(58, 123, 213, 0.2) 50%, rgba(17, 24, 39, 0.95) 100%);
             backdrop-filter: blur(16px);
             border: 2px solid var(--primary-color);
-            border-radius: 18px;
+            border-radius: 8px;
             padding: 20px 24px;
             margin-bottom: 25px;
             box-shadow: 0 0 25px rgba(0, 210, 255, 0.4);
@@ -215,17 +215,18 @@
         .hero-desc { font-size: 0.9rem; color: #cbd5e1; margin-bottom: 15px; }
 
         .category-filter-pills { display: flex; gap: 10px; flex-wrap: wrap; }
-        .filter-pill { background: rgba(17, 24, 39, 0.8); border: 1px solid #374151; color: #cbd5e1; padding: 7px 16px; border-radius: 30px; font-size: 0.85rem; font-weight: 600; cursor: pointer; }
+        .filter-pill { background: rgba(17, 24, 39, 0.8); border: 1px solid #374151; color: #cbd5e1; padding: 7px 16px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; cursor: pointer; }
         .filter-pill.active { background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: #04060a; border-color: var(--accent-color); font-weight: 800; }
 
         /* Grid Layout */
         .apk-grid { display: grid; grid-template-columns: 1fr; gap: 25px; width: 100%; }
         @media screen and (min-width: 768px) { .apk-grid { grid-template-columns: repeat(2, 1fr) !important; } }
 
+        /* SQUARE CARDS LOOK (Rounded corners removed for sharp square edges) */
         .apk-card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 20px;
+            border-radius: 6px; /* SQUARE LOOK */
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -244,6 +245,7 @@
             scroll-snap-type: x mandatory;
             scroll-behavior: smooth;
             -webkit-overflow-scrolling: touch;
+            border-radius: 6px 6px 0 0; /* Square edges on top */
         }
 
         .media-scroll-wrapper::-webkit-scrollbar {
@@ -251,7 +253,7 @@
         }
         .media-scroll-wrapper::-webkit-scrollbar-thumb {
             background: var(--primary-color);
-            border-radius: 4px;
+            border-radius: 2px;
         }
 
         .media-slide-item {
@@ -275,7 +277,7 @@
             background: rgba(0, 0, 0, 0.65);
             color: var(--accent-color);
             padding: 3px 8px;
-            border-radius: 12px;
+            border-radius: 4px;
             font-size: 0.7rem;
             font-weight: 700;
             border: 1px solid var(--primary-color);
@@ -286,36 +288,45 @@
         .card-content-area { padding: 20px; display: flex; flex-direction: column; justify-content: space-between; flex-grow: 1; }
         .card-top-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
         .card-header-left-group { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-        .card-category-badge { background: rgba(0, 210, 255, 0.15); color: var(--primary-color); font-size: 0.72rem; font-weight: 700; padding: 3px 8px; border-radius: 20px; text-transform: uppercase; border: 1px solid rgba(0, 210, 255, 0.3); }
+        .card-category-badge { background: rgba(0, 210, 255, 0.15); color: var(--primary-color); font-size: 0.72rem; font-weight: 700; padding: 3px 8px; border-radius: 4px; text-transform: uppercase; border: 1px solid rgba(0, 210, 255, 0.3); }
 
         .app-name { font-size: 1.35rem; font-weight: 800; color: #f9fafb; margin-bottom: 6px; }
         .app-desc { font-size: 0.9rem; color: #cbd5e1; margin-bottom: 16px; line-height: 1.5; }
 
         .card-links-group { display: flex; gap: 12px; width: 100%; }
-        .download-btn { flex: 1; text-align: center; font-weight: 700; padding: 12px 10px; border-radius: 12px; text-decoration: none; font-size: 0.9rem; cursor: pointer; background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: #0b0f19; border: none; }
-        .video-btn { flex: 1; text-align: center; font-weight: 700; padding: 12px 10px; border-radius: 12px; text-decoration: none; font-size: 0.9rem; cursor: pointer; background: rgba(0, 210, 255, 0.12); color: var(--primary-color); border: 1px solid rgba(0, 210, 255, 0.4); }
+        .download-btn { flex: 1; text-align: center; font-weight: 700; padding: 12px 10px; border-radius: 6px; text-decoration: none; font-size: 0.9rem; cursor: pointer; background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: #0b0f19; border: none; }
+        .video-btn { flex: 1; text-align: center; font-weight: 700; padding: 12px 10px; border-radius: 6px; text-decoration: none; font-size: 0.9rem; cursor: pointer; background: rgba(0, 210, 255, 0.12); color: var(--primary-color); border: 1px solid rgba(0, 210, 255, 0.4); }
 
-        #section-admin-panel { max-width: 900px; margin: 0 auto; background: var(--card-bg); border: 2px solid var(--primary-color); border-radius: 24px; padding: 40px; box-shadow: 0 0 20px rgba(0, 210, 255, 0.3); }
+        #section-admin-panel { max-width: 900px; margin: 0 auto; background: var(--card-bg); border: 2px solid var(--primary-color); border-radius: 12px; padding: 40px; box-shadow: 0 0 20px rgba(0, 210, 255, 0.3); }
         .admin-panel-title { font-size: 2rem; font-weight: 800; background: linear-gradient(45deg, var(--primary-color), var(--accent-color)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; font-size: 0.9rem; font-weight: 600; color: #e5e7eb; margin-bottom: 8px; }
-        .form-control { width: 100%; padding: 12px 16px; background: #0f172a; border: 1px solid #334155; border-radius: 12px; color: #fff; font-size: 1rem; outline: none; }
+        .form-control { width: 100%; padding: 12px 16px; background: #0f172a; border: 1px solid #334155; border-radius: 6px; color: #fff; font-size: 1rem; outline: none; }
 
-        .banner-preview-box { width: 100%; aspect-ratio: 16 / 9; background: #0f172a; border: 2px dashed #334155; border-radius: 14px; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-top: 10px; cursor: pointer; position: relative; }
+        .banner-preview-box { width: 100%; aspect-ratio: 16 / 9; background: #0f172a; border: 2px dashed #334155; border-radius: 6px; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-top: 10px; cursor: pointer; position: relative; }
         .banner-preview-box img, .banner-preview-box video { width: 100%; height: 100%; object-fit: cover; display: none; }
         .banner-placeholder-text { color: #64748b; font-size: 0.95rem; font-weight: 600; }
 
-        .sliders-container { background: #0f172a; border: 1px solid #334155; border-radius: 14px; padding: 16px; margin-top: 12px; }
+        .sliders-container { background: #0f172a; border: 1px solid #334155; border-radius: 6px; padding: 16px; margin-top: 12px; }
         .slider-row { margin-bottom: 14px; }
         .slider-label-row { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 600; color: #cbd5e1; margin-bottom: 6px; }
         .slider-label-row span.val { color: var(--primary-color); }
         .custom-slider { width: 100%; height: 6px; background: #1e293b; border-radius: 3px; outline: none; appearance: none; cursor: pointer; }
         .custom-slider::-webkit-slider-thumb { appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--primary-color); cursor: pointer; }
 
-        .save-config-btn { background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: #0b0f19; font-weight: 700; padding: 14px 28px; border: none; border-radius: 12px; font-size: 1rem; cursor: pointer; width: 100%; box-shadow: 0 0 15px rgba(0, 210, 255, 0.4); }
+        /* Sync Button Progress Style */
+        .save-config-btn-wrapper {
+            position: relative;
+            width: 100%;
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
+        }
+        .save-config-btn { background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: #0b0f19; font-weight: 700; padding: 14px 28px; border: none; font-size: 1rem; cursor: pointer; width: 100%; display: block; position: relative; z-index: 2; }
+        .btn-progress-line { position: absolute; bottom: 0; left: 0; height: 4px; width: 0%; background: var(--accent-color); z-index: 3; transition: width 0.3s ease; }
 
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(11, 15, 25, 0.95); backdrop-filter: blur(16px); border-top: 1px solid #1e293b; padding: 12px 25px; display: flex; align-items: center; justify-content: space-around; z-index: 100; }
-        .nav-btn { background: #111827; border: 1px solid var(--border-color); color: #9ca3af; padding: 10px 20px; border-radius: 14px; font-size: 0.95rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+        .nav-btn { background: #111827; border: 1px solid var(--border-color); color: #9ca3af; padding: 10px 20px; border-radius: 6px; font-size: 0.95rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; }
         .nav-btn.active { border-color: var(--primary-color); background: linear-gradient(135deg, rgba(0, 210, 255, 0.2), rgba(58, 123, 213, 0.3)); color: var(--primary-color); }
     </style>
 </head>
@@ -382,7 +393,7 @@
         <h1 class="admin-panel-title" id="adminPanelTitleText">Cloud Admin Console</h1>
         <p style="color: #9ca3af; margin-bottom: 20px;" id="adminPanelSubText">Direct Live Auto-Sync to GitHub Repository.</p>
         
-        <div class="form-group" style="border: 1px dashed var(--primary-color); padding: 15px; border-radius: 12px; background: rgba(0,210,255,0.05);">
+        <div class="form-group" style="border: 1px dashed var(--primary-color); padding: 15px; border-radius: 6px; background: rgba(0,210,255,0.05);">
             <label for="githubTokenInput" style="color: var(--accent-color);">🔑 GitHub Personal Access Token (PAT):</label>
             <input type="password" id="githubTokenInput" class="form-control" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" onchange="saveGithubToken(this.value)">
         </div>
@@ -449,7 +460,11 @@
             <label for="videoLinkInput">External Video Link (YouTube / Web Link):</label>
             <input type="url" id="videoLinkInput" class="form-control" placeholder="https://youtube.com/...">
         </div>
-        <button type="button" class="save-config-btn" id="btnSyncGithub" onclick="addAppAndPushToGitHubAPI()">⚡ Pack Data & Direct Sync To GitHub Live</button>
+        
+        <div class="save-config-btn-wrapper">
+            <button type="button" class="save-config-btn" id="btnSyncGithub" onclick="addAppAndPushToGitHubAPI()">⚡ Pack Data & Direct Sync To GitHub Live</button>
+            <div class="btn-progress-line" id="btnProgressLine"></div>
+        </div>
     </div>
 
     <!-- SECTION 3: SEARCH -->
@@ -573,7 +588,10 @@
 
             isSyncingActive = true;
             const btn = document.getElementById('btnSyncGithub');
-            btn.innerText = "⏳ Packing Data & Syncing to GitHub...";
+            const progressLine = document.getElementById('btnProgressLine');
+            
+            btn.innerText = "⏳ Packing Data...";
+            progressLine.style.width = "30%";
             btn.disabled = true;
 
             const currentPos = document.getElementById('photoSlider1').value + '%';
@@ -593,9 +611,15 @@
             const encodedContent = packUnicodeBase64(packedJSONString);
 
             try {
+                btn.innerText = "⏳ Connecting to GitHub API...";
+                progressLine.style.width = "60%";
+
                 const getFileRes = await fetch(GITHUB_API_URL, { headers: { 'Authorization': `Bearer ${token}` } });
                 const getFileData = await getFileRes.json();
                 const fileSHA = getFileData.sha || currentFileSHA;
+
+                btn.innerText = "⏳ Syncing Live to Repository...";
+                progressLine.style.width = "85%";
 
                 const putRes = await fetch(GITHUB_API_URL, {
                     method: 'PUT',
@@ -604,6 +628,7 @@
                 });
 
                 if (putRes.ok) {
+                    progressLine.style.width = "100%";
                     alert(`🎉 Success! Packed data for "${name}" synced DIRECTLY to GitHub Live!`);
                     document.getElementById('appNameInput').value = "";
                     document.getElementById('appDescInput').value = "";
@@ -621,7 +646,12 @@
                     alert("❌ Sync Failed: " + (err.message || "Check Token Permission"));
                 }
             } catch (err) { alert("❌ Network Error!"); }
-            finally { btn.innerText = "⚡ Pack Data & Direct Sync To GitHub Live"; btn.disabled = false; isSyncingActive = false; }
+            finally {
+                btn.innerText = "⚡ Pack Data & Direct Sync To GitHub Live";
+                progressLine.style.width = "0%";
+                btn.disabled = false;
+                isSyncingActive = false;
+            }
         }
 
         function previewBannerImage(event) {
