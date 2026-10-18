@@ -261,11 +261,9 @@
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
             height: 100%;
             position: relative;
-            transition: transform 0.2s ease;
         }
-        .apk-card:hover { border-color: rgba(0, 210, 255, 0.4); }
 
-        /* Play-Store Style Horizontal Scroll Container - Fixed 16:9 Ratio */
+        /* STABLE PLAY-STORE STYLE MEDIA CONTAINER */
         .media-scroll-wrapper {
             width: 100%;
             aspect-ratio: 16 / 9;
@@ -295,8 +293,19 @@
             overflow: hidden;
         }
 
-        .media-slide-item img { width: 100%; height: 100%; object-fit: cover; }
-        .media-slide-item video { width: 100%; height: 100%; object-fit: contain; background: #000; }
+        .media-slide-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .media-slide-item video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: #000;
+        }
 
         .swipe-hint-badge {
             position: absolute;
@@ -324,7 +333,7 @@
         .download-btn { flex: 1; text-align: center; font-weight: 700; padding: 10px 8px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; cursor: pointer; background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: #0b0f19; border: none; }
         .video-btn { flex: 1; text-align: center; font-weight: 700; padding: 10px 8px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; cursor: pointer; background: rgba(0, 210, 255, 0.12); color: var(--primary-color); border: 1px solid rgba(0, 210, 255, 0.4); }
 
-        /* Admin Panel Responsiveness & Fixed Preview Box */
+        /* Admin Panel */
         #section-admin-panel { max-width: 850px; margin: 0 auto; background: var(--card-bg); border: 2px solid var(--primary-color); border-radius: 12px; padding: 20px; box-shadow: 0 0 25px rgba(0, 210, 255, 0.3); }
         @media screen and (min-width: 768px) { #section-admin-panel { padding: 35px; } }
 
@@ -352,7 +361,7 @@
         .banner-preview-box img {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Changed to cover for perfect preview scaling */
+            object-fit: cover;
             display: none;
             position: relative;
         }
