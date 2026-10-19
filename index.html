@@ -737,7 +737,7 @@
 
             runFastIntroLoader();
             
-            // 2. Fetch fresh data from GitHub
+            // 2. Fetch fresh data from GitHub with fallback
             fetchAppsFromGitHub(() => {
                 checkAndScrollToCard();
             });
@@ -821,11 +821,12 @@
                     if(callback) callback();
                 })
                 .catch(() => { 
+                    // Fallback if apps.json doesn't exist yet on GitHub
                     const cachedData = localStorage.getItem('VSF_CACHED_APPS');
                     if (cachedData) {
                         try { allAppsData = JSON.parse(cachedData); } catch(e) { allAppsData = []; }
                     } else {
-                        allAppsData = [];
+                        allAppsData = []; // Default empty array so app never gets stuck
                     }
                     filterCategory(activeCategoryFilter, document.querySelector('.filter-pill.active'));
                     isDataFetched = true;
@@ -897,17 +898,25 @@
                 btn.innerText = "⏳ Connecting to GitHub API...";
                 progressLine.style.width = "60%";
 
-                const getFileRes = await fetch(GITHUB_API_URL, { headers: { 'Authorization': `Bearer ${token}` } });
-                const getFileData = await getFileRes.json();
-                const fileSHA = getFileData.sha || currentFileSHA;
+                let fileSHA = currentFileSHA;
+                try {
+                    const getFileRes = await fetch(GITHUB_API_URL, { headers: { 'Authorization': `Bearer ${token}` } });
+                    if(getFileRes.ok) {
+                        const getFileData = await getFileRes.json();
+                        if(getFileData.sha) fileSHA = getFileData.sha;
+                    }
+                } catch(e) {}
 
                 btn.innerText = "⏳ Syncing Live to Repository...";
                 progressLine.style.width = "85%";
 
+                const putBody = { message: editingAppId ? `Update app: ${name}` : `Add packed app: ${name}`, content: encodedContent };
+                if(fileSHA) putBody.sha = fileSHA;
+
                 const putRes = await fetch(GITHUB_API_URL, {
                     method: 'PUT',
                     headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: editingAppId ? `Update app: ${name}` : `Add packed app: ${name}`, content: encodedContent, sha: fileSHA })
+                    body: JSON.stringify(putBody)
                 });
 
                 if (putRes.ok) {
