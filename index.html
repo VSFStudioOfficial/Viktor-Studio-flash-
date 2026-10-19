@@ -279,69 +279,80 @@
             transform: scale(1.02);
         }
 
-        /* HIGH-PERFORMANCE VIDEO & MEDIA SLIDER CONTAINER */
-        .media-scroll-wrapper {
+        /* MEDIA CONTAINER (SINGLE POSTER WITH PLAY OVERLAY) */
+        .media-container-wrapper {
+            position: relative;
             width: 100%;
             aspect-ratio: 16 / 9;
             background: #000;
-            display: flex;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            scroll-behavior: smooth;
-            -webkit-overflow-scrolling: touch;
             border-radius: 8px 8px 0 0;
-            position: relative;
-            touch-action: pan-x pan-y;
+            overflow: hidden;
         }
 
-        .media-scroll-wrapper::-webkit-scrollbar { height: 3px; }
-        .media-scroll-wrapper::-webkit-scrollbar-thumb { background: var(--primary-color); border-radius: 2px; }
-
-        .media-slide-item {
-            flex: 0 0 100%;
+        .media-poster-box {
             width: 100%;
             height: 100%;
-            scroll-snap-align: start;
-            scroll-snap-stop: always;
             position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: #000;
             overflow: hidden;
-        }
-
-        .media-slide-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-            pointer-events: none;
-        }
-
-        .media-slide-item video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
             background: #000;
-            display: block;
-            outline: none;
-            z-index: 2;
         }
 
-        .swipe-hint-badge {
+        .media-poster-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* OVERLAY PLAY BUTTON */
+        .card-play-overlay-btn {
             position: absolute;
-            bottom: 6px;
-            right: 6px;
-            background: rgba(0, 0, 0, 0.85);
-            color: var(--accent-color);
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-size: 0.65rem;
-            font-weight: 700;
-            border: 1px solid var(--primary-color);
-            pointer-events: none;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 210, 255, 0.85);
+            color: #04060a;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(0, 210, 255, 0.8);
+            border: 2px solid #fff;
+            transition: transform 0.2s ease, background 0.2s ease;
             z-index: 5;
+        }
+
+        .card-play-overlay-btn:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+            background: var(--accent-color);
+        }
+
+        /* VIDEO PLAYER CONTAINER (HIDDEN UNTIL PLAY CLICKED) */
+        .card-video-player-box {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            display: none;
+            z-index: 6;
+        }
+
+        .card-preview-video-tag {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: contain !important;
+            background: #000 !important;
+            display: block !important;
+            outline: none !important;
         }
 
         .card-content-area { padding: 16px; display: flex; flex-direction: column; justify-content: space-between; flex-grow: 1; }
@@ -448,7 +459,7 @@
         .banner-preview-box video {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain;
             display: none;
         }
         .banner-placeholder-text { color: #64748b; font-size: 0.85rem; font-weight: 600; text-align: center; padding: 0 10px; }
@@ -557,7 +568,6 @@
             <input type="text" id="appDescInput" class="form-control" placeholder="Short description...">
         </div>
 
-        <!-- 🖼️ IMAGE UPLOAD & 3 CONTROLLING SLIDERS -->
         <div class="form-group">
             <label>1st Main Poster Image (1 KB to 2 MB):</label>
             <input type="file" id="bannerInputFile" class="form-control" accept="image/*" style="display: none;" onchange="previewBannerImage(event)">
@@ -591,12 +601,11 @@
             </div>
         </div>
 
-        <!-- 🎬 VIDEO PREVIEW UPLOAD -->
         <div class="form-group">
-            <label>2nd Video Preview (Optional - Scroll Right Item, 1 KB to 3 MB):</label>
+            <label>2nd Video Preview (Optional - Play Overlay Feature, 1 KB to 3 MB):</label>
             <input type="file" id="videoInputFile" class="form-control" accept="video/*" style="display: none;" onchange="previewVideoFile(event)">
             <div class="banner-preview-box" onclick="document.getElementById('videoInputFile').click()">
-                <span class="banner-placeholder-text" id="videoPlaceholderText">🎬 Tap to select Video Preview (Play Store Style)</span>
+                <span class="banner-placeholder-text" id="videoPlaceholderText">🎬 Tap to select Video Preview</span>
                 <video id="bannerVideoTag" controls playsinline></video>
             </div>
         </div>
@@ -652,7 +661,6 @@
         let currentProgress = 0;
         let isDataFetched = false;
 
-        /* SMOOTH 0 TO 100% INTRO LOADER */
         function runFastIntroLoader(onComplete) {
             currentProgress = 0;
             const progressInterval = setInterval(() => {
@@ -680,18 +688,20 @@
             }, 30);
         }
 
-        /* Safe Unicode Base64 Encoders */
         function packUnicodeBase64(str) {
             return btoa(new TextEncoder().encode(str).reduce((data, byte) => data + String.fromCharCode(byte), ''));
         }
 
         function unpackUnicodeBase64(base64Str) {
-            const binString = atob(base64Str.replace(/\s/g, ''));
-            const bytes = Uint8Array.from(binString, (m) => m.codePointAt(0));
-            return new TextDecoder().decode(bytes);
+            try {
+                const binString = atob(base64Str.replace(/\s/g, ''));
+                const bytes = Uint8Array.from(binString, (m) => m.codePointAt(0));
+                return new TextDecoder().decode(bytes);
+            } catch(e) {
+                return base64Str;
+            }
         }
 
-        /* DEEP LINK SCROLL & HIGHLIGHT SYSTEM */
         function checkAndScrollToCard() {
             if (window.location.hash) {
                 const targetCardId = window.location.hash.substring(1);
@@ -716,7 +726,18 @@
             qrContainer.innerHTML = "";
             new QRCode(qrContainer, { text: LIVE_DOMAIN_URL, width: 100, height: 100 });
 
+            // 1. Instantly load local cache so app NEVER gets stuck
+            const cachedData = localStorage.getItem('VSF_CACHED_APPS');
+            if (cachedData) {
+                try {
+                    allAppsData = JSON.parse(cachedData);
+                    filterCategory(activeCategoryFilter, document.querySelector('.filter-pill.active'));
+                } catch(e) {}
+            }
+
             runFastIntroLoader();
+            
+            // 2. Fetch fresh data from GitHub
             fetchAppsFromGitHub(() => {
                 checkAndScrollToCard();
             });
@@ -765,13 +786,14 @@
         }
 
         function fetchAppsFromGitHub(callback) {
-            fetch(GITHUB_API_URL + "?t=" + Date.now())
-            .then(res => res.json())
+            fetch(GITHUB_JSON_URL + "?t=" + Date.now())
+            .then(res => {
+                if (!res.ok) throw new Error("Raw fetch failed");
+                return res.json();
+            })
             .then(data => {
-                if(data.sha) currentFileSHA = data.sha;
-                const content = unpackUnicodeBase64(data.content);
-                const jsonParsed = JSON.parse(content);
-                allAppsData = Array.isArray(jsonParsed) ? jsonParsed : (jsonParsed.apps || []);
+                allAppsData = Array.isArray(data) ? data : (data.apps || []);
+                localStorage.setItem('VSF_CACHED_APPS', JSON.stringify(allAppsData));
                 filterCategory(activeCategoryFilter, document.querySelector('.filter-pill.active'));
                 
                 const searchInput = document.getElementById('dedicated-search-input');
@@ -779,12 +801,17 @@
 
                 isDataFetched = true;
                 if(callback) callback();
+                fetchGitHubSHA();
             })
             .catch(() => {
-                fetch(GITHUB_JSON_URL + "?t=" + Date.now())
+                fetch(GITHUB_API_URL + "?t=" + Date.now())
                 .then(res => res.json())
                 .then(data => {
-                    allAppsData = Array.isArray(data) ? data : (data.apps || []);
+                    if(data.sha) currentFileSHA = data.sha;
+                    const content = unpackUnicodeBase64(data.content);
+                    const jsonParsed = JSON.parse(content);
+                    allAppsData = Array.isArray(jsonParsed) ? jsonParsed : (jsonParsed.apps || []);
+                    localStorage.setItem('VSF_CACHED_APPS', JSON.stringify(allAppsData));
                     filterCategory(activeCategoryFilter, document.querySelector('.filter-pill.active'));
                     
                     const searchInput = document.getElementById('dedicated-search-input');
@@ -794,10 +821,24 @@
                     if(callback) callback();
                 })
                 .catch(() => { 
+                    const cachedData = localStorage.getItem('VSF_CACHED_APPS');
+                    if (cachedData) {
+                        try { allAppsData = JSON.parse(cachedData); } catch(e) { allAppsData = []; }
+                    } else {
+                        allAppsData = [];
+                    }
+                    filterCategory(activeCategoryFilter, document.querySelector('.filter-pill.active'));
                     isDataFetched = true;
                     if(callback) callback(); 
                 });
             });
+        }
+
+        function fetchGitHubSHA() {
+            fetch(GITHUB_API_URL + "?t=" + Date.now())
+            .then(res => res.json())
+            .then(data => { if(data.sha) currentFileSHA = data.sha; })
+            .catch(e => {});
         }
 
         async function addAppAndPushToGitHubAPI() {
@@ -848,6 +889,7 @@
                 });
             }
 
+            localStorage.setItem('VSF_CACHED_APPS', JSON.stringify(allAppsData));
             const packedJSONString = JSON.stringify({ apps: allAppsData }, null, 2);
             const encodedContent = packUnicodeBase64(packedJSONString);
 
@@ -936,6 +978,7 @@
                 if(!token) { alert("⚠️ Enter your GitHub Token in Admin Panel first!"); return; }
 
                 allAppsData = allAppsData.filter(app => app.id != appId);
+                localStorage.setItem('VSF_CACHED_APPS', JSON.stringify(allAppsData));
                 const packedJSONString = JSON.stringify({ apps: allAppsData }, null, 2);
                 const encodedContent = packUnicodeBase64(packedJSONString);
 
@@ -959,7 +1002,6 @@
             } else if (pwd !== null) { alert("Incorrect Password!"); }
         }
 
-        /* DIRECT CARD DEEP LINKING COPY (FIXED OFFICIAL LIVE GITHUB URL) */
         function copyDirectCardLink(appId) {
             const directCardUrl = `${LIVE_DOMAIN_URL}#app-${appId}`;
             
@@ -976,14 +1018,12 @@
             });
         }
 
-        /* SHARE TO WHATSAPP DIRECTLY */
         function shareCardToWhatsApp(appId, appName) {
             const directCardUrl = `${LIVE_DOMAIN_URL}#app-${appId}`;
             const message = encodeURIComponent(`Check out "${appName}" on VSF Studio Hub!\n\nDirect Link: ${directCardUrl}`);
             window.open(`https://api.whatsapp.com/send?text=${message}`, '_blank');
         }
 
-        /* 5 SECONDS HOLD TIMER ON CARD THREE LINES */
         let cardHoldTimer = null;
         
         function startCardHoldTimer(event, appId) {
@@ -992,7 +1032,7 @@
             cardHoldTimer = setTimeout(() => {
                 if (navigator.vibrate) navigator.vibrate(100);
                 openCardMenu(event, appId);
-            }, 5000); // Exact 5 seconds hold
+            }, 5000);
         }
 
         function cancelCardHoldTimer() {
@@ -1045,45 +1085,39 @@
             }
         }
 
-        /* SMART VIDEO SCROLL EVENT LISTENER */
-        function handleMediaScroll(wrapper) {
-            const videos = wrapper.querySelectorAll('video');
-            const scrollLeft = wrapper.scrollLeft;
-            const itemWidth = wrapper.clientWidth;
-
-            videos.forEach(vid => {
-                const vidPosition = vid.parentElement.offsetLeft;
-                if (Math.abs(scrollLeft - vidPosition) > itemWidth / 2) {
-                    vid.pause();
-                }
-            });
+        /* PLAY OVERLAY CLICK HANDLER */
+        function playCardVideo(appId) {
+            const playerBox = document.getElementById(`video-player-${appId}`);
+            const videoTag = document.getElementById(`video-elem-${appId}`);
+            if (playerBox && videoTag) {
+                playerBox.style.display = 'block';
+                videoTag.play();
+            }
         }
 
+        /* CARD RENDERER WITH PLAY OVERLAY BUTTON */
         function buildCardHTML(app) {
             const imgPos = app.pos || '50% 50%';
             const imgZoom = app.zoom || '1';
 
             let hasVideo = app.previewVideo && app.previewVideo.trim() !== "";
-            let hintBadgeText = hasVideo ? "👉 Swipe Right for Video 🎬" : "🖼️ Main Poster";
-
-            let mediaSlides = `
-                <div class="media-slide-item">
-                    <img src="${app.banner}" alt="${app.name}" style="object-position: ${imgPos}; transform: scale(${imgZoom});">
-                </div>
-            `;
+            let videoOverlayHTML = "";
 
             if (hasVideo) {
-                mediaSlides += `
-                    <div class="media-slide-item">
-                        <video src="${app.previewVideo}" controls playsinline preload="metadata" onplay="event.stopPropagation()"></video>
+                videoOverlayHTML = `
+                    <div class="card-play-overlay-btn" onclick="playCardVideo('${app.id}')" title="Play Video Preview">▶</div>
+                    <div class="card-video-player-box" id="video-player-${app.id}">
+                        <video id="video-elem-${app.id}" class="card-preview-video-tag" src="${app.previewVideo}" controls playsinline preload="metadata"></video>
                     </div>
                 `;
             }
 
             return `
-                <div class="media-scroll-wrapper" onscroll="handleMediaScroll(this)">
-                    ${mediaSlides}
-                    <span class="swipe-hint-badge">${hintBadgeText}</span>
+                <div class="media-container-wrapper">
+                    <div class="media-poster-box">
+                        <img src="${app.banner}" alt="${app.name}" style="object-position: ${imgPos}; transform: scale(${imgZoom});">
+                    </div>
+                    ${videoOverlayHTML}
                 </div>
                 <div class="card-content-area">
                     <div>
@@ -1162,7 +1196,6 @@
             alert("Hub link copied!");
         }
 
-        /* BRAND LOGO: EXACT 10 SECONDS HOLD TO OPEN ADMIN PANEL */
         const brandLogoTrigger = document.getElementById('brandLogoTrigger');
         let logoPressTimer;
         
