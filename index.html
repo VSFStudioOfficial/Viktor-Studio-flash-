@@ -63,6 +63,66 @@
             font-size: 0.9rem;
         }
 
+        /* Simulated Download Modal Popup */
+        #download-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(4, 6, 10, 0.85);
+            backdrop-filter: blur(8px);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 20000;
+            padding: 20px;
+        }
+        .download-modal-box {
+            background: var(--card-bg);
+            border: 2px solid var(--primary-color);
+            border-radius: 12px;
+            padding: 25px;
+            width: 100%;
+            max-width: 380px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(0, 210, 255, 0.4);
+        }
+        .download-modal-title {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+        .download-modal-appname {
+            font-size: 0.95rem;
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        .download-progress-bar-wrap {
+            width: 100%;
+            height: 8px;
+            background: #070a14;
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid rgba(0, 210, 255, 0.3);
+            margin-bottom: 12px;
+        }
+        .download-progress-bar-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            box-shadow: 0 0 10px var(--accent-color);
+            transition: width 0.05s linear;
+        }
+        .download-percentage-text {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
         /* Intro Screen */
         #intro-screen {
             position: fixed;
@@ -253,11 +313,22 @@
         @media screen and (min-width: 768px) { .filter-pill { padding: 8px 18px; font-size: 0.9rem; } }
         .filter-pill.active { background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: #04060a; border-color: var(--accent-color); font-weight: 800; }
 
-        /* Responsive Grid Layout for Cards */
-        .apk-grid { display: grid; grid-template-columns: 1fr; gap: 20px; width: 100%; }
-        @media screen and (min-width: 640px) { .apk-grid { grid-template-columns: repeat(2, 1fr); gap: 22px; } }
-        @media screen and (min-width: 1024px) { .apk-grid { grid-template-columns: repeat(3, 1fr); gap: 25px; } }
-        @media screen and (min-width: 1350px) { .apk-grid { grid-template-columns: repeat(4, 1fr); gap: 25px; } }
+        /* ULTRA RESPONSIVE GRID LAYOUT FOR CARDS */
+        .apk-grid { 
+            display: grid; 
+            grid-template-columns: 1fr; /* Mobile: 1 Card per row */
+            gap: 20px; 
+            width: 100%; 
+        }
+        @media screen and (min-width: 640px) { 
+            .apk-grid { grid-template-columns: repeat(2, 1fr); gap: 22px; } 
+        }
+        @media screen and (min-width: 1024px) { 
+            .apk-grid { grid-template-columns: repeat(3, 1fr); gap: 25px; } 
+        }
+        @media screen and (min-width: 1280px) { 
+            .apk-grid { grid-template-columns: repeat(4, 1fr); gap: 25px; } /* Desktop: 4 Cards per row */
+        }
 
         /* CARD STYLE */
         .apk-card {
@@ -487,6 +558,18 @@
 
     <div id="offline-banner">⚠️ No Internet Connection! You are currently offline.</div>
 
+    <!-- Simulated Direct Download Modal -->
+    <div id="download-modal">
+        <div class="download-modal-box">
+            <div class="download-modal-title">📥 Preparing Direct Download</div>
+            <div class="download-modal-appname" id="modalAppName">App Name</div>
+            <div class="download-progress-bar-wrap">
+                <div class="download-progress-bar-fill" id="modalProgressFill"></div>
+            </div>
+            <div class="download-percentage-text" id="modalPercentageText">Fetching from Cloud: 0%</div>
+        </div>
+    </div>
+
     <!-- Intro / Loading Screen -->
     <div id="intro-screen">
         <div class="smoke-container">
@@ -615,8 +698,8 @@
             <input type="url" id="gdriveLinkInput" class="form-control" placeholder="https://drive.google.com/...">
         </div>
         <div class="form-group">
-            <label for="videoLinkInput">External Video Link (YouTube / Web Link):</label>
-            <input type="url" id="videoLinkInput" class="form-control" placeholder="https://youtube.com/...">
+            <label for="videoLinkInput">External Smart Video Link (YouTube / Instagram / Web):</label>
+            <input type="url" id="videoLinkInput" class="form-control" placeholder="https://youtube.com/... or https://instagram.com/...">
         </div>
         
         <div class="save-config-btn-wrapper">
@@ -653,6 +736,7 @@
         let tempVideoBase64 = "";
         let editingAppId = null;
         let activeCategoryFilter = 'all';
+        let activeDownloadInterval = null;
 
         const introScreen = document.getElementById('intro-screen');
         const loaderFillBar = document.getElementById('loaderFillBar');
@@ -821,12 +905,11 @@
                     if(callback) callback();
                 })
                 .catch(() => { 
-                    // Fallback if apps.json doesn't exist yet on GitHub
                     const cachedData = localStorage.getItem('VSF_CACHED_APPS');
                     if (cachedData) {
                         try { allAppsData = JSON.parse(cachedData); } catch(e) { allAppsData = []; }
                     } else {
-                        allAppsData = []; // Default empty array so app never gets stuck
+                        allAppsData = [];
                     }
                     filterCategory(activeCategoryFilter, document.querySelector('.filter-pill.active'));
                     isDataFetched = true;
@@ -1104,7 +1187,51 @@
             }
         }
 
-        /* CARD RENDERER WITH PLAY OVERLAY BUTTON */
+        /* SECURE SIMULATED DIRECT DOWNLOAD HANDLER */
+        function triggerSimulatedDownload(appName, gdriveLink) {
+            const modal = document.getElementById('download-modal');
+            const modalAppName = document.getElementById('modalAppName');
+            const modalProgressFill = document.getElementById('modalProgressFill');
+            const modalPercentageText = document.getElementById('modalPercentageText');
+
+            modalAppName.innerText = appName;
+            modal.style.display = 'flex';
+            
+            let progress = 0;
+            modalProgressFill.style.width = "0%";
+            modalPercentageText.innerText = `Preparing Direct Download: 0%`;
+
+            if (activeDownloadInterval) {
+                clearInterval(activeDownloadInterval);
+            }
+
+            activeDownloadInterval = setInterval(() => {
+                progress += Math.floor(Math.random() * 12) + 8;
+                if (progress > 100) progress = 100;
+
+                modalProgressFill.style.width = progress + '%';
+                modalPercentageText.innerText = `Downloading to device: ${progress}%`;
+
+                if (progress === 100) {
+                    clearInterval(activeDownloadInterval);
+                    activeDownloadInterval = null;
+                    setTimeout(() => {
+                        modal.style.display = 'none';
+                        
+                        // Mobile popup blocker bypass trigger
+                        const anchor = document.createElement('a');
+                        anchor.href = gdriveLink || '#';
+                        anchor.target = '_blank';
+                        anchor.rel = 'noopener noreferrer';
+                        document.body.appendChild(anchor);
+                        anchor.click();
+                        document.body.removeChild(anchor);
+                    }, 400);
+                }
+            }, 120);
+        }
+
+        /* CARD RENDERER WITH PLAY OVERLAY BUTTON & SMART LINKS */
         function buildCardHTML(app) {
             const imgPos = app.pos || '50% 50%';
             const imgZoom = app.zoom || '1';
@@ -1120,6 +1247,10 @@
                     </div>
                 `;
             }
+
+            const safeAppName = (app.name || "").replace(/'/g, "\\'");
+            const safeLink = (app.link || "#").replace(/'/g, "\\'");
+            const smartVideoLink = app.videoLink && app.videoLink !== "#" ? app.videoLink : "#";
 
             return `
                 <div class="media-container-wrapper">
@@ -1145,7 +1276,7 @@
                             </button>
                             <div class="card-popup-menu" id="menu-${app.id}" onclick="event.stopPropagation()">
                                 <button class="card-popup-option" onclick="copyDirectCardLink('${app.id}')">🔗 Copy Direct Link</button>
-                                <button class="card-popup-option" onclick="shareCardToWhatsApp('${app.id}', '${app.name.replace(/'/g, "\\'")}')">💬 Share on WhatsApp</button>
+                                <button class="card-popup-option" onclick="shareCardToWhatsApp('${app.id}', '${safeAppName}')">💬 Share on WhatsApp</button>
                                 <button class="card-popup-option" onclick="editApp('${app.id}')">✏️ Edit App</button>
                                 <button class="card-popup-option card-delete-option" onclick="deleteApp('${app.id}')">🗑️ Delete</button>
                             </div>
@@ -1154,8 +1285,8 @@
                         <p class="app-desc">${app.desc}</p>
                     </div>
                     <div class="card-links-group">
-                        <a href="${app.link || '#'}" target="_blank" class="download-btn">Download</a>
-                        <a href="${app.videoLink || '#'}" target="_blank" class="video-btn">▶ Watch Link</a>
+                        <button type="button" class="download-btn" onclick="triggerSimulatedDownload('${safeAppName}', '${safeLink}')">Download</button>
+                        <a href="${smartVideoLink}" target="_blank" class="video-btn">▶ Watch Link</a>
                     </div>
                 </div>
             `;
@@ -1185,12 +1316,18 @@
             renderCards(cat === 'all' ? allAppsData : allAppsData.filter(app => app.category === cat), 'card-container');
         }
 
+        /* UPDATED SEARCH FUNCTION: BLANK UNTIL USER TYPES */
         function searchAppsLocally(query) {
             const q = (query || "").toLowerCase().trim();
+            const container = document.getElementById('search-results-container');
+            
             if (!q) {
-                renderCards(allAppsData, 'search-results-container');
+                if (container) {
+                    container.innerHTML = `<p style="color: #64748b; grid-column: 1/-1; text-align: center; padding: 40px; font-weight: 600;">🔍 Type app name to search...</p>`;
+                }
                 return;
             }
+
             const filtered = allAppsData.filter(app => 
                 (app.name && app.name.toLowerCase().includes(q)) || 
                 (app.desc && app.desc.toLowerCase().includes(q)) || 
