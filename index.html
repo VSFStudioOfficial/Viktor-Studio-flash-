@@ -27,6 +27,7 @@
             --primary-color: #00d2ff;
             --secondary-color: #3a7bd5;
             --accent-color: #00ffcc;
+            --gold-color: #ffd700;
             --bg-color: #070a14;
             --card-bg: #111827;
             --border-color: #1f2937;
@@ -123,7 +124,7 @@
             color: var(--accent-color);
         }
 
-        /* Intro Screen */
+        /* Intro Screen with High-Tech Processor Light-Speed Lines Animation */
         #intro-screen {
             position: fixed;
             top: 0;
@@ -141,33 +142,57 @@
             padding: 20px;
         }
 
-        .smoke-container {
+        .processor-grid-bg {
             position: absolute;
             width: 100%;
             height: 100%;
             top: 0;
             left: 0;
-            pointer-events: none;
+            background-image: 
+                linear-gradient(rgba(0, 210, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 210, 255, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
             z-index: 1;
-            filter: blur(35px);
-            opacity: 0.6;
         }
 
-        .smoke-cloud {
+        .light-speed-line {
             position: absolute;
-            background: radial-gradient(circle, rgba(0, 210, 255, 0.45) 0%, rgba(58, 123, 213, 0.15) 50%, transparent 80%);
-            border-radius: 50%;
-            animation: smokeRiseUp 6s infinite linear;
+            background: linear-gradient(90deg, transparent, var(--accent-color), var(--primary-color), transparent);
+            height: 2px;
+            width: 100%;
+            opacity: 0.7;
+            filter: drop-shadow(0 0 8px var(--accent-color));
+            z-index: 2;
+            animation: lightSpeedMove 2.5s infinite linear;
         }
 
-        .smoke-cloud:nth-child(1) { width: 300px; height: 300px; bottom: -100px; left: 10%; animation-duration: 5s; }
-        .smoke-cloud:nth-child(2) { width: 400px; height: 400px; bottom: -150px; right: 15%; animation-duration: 7s; animation-delay: 1.5s; }
-        .smoke-cloud:nth-child(3) { width: 350px; height: 350px; bottom: -120px; left: 40%; animation-duration: 6s; animation-delay: 3s; }
+        .light-speed-line:nth-child(1) { top: 15%; animation-duration: 2s; animation-delay: 0s; }
+        .light-speed-line:nth-child(2) { top: 35%; animation-duration: 3s; animation-delay: 0.5s; height: 3px; }
+        .light-speed-line:nth-child(3) { top: 65%; animation-duration: 1.8s; animation-delay: 1s; }
+        .light-speed-line:nth-child(4) { top: 85%; animation-duration: 2.2s; animation-delay: 0.3s; height: 3px; }
 
-        @keyframes smokeRiseUp {
-            0% { transform: translateY(0px) scale(0.8) rotate(0deg); opacity: 0.2; }
-            50% { opacity: 0.7; }
-            100% { transform: translateY(-500px) scale(1.6) rotate(45deg); opacity: 0; }
+        @keyframes lightSpeedMove {
+            0% { transform: translateX(-100%) scaleX(0.5); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateX(100%) scaleX(1.2); opacity: 0; }
+        }
+
+        .vertical-laser {
+            position: absolute;
+            background: linear-gradient(180deg, transparent, var(--primary-color), transparent);
+            width: 2px;
+            height: 100%;
+            z-index: 2;
+            animation: verticalLaserMove 3s infinite linear;
+        }
+
+        .vertical-laser:nth-child(5) { left: 25%; animation-duration: 2.5s; }
+        .vertical-laser:nth-child(6) { left: 75%; animation-duration: 3.2s; animation-delay: 1s; }
+
+        @keyframes verticalLaserMove {
+            0% { transform: translateY(-100%); opacity: 0; }
+            50% { opacity: 0.8; }
+            100% { transform: translateY(100%); opacity: 0; }
         }
 
         .intro-banner {
@@ -175,10 +200,10 @@
             max-width: 250px;
             height: auto;
             border-radius: 8px;
-            box-shadow: 0 0 35px rgba(0, 210, 255, 0.4);
-            border: 1px solid var(--primary-color);
+            box-shadow: 0 0 35px rgba(0, 210, 255, 0.5);
+            border: 2px solid var(--primary-color);
             position: relative;
-            z-index: 2;
+            z-index: 5;
         }
 
         .intro-title {
@@ -192,7 +217,7 @@
             letter-spacing: 2px;
             text-align: center;
             position: relative;
-            z-index: 2;
+            z-index: 5;
         }
 
         .loading-percentage {
@@ -201,7 +226,7 @@
             font-weight: 700;
             color: var(--accent-color);
             position: relative;
-            z-index: 2;
+            z-index: 5;
         }
 
         .loader-bar {
@@ -213,7 +238,7 @@
             overflow: hidden;
             position: relative;
             border: 1px solid rgba(0, 210, 255, 0.3);
-            z-index: 2;
+            z-index: 5;
         }
 
         .loader-fill {
@@ -298,13 +323,21 @@
             box-shadow: 0 0 25px rgba(0, 210, 255, 0.3);
         }
 
+        .hero-banner-section.premium-banner {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(218, 165, 32, 0.2) 50%, rgba(17, 24, 39, 0.95) 100%);
+            border: 2px solid var(--gold-color);
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.3);
+        }
+
         @media screen and (min-width: 768px) {
             .hero-banner-section { padding: 25px 30px; margin-bottom: 30px; }
         }
 
-        .hero-title { font-size: 1.35rem; font-weight: 800; margin-bottom: 6px; color: #fff; }
+        .hero-title { font-size: 1.35rem; font-weight: 800; margin-bottom: 6px; color: #fff; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
         @media screen and (min-width: 768px) { .hero-title { font-size: 1.8rem; } }
         .hero-title span { background: linear-gradient(45deg, var(--primary-color), var(--accent-color)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero-title span.gold-text { background: linear-gradient(45deg, var(--gold-color), #fff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero-title img.hero-logo-icon { height: 28px; width: auto; border-radius: 4px; vertical-align: middle; border: 1px solid var(--gold-color); }
         .hero-desc { font-size: 0.85rem; color: #cbd5e1; margin-bottom: 12px; }
         @media screen and (min-width: 768px) { .hero-desc { font-size: 1rem; margin-bottom: 18px; } }
 
@@ -312,11 +345,12 @@
         .filter-pill { background: rgba(17, 24, 39, 0.8); border: 1px solid #374151; color: #cbd5e1; padding: 6px 14px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
         @media screen and (min-width: 768px) { .filter-pill { padding: 8px 18px; font-size: 0.9rem; } }
         .filter-pill.active { background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: #04060a; border-color: var(--accent-color); font-weight: 800; }
+        .filter-pill.active-gold { background: linear-gradient(135deg, var(--gold-color), #b8860b); color: #04060a; border-color: #fff; font-weight: 800; }
 
         /* ULTRA RESPONSIVE GRID LAYOUT FOR CARDS */
         .apk-grid { 
             display: grid; 
-            grid-template-columns: 1fr; /* Mobile: 1 Card per row */
+            grid-template-columns: 1fr; 
             gap: 20px; 
             width: 100%; 
         }
@@ -327,7 +361,7 @@
             .apk-grid { grid-template-columns: repeat(3, 1fr); gap: 25px; } 
         }
         @media screen and (min-width: 1280px) { 
-            .apk-grid { grid-template-columns: repeat(4, 1fr); gap: 25px; } /* Desktop: 4 Cards per row */
+            .apk-grid { grid-template-columns: repeat(4, 1fr); gap: 25px; } 
         }
 
         /* CARD STYLE */
@@ -344,13 +378,17 @@
             transition: all 0.4s ease;
         }
 
+        .apk-card.premium-card {
+            border: 1px solid rgba(255, 215, 0, 0.4);
+        }
+
         .apk-card.highlighted-card {
             border: 2px solid var(--accent-color) !important;
             box-shadow: 0 0 30px rgba(0, 255, 204, 0.8) !important;
             transform: scale(1.02);
         }
 
-        /* MEDIA CONTAINER (SINGLE POSTER WITH PLAY OVERLAY) */
+        /* MEDIA CONTAINER */
         .media-container-wrapper {
             position: relative;
             width: 100%;
@@ -405,7 +443,7 @@
             background: var(--accent-color);
         }
 
-        /* VIDEO PLAYER CONTAINER (HIDDEN UNTIL PLAY CLICKED) */
+        /* VIDEO PLAYER CONTAINER */
         .card-video-player-box {
             position: absolute;
             top: 0;
@@ -428,16 +466,17 @@
 
         .card-content-area { padding: 16px; display: flex; flex-direction: column; justify-content: space-between; flex-grow: 1; }
         
-        /* CARD TOP HEADER WITH 3 DOTS OPTIONS MENU */
         .card-top-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; gap: 6px; position: relative; }
-        .card-category-badge { background: rgba(0, 210, 255, 0.15); color: var(--primary-color); font-size: 0.7rem; font-weight: 700; padding: 3px 8px; border-radius: 4px; text-transform: uppercase; border: 1px solid rgba(0, 210, 255, 0.3); }
+        .card-category-badge { background: rgba(0, 210, 255, 0.15); color: var(--primary-color); font-size: 0.7rem; font-weight: 700; padding: 3px 8px; border-radius: 4px; text-transform: uppercase; border: 1px solid rgba(0, 210, 255, 0.3); display: inline-flex; align-items: center; gap: 4px; }
+        .card-category-badge.gold-badge { background: rgba(255, 215, 0, 0.15); color: var(--gold-color); border: 1px solid rgba(255, 215, 0, 0.4); }
+        .badge-logo-img { height: 12px; width: auto; border-radius: 2px; }
 
         .card-menu-dots {
             background: transparent;
             border: 1px solid transparent;
             border-radius: 6px;
             cursor: pointer;
-            display: flex;
+            display: none;
             flex-direction: column;
             gap: 3px;
             padding: 6px;
@@ -446,6 +485,10 @@
             touch-action: manipulation;
             outline: none;
         }
+        .admin-unlocked .card-menu-dots {
+            display: flex;
+        }
+
         .card-menu-dots span {
             display: block;
             width: 14px;
@@ -493,14 +536,20 @@
 
         .card-links-group { display: flex; gap: 10px; width: 100%; }
         .download-btn { flex: 1; text-align: center; font-weight: 700; padding: 10px 8px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; cursor: pointer; background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: #0b0f19; border: none; }
+        .download-btn.gold-btn { background: linear-gradient(135deg, var(--gold-color), #b8860b); color: #000; }
         .video-btn { flex: 1; text-align: center; font-weight: 700; padding: 10px 8px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; cursor: pointer; background: rgba(0, 210, 255, 0.12); color: var(--primary-color); border: 1px solid rgba(0, 210, 255, 0.4); }
 
         /* Admin Panel */
         #section-admin-panel { max-width: 850px; margin: 0 auto; background: var(--card-bg); border: 2px solid var(--primary-color); border-radius: 12px; padding: 20px; box-shadow: 0 0 25px rgba(0, 210, 255, 0.3); }
+        #section-admin-panel.premium-target { border-color: var(--gold-color); box-shadow: 0 0 25px rgba(255, 215, 0, 0.3); }
         @media screen and (min-width: 768px) { #section-admin-panel { padding: 35px; } }
 
         .admin-panel-title { font-size: 1.6rem; font-weight: 800; background: linear-gradient(45deg, var(--primary-color), var(--accent-color)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+        .admin-panel-title.gold-title { background: linear-gradient(45deg, var(--gold-color), #fff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         @media screen and (min-width: 768px) { .admin-panel-title { font-size: 2rem; } }
+
+        .target-mode-indicator { background: rgba(0, 210, 255, 0.1); border: 1px solid var(--primary-color); color: var(--primary-color); padding: 8px 12px; border-radius: 6px; font-weight: 700; font-size: 0.85rem; margin-bottom: 15px; display: inline-flex; align-items: center; gap: 6px; }
+        .target-mode-indicator.gold-mode { background: rgba(255, 215, 0, 0.1); border-color: var(--gold-color); color: var(--gold-color); }
 
         .form-group { margin-bottom: 16px; }
         .form-group label { display: block; font-size: 0.85rem; font-weight: 600; color: #e5e7eb; margin-bottom: 6px; }
@@ -545,16 +594,19 @@
 
         .save-config-btn-wrapper { position: relative; width: 100%; border-radius: 6px; overflow: hidden; box-shadow: 0 0 15px rgba(0, 210, 255, 0.4); margin-top: 10px; }
         .save-config-btn { background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: #0b0f19; font-weight: 700; padding: 12px 20px; border: none; font-size: 0.95rem; cursor: pointer; width: 100%; display: block; position: relative; z-index: 2; }
+        .save-config-btn.gold-btn-sync { background: linear-gradient(135deg, var(--gold-color), #b8860b); color: #000; }
         .btn-progress-line { position: absolute; bottom: 0; left: 0; height: 4px; width: 0%; background: var(--accent-color); z-index: 3; transition: width 0.3s ease; }
 
         /* Bottom Nav Bar */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(11, 15, 25, 0.95); backdrop-filter: blur(16px); border-top: 1px solid #1e293b; padding: 10px 20px; display: flex; align-items: center; justify-content: space-around; z-index: 100; }
-        .nav-btn { background: #111827; border: 1px solid var(--border-color); color: #9ca3af; padding: 8px 16px; border-radius: 6px; font-size: 0.85rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; }
-        @media screen and (min-width: 768px) { .nav-btn { padding: 10px 24px; font-size: 0.95rem; } }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(11, 15, 25, 0.95); backdrop-filter: blur(16px); border-top: 1px solid #1e293b; padding: 10px 15px; display: flex; align-items: center; justify-content: space-around; z-index: 100; gap: 5px; }
+        .nav-btn { background: #111827; border: 1px solid var(--border-color); color: #9ca3af; padding: 8px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; flex: 1; justify-content: center; }
+        @media screen and (min-width: 768px) { .nav-btn { padding: 10px 20px; font-size: 0.9rem; } }
         .nav-btn.active { border-color: var(--primary-color); background: linear-gradient(135deg, rgba(0, 210, 255, 0.2), rgba(58, 123, 213, 0.3)); color: var(--primary-color); }
+        .nav-btn.active-gold { border-color: var(--gold-color); background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(184, 134, 11, 0.3)); color: var(--gold-color); }
+        .nav-logo-icon { height: 18px; width: auto; border-radius: 3px; vertical-align: middle; }
     </style>
 </head>
-<body>
+<body id="mainBody">
 
     <div id="offline-banner">⚠️ No Internet Connection! You are currently offline.</div>
 
@@ -570,13 +622,16 @@
         </div>
     </div>
 
-    <!-- Intro / Loading Screen -->
+    <!-- Intro / Loading Screen with Processor Light-Speed Lines -->
     <div id="intro-screen">
-        <div class="smoke-container">
-            <div class="smoke-cloud"></div>
-            <div class="smoke-cloud"></div>
-            <div class="smoke-cloud"></div>
-        </div>
+        <div class="processor-grid-bg"></div>
+        <div class="light-speed-line"></div>
+        <div class="light-speed-line"></div>
+        <div class="light-speed-line"></div>
+        <div class="light-speed-line"></div>
+        <div class="vertical-laser"></div>
+        <div class="vertical-laser"></div>
+
         <img src="logo.jpg" alt="Logo" class="intro-banner">
         <div class="intro-title">VSF Studio</div>
         <div class="loading-percentage" id="loadingPercentText">Connecting to server for VSF: 0%</div>
@@ -586,7 +641,7 @@
     </div>
 
     <header>
-        <div class="header-left" id="brandLogoTrigger" title="Hold for 10 seconds to open Admin">
+        <div class="header-left" id="brandLogoTrigger" title="Logo">
             <img src="logo.jpg" alt="Logo" class="header-banner">
             <span class="brand-name">VSF Studio</span>
         </div>
@@ -614,19 +669,35 @@
         <div class="hero-banner-section">
             <h1 class="hero-title">Welcome to <span>VSF Studio Cloud Hub</span></h1>
             <p class="hero-desc">Cloud hub providing APK files, AI assistants, battle royale games, and custom software.</p>
-            <div class="category-filter-pills">
-                <button class="filter-pill active" onclick="filterCategory('all', this)">All Files</button>
-                <button class="filter-pill" onclick="filterCategory('music', this)">Music Production</button>
-                <button class="filter-pill" onclick="filterCategory('dev', this)">Development</button>
-                <button class="filter-pill" onclick="filterCategory('tools', this)">Utilities</button>
+            <div class="category-filter-pills" id="home-pills-container">
+                <button class="filter-pill active" onclick="filterCategory('all', this, 'card-container', false)">All Files</button>
+                <button class="filter-pill" onclick="filterCategory('music', this, 'card-container', false)">Music Production</button>
+                <button class="filter-pill" onclick="filterCategory('dev', this, 'card-container', false)">Development</button>
+                <button class="filter-pill" onclick="filterCategory('tools', this, 'card-container', false)">Utilities</button>
             </div>
         </div>
         <div class="apk-grid" id="card-container"></div>
     </div>
 
-    <!-- SECTION 2: ADMIN PANEL -->
+    <!-- SECTION 2: PREMIUM SECTION -->
+    <div id="section-premium" class="page-section">
+        <div class="hero-banner-section premium-banner">
+            <h1 class="hero-title"><img src="logo.jpg" alt="VSF Logo" class="hero-logo-icon"> <span class="gold-text">VSF Premium Zone</span></h1>
+            <p class="hero-desc">Exclusive VIP Packs, High-Grade Sound Fonts, Pro Tools, and Specialized Software.</p>
+            <div class="category-filter-pills" id="premium-pills-container">
+                <button class="filter-pill active-gold" onclick="filterCategory('all', this, 'premium-card-container', true)">All Premium</button>
+                <button class="filter-pill" onclick="filterCategory('music', this, 'premium-card-container', true)">Pro Music</button>
+                <button class="filter-pill" onclick="filterCategory('dev', this, 'premium-card-container', true)">VIP Dev</button>
+                <button class="filter-pill" onclick="filterCategory('tools', this, 'premium-card-container', true)">Pro Tools</button>
+            </div>
+        </div>
+        <div class="apk-grid" id="premium-card-container"></div>
+    </div>
+
+    <!-- SECTION 3: ADMIN PANEL -->
     <div id="section-admin-panel" class="page-section">
         <h1 class="admin-panel-title" id="adminPanelTitleText">Cloud Admin Console</h1>
+        <div class="target-mode-indicator" id="targetModeIndicator">📍 Target Upload: HOME SECTION</div>
         <p style="color: #9ca3af; margin-bottom: 16px; font-size: 0.9rem;" id="adminPanelSubText">Direct Live Auto-Sync to GitHub Repository.</p>
         
         <div class="form-group" style="border: 1px dashed var(--primary-color); padding: 12px; border-radius: 6px; background: rgba(0,210,255,0.05);">
@@ -708,7 +779,7 @@
         </div>
     </div>
 
-    <!-- SECTION 3: SEARCH -->
+    <!-- SECTION 4: SEARCH -->
     <div id="section-search" class="page-section">
         <div class="hero-banner-section">
             <h1 class="hero-title">Search <span>App Hub</span></h1>
@@ -717,9 +788,11 @@
         <div class="apk-grid" id="search-results-container"></div>
     </div>
 
+    <!-- BOTTOM NAVIGATION BAR -->
     <div class="bottom-nav">
-        <button class="nav-btn active" id="navHomeBtn" onclick="switchSection('home')"><span class="nav-icon">🏠</span> Home Section</button>
-        <button class="nav-btn" id="navSearchBtn" onclick="switchSection('search')"><span class="nav-icon">🔍</span> Search Section</button>
+        <button class="nav-btn active" id="navHomeBtn" onclick="switchSection('home')"><span class="nav-icon">🏠</span> Home</button>
+        <button class="nav-btn" id="navPremiumBtn" onclick="switchSection('premium')"><img src="logo.jpg" alt="Logo" class="nav-logo-icon"> Premium</button>
+        <button class="nav-btn" id="navSearchBtn" onclick="switchSection('search')"><span class="nav-icon">🔍</span> Search</button>
     </div>
 
     <script>
@@ -735,8 +808,9 @@
         let tempImageBase64 = "";
         let tempVideoBase64 = "";
         let editingAppId = null;
-        let activeCategoryFilter = 'all';
         let activeDownloadInterval = null;
+        
+        let currentActiveSectionContext = 'home';
 
         const introScreen = document.getElementById('intro-screen');
         const loaderFillBar = document.getElementById('loaderFillBar');
@@ -792,9 +866,20 @@
                 setTimeout(() => {
                     const targetElem = document.getElementById(targetCardId);
                     if (targetElem) {
-                        targetElem.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        document.querySelectorAll('.apk-card').forEach(c => c.classList.remove('highlighted-card'));
-                        targetElem.classList.add('highlighted-card');
+                        const targetApp = allAppsData.find(a => `app-${a.id}` === targetCardId);
+                        if(targetApp && targetApp.isPremium) {
+                            switchSection('premium');
+                        } else {
+                            switchSection('home');
+                        }
+                        setTimeout(() => {
+                            const elem = document.getElementById(targetCardId);
+                            if(elem) {
+                                elem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                document.querySelectorAll('.apk-card').forEach(c => c.classList.remove('highlighted-card'));
+                                elem.classList.add('highlighted-card');
+                            }
+                        }, 200);
                     }
                 }, 400);
             }
@@ -810,18 +895,16 @@
             qrContainer.innerHTML = "";
             new QRCode(qrContainer, { text: LIVE_DOMAIN_URL, width: 100, height: 100 });
 
-            // 1. Instantly load local cache so app NEVER gets stuck
             const cachedData = localStorage.getItem('VSF_CACHED_APPS');
             if (cachedData) {
                 try {
                     allAppsData = JSON.parse(cachedData);
-                    filterCategory(activeCategoryFilter, document.querySelector('.filter-pill.active'));
+                    renderAllSections();
                 } catch(e) {}
             }
 
             runFastIntroLoader();
             
-            // 2. Fetch fresh data from GitHub with fallback
             fetchAppsFromGitHub(() => {
                 checkAndScrollToCard();
             });
@@ -869,6 +952,17 @@
             });
         }
 
+        function renderAllSections() {
+            const homeApps = allAppsData.filter(app => !app.isPremium);
+            const premiumApps = allAppsData.filter(app => app.isPremium);
+
+            renderCards(homeApps, 'card-container');
+            renderCards(premiumApps, 'premium-card-container', true);
+
+            const searchInput = document.getElementById('dedicated-search-input');
+            if(searchInput) searchAppsLocally(searchInput.value);
+        }
+
         function fetchAppsFromGitHub(callback) {
             fetch(GITHUB_JSON_URL + "?t=" + Date.now())
             .then(res => {
@@ -878,10 +972,7 @@
             .then(data => {
                 allAppsData = Array.isArray(data) ? data : (data.apps || []);
                 localStorage.setItem('VSF_CACHED_APPS', JSON.stringify(allAppsData));
-                filterCategory(activeCategoryFilter, document.querySelector('.filter-pill.active'));
-                
-                const searchInput = document.getElementById('dedicated-search-input');
-                if(searchInput) searchAppsLocally(searchInput.value);
+                renderAllSections();
 
                 isDataFetched = true;
                 if(callback) callback();
@@ -896,10 +987,7 @@
                     const jsonParsed = JSON.parse(content);
                     allAppsData = Array.isArray(jsonParsed) ? jsonParsed : (jsonParsed.apps || []);
                     localStorage.setItem('VSF_CACHED_APPS', JSON.stringify(allAppsData));
-                    filterCategory(activeCategoryFilter, document.querySelector('.filter-pill.active'));
-                    
-                    const searchInput = document.getElementById('dedicated-search-input');
-                    if(searchInput) searchAppsLocally(searchInput.value);
+                    renderAllSections();
 
                     isDataFetched = true;
                     if(callback) callback();
@@ -911,7 +999,7 @@
                     } else {
                         allAppsData = [];
                     }
-                    filterCategory(activeCategoryFilter, document.querySelector('.filter-pill.active'));
+                    renderAllSections();
                     isDataFetched = true;
                     if(callback) callback(); 
                 });
@@ -948,6 +1036,8 @@
             const zoomVal = (document.getElementById('photoSlider2').value / 100);
             const posV = document.getElementById('photoSlider3').value + '%';
 
+            const isPremiumFlag = (currentActiveSectionContext === 'premium');
+
             if (editingAppId) {
                 allAppsData = allAppsData.map(app => {
                     if (app.id === editingAppId) {
@@ -957,7 +1047,8 @@
                             banner: tempImageBase64 || app.banner,
                             previewVideo: tempVideoBase64 || app.previewVideo,
                             pos: `${posH} ${posV}`, zoom: zoomVal,
-                            link, videoLink: videoLink || "#"
+                            link, videoLink: videoLink || "#",
+                            isPremium: isPremiumFlag
                         };
                     }
                     return app;
@@ -969,6 +1060,7 @@
                     previewVideo: tempVideoBase64 || "",
                     pos: `${posH} ${posV}`, zoom: zoomVal,
                     link, videoLink: videoLink || "#",
+                    isPremium: isPremiumFlag,
                     views: 0, likes: 0, dislikes: 0
                 });
             }
@@ -993,7 +1085,8 @@
                 btn.innerText = "⏳ Syncing Live to Repository...";
                 progressLine.style.width = "85%";
 
-                const putBody = { message: editingAppId ? `Update app: ${name}` : `Add packed app: ${name}`, content: encodedContent };
+                const targetName = isPremiumFlag ? "Premium Zone" : "Home Section";
+                const putBody = { message: editingAppId ? `Update app (${targetName}): ${name}` : `Add packed app (${targetName}): ${name}`, content: encodedContent };
                 if(fileSHA) putBody.sha = fileSHA;
 
                 const putRes = await fetch(GITHUB_API_URL, {
@@ -1004,7 +1097,7 @@
 
                 if (putRes.ok) {
                     progressLine.style.width = "100%";
-                    alert(`🎉 Success! Packed data for "${name}" synced DIRECTLY to GitHub Live!`);
+                    alert(`🎉 Success! Packed data for "${name}" synced DIRECTLY to GitHub Live (${targetName})!`);
                     document.getElementById('appNameInput').value = "";
                     document.getElementById('appDescInput').value = "";
                     document.getElementById('gdriveLinkInput').value = "";
@@ -1015,7 +1108,7 @@
                     tempImageBase64 = ""; tempVideoBase64 = "";
                     editingAppId = null;
 
-                    switchSection('home');
+                    switchSection(isPremiumFlag ? 'premium' : 'home');
                     fetchAppsFromGitHub();
                 } else {
                     const err = await putRes.json();
@@ -1036,6 +1129,8 @@
                 if (!appToEdit) { alert("App not found!"); return; }
 
                 editingAppId = appToEdit.id;
+                currentActiveSectionContext = appToEdit.isPremium ? 'premium' : 'home';
+
                 document.getElementById('appVariantSelect').value = appToEdit.category || 'music';
                 document.getElementById('appNameInput').value = appToEdit.name || '';
                 document.getElementById('appDescInput').value = appToEdit.desc || '';
@@ -1085,9 +1180,7 @@
                     });
 
                     if(putRes.ok) {
-                        filterCategory(activeCategoryFilter, document.querySelector('.filter-pill.active'));
-                        const searchInput = document.getElementById('dedicated-search-input');
-                        if(searchInput) searchAppsLocally(searchInput.value);
+                        renderAllSections();
                         alert("App deleted and synced live on GitHub!");
                     } else { alert("Delete Sync Failed!"); }
                 } catch(e) { alert("Network Error during deletion."); }
@@ -1124,7 +1217,7 @@
             cardHoldTimer = setTimeout(() => {
                 if (navigator.vibrate) navigator.vibrate(100);
                 openCardMenu(event, appId);
-            }, 5000);
+            }, 3000);
         }
 
         function cancelCardHoldTimer() {
@@ -1177,7 +1270,6 @@
             }
         }
 
-        /* PLAY OVERLAY CLICK HANDLER */
         function playCardVideo(appId) {
             const playerBox = document.getElementById(`video-player-${appId}`);
             const videoTag = document.getElementById(`video-elem-${appId}`);
@@ -1187,7 +1279,6 @@
             }
         }
 
-        /* SECURE SIMULATED DIRECT DOWNLOAD HANDLER */
         function triggerSimulatedDownload(appName, gdriveLink) {
             const modal = document.getElementById('download-modal');
             const modalAppName = document.getElementById('modalAppName');
@@ -1218,7 +1309,6 @@
                     setTimeout(() => {
                         modal.style.display = 'none';
                         
-                        // Mobile popup blocker bypass trigger
                         const anchor = document.createElement('a');
                         anchor.href = gdriveLink || '#';
                         anchor.target = '_blank';
@@ -1231,8 +1321,7 @@
             }, 120);
         }
 
-        /* CARD RENDERER WITH PLAY OVERLAY BUTTON & SMART LINKS */
-        function buildCardHTML(app) {
+        function buildCardHTML(app, isPremiumCard = false) {
             const imgPos = app.pos || '50% 50%';
             const imgZoom = app.zoom || '1';
 
@@ -1252,6 +1341,9 @@
             const safeLink = (app.link || "#").replace(/'/g, "\\'");
             const smartVideoLink = app.videoLink && app.videoLink !== "#" ? app.videoLink : "#";
 
+            const badgeClass = isPremiumCard ? "card-category-badge gold-badge" : "card-category-badge";
+            const downloadBtnClass = isPremiumCard ? "download-btn gold-btn" : "download-btn";
+
             return `
                 <div class="media-container-wrapper">
                     <div class="media-poster-box">
@@ -1262,7 +1354,9 @@
                 <div class="card-content-area">
                     <div>
                         <div class="card-top-header">
-                            <span class="card-category-badge">${app.category}</span>
+                            <span class="${badgeClass}">
+                                ${isPremiumCard ? '<img src="logo.jpg" class="badge-logo-img"> PRO ' + app.category : app.category}
+                            </span>
                             <button class="card-menu-dots" 
                                     onmousedown="startCardHoldTimer(event, '${app.id}')" 
                                     onmouseup="cancelCardHoldTimer()" 
@@ -1271,7 +1365,7 @@
                                     ontouchend="cancelCardHoldTimer()" 
                                     ontouchcancel="cancelCardHoldTimer()"
                                     onclick="event.stopPropagation()"
-                                    title="Hold for 5 seconds to open Options">
+                                    title="Hold for 3 seconds to open Options">
                                 <span></span><span></span><span></span>
                             </button>
                             <div class="card-popup-menu" id="menu-${app.id}" onclick="event.stopPropagation()">
@@ -1285,38 +1379,39 @@
                         <p class="app-desc">${app.desc}</p>
                     </div>
                     <div class="card-links-group">
-                        <button type="button" class="download-btn" onclick="triggerSimulatedDownload('${safeAppName}', '${safeLink}')">Download</button>
+                        <button type="button" class="${downloadBtnClass}" onclick="triggerSimulatedDownload('${safeAppName}', '${safeLink}')">Download</button>
                         <a href="${smartVideoLink}" target="_blank" class="video-btn">▶ Watch Link</a>
                     </div>
                 </div>
             `;
         }
 
-        function renderCards(apps, containerId = 'card-container') {
+        function renderCards(apps, containerId = 'card-container', isPremium = false) {
             const container = document.getElementById(containerId);
             if (!container) return;
             container.innerHTML = "";
             if (!apps || apps.length === 0) {
-                container.innerHTML = `<p style="color: #9ca3af; grid-column: 1/-1; text-align: center; padding: 30px;">No matching app data found.</p>`;
+                container.innerHTML = `<p style="color: #9ca3af; grid-column: 1/-1; text-align: center; padding: 30px;">No matching ${isPremium ? 'Premium VIP' : ''} files found.</p>`;
                 return;
             }
             apps.forEach(app => {
                 const card = document.createElement('div');
-                card.className = 'apk-card';
+                card.className = isPremium ? 'apk-card premium-card' : 'apk-card';
                 card.id = `app-${app.id}`;
-                card.innerHTML = buildCardHTML(app);
+                card.innerHTML = buildCardHTML(app, isPremium);
                 container.appendChild(card);
             });
         }
 
-        function filterCategory(cat, btn) {
-            activeCategoryFilter = cat;
-            document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
-            if(btn) btn.classList.add('active');
-            renderCards(cat === 'all' ? allAppsData : allAppsData.filter(app => app.category === cat), 'card-container');
+        function filterCategory(cat, btn, containerId, isPremium = false) {
+            const pillsContainerId = isPremium ? 'premium-pills-container' : 'home-pills-container';
+            document.querySelectorAll(`#${pillsContainerId} .filter-pill`).forEach(p => p.classList.remove('active', 'active-gold'));
+            if(btn) btn.classList.add(isPremium ? 'active-gold' : 'active');
+            
+            const targetData = allAppsData.filter(app => isPremium ? app.isPremium : !app.isPremium);
+            renderCards(cat === 'all' ? targetData : targetData.filter(app => app.category === cat), containerId, isPremium);
         }
 
-        /* UPDATED SEARCH FUNCTION: BLANK UNTIL USER TYPES */
         function searchAppsLocally(query) {
             const q = (query || "").toLowerCase().trim();
             const container = document.getElementById('search-results-container');
@@ -1342,12 +1437,21 @@
             alert("Hub link copied!");
         }
 
+        /* LOGO HOLD TIMER LOGIC */
         const brandLogoTrigger = document.getElementById('brandLogoTrigger');
-        let logoPressTimer;
+        let logoPressTimer5s = null;
+        let logoPressTimer10s = null;
         
-        function startLogoHoldTimer() {
-            clearLogoHoldTimer();
-            logoPressTimer = setTimeout(() => {
+        function startLogoHoldTimers() {
+            clearLogoHoldTimers();
+
+            logoPressTimer5s = setTimeout(() => {
+                if (navigator.vibrate) navigator.vibrate(100);
+                document.getElementById('mainBody').classList.toggle('admin-unlocked');
+            }, 5000);
+
+            logoPressTimer10s = setTimeout(() => {
+                clearLogoHoldTimers();
                 const pwd = prompt("Enter Master Administrator Password:");
                 if (pwd === "109888977VMJ") {
                     editingAppId = null;
@@ -1359,9 +1463,7 @@
                     document.getElementById('bannerVideoTag').style.display = 'none';
                     document.getElementById('videoPlaceholderText').style.display = 'block';
                     tempImageBase64 = ""; tempVideoBase64 = "";
-                    document.getElementById('adminPanelTitleText').innerText = "Cloud Admin Console";
-                    document.getElementById('btnSyncGithub').innerText = "⚡ Pack Data & Direct Sync To GitHub Live";
-
+                    
                     switchSection('admin');
                 } else if (pwd !== null) { 
                     alert("Incorrect Password!"); 
@@ -1369,32 +1471,46 @@
             }, 10000);
         }
 
-        function clearLogoHoldTimer() {
-            if (logoPressTimer) {
-                clearTimeout(logoPressTimer);
-                logoPressTimer = null;
+        function clearLogoHoldTimers() {
+            if (logoPressTimer5s) {
+                clearTimeout(logoPressTimer5s);
+                logoPressTimer5s = null;
+            }
+            if (logoPressTimer10s) {
+                clearTimeout(logoPressTimer10s);
+                logoPressTimer10s = null;
             }
         }
 
-        brandLogoTrigger.addEventListener('mousedown', startLogoHoldTimer);
-        brandLogoTrigger.addEventListener('touchstart', startLogoHoldTimer, { passive: true });
+        brandLogoTrigger.addEventListener('mousedown', startLogoHoldTimers);
+        brandLogoTrigger.addEventListener('touchstart', startLogoHoldTimers, { passive: true });
         
-        brandLogoTrigger.addEventListener('mouseup', clearLogoHoldTimer);
-        brandLogoTrigger.addEventListener('mouseleave', clearLogoHoldTimer);
-        brandLogoTrigger.addEventListener('touchend', clearLogoHoldTimer);
-        brandLogoTrigger.addEventListener('touchcancel', clearLogoHoldTimer);
+        brandLogoTrigger.addEventListener('mouseup', clearLogoHoldTimers);
+        brandLogoTrigger.addEventListener('mouseleave', clearLogoHoldTimers);
+        brandLogoTrigger.addEventListener('touchend', clearLogoHoldTimers);
+        brandLogoTrigger.addEventListener('touchcancel', clearLogoHoldTimers);
 
         function switchSection(target) {
+            // Agar target 'admin' hai, toh currentActiveSectionContext ko disturb nahi karna hai
+            if (target !== 'admin') {
+                currentActiveSectionContext = target;
+            }
+
             document.getElementById('section-home').classList.remove('active-page');
+            document.getElementById('section-premium').classList.remove('active-page');
             document.getElementById('section-admin-panel').classList.remove('active-page');
             document.getElementById('section-search').classList.remove('active-page');
             
-            document.getElementById('navHomeBtn').classList.remove('active');
-            document.getElementById('navSearchBtn').classList.remove('active');
+            document.getElementById('navHomeBtn').classList.remove('active', 'active-gold');
+            document.getElementById('navPremiumBtn').classList.remove('active', 'active-gold');
+            document.getElementById('navSearchBtn').classList.remove('active', 'active-gold');
 
             if(target === 'home') {
                 document.getElementById('section-home').classList.add('active-page');
                 document.getElementById('navHomeBtn').classList.add('active');
+            } else if(target === 'premium') {
+                document.getElementById('section-premium').classList.add('active-page');
+                document.getElementById('navPremiumBtn').classList.add('active-gold');
             } else if(target === 'search') {
                 document.getElementById('section-search').classList.add('active-page');
                 document.getElementById('navSearchBtn').classList.add('active');
@@ -1403,6 +1519,27 @@
                 searchAppsLocally(searchInput ? searchInput.value : "");
             } else if(target === 'admin') {
                 document.getElementById('section-admin-panel').classList.add('active-page');
+
+                const indicator = document.getElementById('targetModeIndicator');
+                const adminTitle = document.getElementById('adminPanelTitleText');
+                const adminBox = document.getElementById('section-admin-panel');
+                const syncBtn = document.getElementById('btnSyncGithub');
+
+                if (currentActiveSectionContext === 'premium') {
+                    indicator.innerHTML = '📍 Target Upload: <img src="logo.jpg" style="height:16px; border-radius:2px;"> VSF PREMIUM ZONE';
+                    indicator.className = "target-mode-indicator gold-mode";
+                    adminTitle.className = "admin-panel-title gold-title";
+                    adminBox.className = "page-section active-page premium-target";
+                    syncBtn.className = "save-config-btn gold-btn-sync";
+                    syncBtn.innerText = editingAppId ? "⚡ Update & Sync Premium Changes Live" : "⚡ Pack Data & Direct Sync To Premium Zone";
+                } else {
+                    indicator.innerHTML = "📍 Target Upload: 🏠 HOME SECTION";
+                    indicator.className = "target-mode-indicator";
+                    adminTitle.className = "admin-panel-title";
+                    adminBox.className = "page-section active-page";
+                    syncBtn.className = "save-config-btn";
+                    syncBtn.innerText = editingAppId ? "⚡ Update & Sync Home Changes Live" : "⚡ Pack Data & Direct Sync To Home Section";
+                }
             }
         }
     </script>
