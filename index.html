@@ -360,7 +360,7 @@
             padding: 12px 20px;
             display: flex;
             align-items: center;
-            justify-content: flex-end;
+            justify-content: space-between;
             border-bottom: 1px solid #1e293b;
             position: sticky;
             top: 0;
@@ -371,16 +371,34 @@
             header { padding: 15px 40px; }
         }
 
-        .header-right-controls { display: flex; align-items: center; gap: 10px; position: relative; }
-        .header-refresh-btn { background: #111827; border: 1px solid var(--border-color); color: var(--primary-color); width: 38px; height: 38px; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1rem; }
-        .header-refresh-btn.spinning { animation: spinRefresh 0.8s linear infinite; }
-        @keyframes spinRefresh { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        /* Header Brand Title */
+        .header-brand-title {
+            font-size: 1.2rem;
+            font-weight: 900;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
+            user-select: none;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 60%;
+        }
+
+        @media screen and (min-width: 768px) {
+            .header-brand-title { font-size: 1.6rem; letter-spacing: 2px; max-width: none; }
+        }
+
+        .header-right-controls { display: flex; align-items: center; gap: 10px; position: relative; flex-shrink: 0; }
 
         .header-menu-btn { background: #111827; border: 1px solid var(--border-color); color: var(--primary-color); width: 38px; height: 38px; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer; }
         .header-menu-btn span { display: block; width: 16px; height: 2px; background-color: var(--primary-color); border-radius: 1px; }
 
         @media screen and (min-width: 768px) {
-            .header-refresh-btn, .header-menu-btn { width: 42px; height: 42px; font-size: 1.1rem; }
+            .header-menu-btn { width: 42px; height: 42px; }
             .header-menu-btn span { width: 18px; }
         }
 
@@ -751,8 +769,8 @@
     <!-- MAIN CONTENT AREA -->
     <div class="main-content-wrapper">
         <header>
+            <div class="header-brand-title">VSF Studio</div>
             <div class="header-right-controls">
-                <button class="header-refresh-btn" id="refreshServerBtn" title="Refresh Live Data" onclick="refreshFromServer()">🔄</button>
                 <button class="header-menu-btn" id="menuToggleBtn" onclick="toggleDropdownMenu(event)"><span></span><span></span><span></span></button>
                 <div class="dropdown-menu-box" id="dropdownMenu" onclick="event.stopPropagation()">
                     <div class="menu-widget-box">
@@ -1041,15 +1059,6 @@
                 imgTag.style.objectPosition = `${s1}% ${s3}%`;
                 imgTag.style.transform = `scale(${scaleVal})`;
             }
-        }
-
-        function refreshFromServer() {
-            const refreshBtn = document.getElementById('refreshServerBtn');
-            refreshBtn.classList.add('spinning');
-            fetchAppsFromGitHub(() => {
-                alert("Data successfully refreshed live from GitHub!");
-                refreshBtn.classList.remove('spinning');
-            });
         }
 
         function renderAllSections() {
@@ -1637,7 +1646,7 @@
                     adminTitle.className = "admin-panel-title";
                     adminBox.className = "page-section active-page";
                     syncBtn.className = "save-config-btn";
-                    syncBtn.innerText = editingId ? "⚡ Update & Sync Home Changes Live" : "⚡ Pack Data & Direct Sync To Home Section";
+                    syncBtn.innerText = editingAppId ? "⚡ Update & Sync Home Changes Live" : "⚡ Pack Data & Direct Sync To Home Section";
                 }
             }
         }
