@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
     
     <!-- SEO & Google Search Meta Tags -->
     <title>VSF Studio - App Hub</title>
@@ -31,125 +31,50 @@
             --bg-color: #070a14;
             --card-bg: #111827;
             --border-color: #1f2937;
-            --sidebar-width: 240px;
         }
 
-        * {
+        /* STRICT ZOOM & OVERFLOW LOCK */
+        *, *::before, *::after {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            touch-action: pan-y !important;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        body {
+        html, body {
+            width: 100% !important;
+            max-width: 100vw !important;
+            height: 100%;
+            overflow-x: hidden !important;
             background-color: var(--bg-color);
             color: #f3f4f6;
-            overflow-x: hidden;
             scroll-behavior: smooth;
             display: flex;
-            min-height: 100vh;
-        }
-
-        /* GitHub Style Left Sidebar - BLUE THEME MATCHED */
-        .left-sidebar {
-            width: var(--sidebar-width);
-            background: linear-gradient(180deg, #07152b 0%, #0d2142 50%, #07101e 100%);
-            border-right: 1px solid rgba(0, 210, 255, 0.3);
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100vh;
-            display: flex;
             flex-direction: column;
-            z-index: 200;
-            padding: 20px 15px;
-            backdrop-filter: blur(15px);
-            box-shadow: 4px 0 20px rgba(0, 210, 255, 0.15);
-        }
-
-        .sidebar-brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            cursor: pointer;
+            min-height: 100vh;
+            -webkit-text-size-adjust: 100% !important;
             user-select: none;
-            margin-bottom: 30px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid rgba(0, 210, 255, 0.2);
+            -webkit-user-select: none;
+            position: relative;
         }
 
-        .sidebar-logo {
-            height: 38px;
-            width: auto;
-            border-radius: 6px;
-            border: 1px solid var(--primary-color);
+        input, textarea, select {
+            user-select: auto !important;
+            -webkit-user-select: auto !important;
+            touch-action: auto !important;
         }
 
-        .sidebar-brand-name {
-            font-size: 1.2rem;
-            font-weight: 800;
-            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: 1px;
-        }
-
-        .sidebar-nav-menu {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            flex-grow: 1;
-        }
-
-        .nav-btn {
-            background: transparent;
-            border: 1px solid transparent;
-            color: #93c5fd;
-            padding: 12px 14px;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            text-align: left;
-            transition: all 0.2s ease;
-        }
-
-        .nav-btn:hover {
-            background: rgba(0, 210, 255, 0.15);
-            color: #fff;
-        }
-
-        .nav-btn.active {
-            border-color: var(--primary-color);
-            background: linear-gradient(135deg, rgba(0, 210, 255, 0.25), rgba(58, 123, 213, 0.35));
-            color: #ffffff;
-            box-shadow: 0 0 12px rgba(0, 210, 255, 0.3);
-        }
-
-        .nav-btn.active-gold {
-            border-color: var(--gold-color);
-            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(184, 134, 11, 0.3));
-            color: var(--gold-color);
-        }
-
-        .nav-logo-icon {
-            height: 20px;
-            width: auto;
-            border-radius: 3px;
-            vertical-align: middle;
-        }
-
-        /* Main Content Wrapper (Pushed right to accommodate sidebar) */
         .main-content-wrapper {
-            margin-left: var(--sidebar-width);
-            flex-grow: 1;
+            flex: 1;
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
-            width: calc(100% - var(--sidebar-width));
+            min-width: 0;
+            width: 100%;
+            padding-top: 65px; /* Fixed Header ke liye jagah */
+            padding-bottom: 20px;
         }
 
         #offline-banner {
@@ -228,7 +153,7 @@
             color: var(--accent-color);
         }
 
-        /* Intro Screen */
+        /* Intro Screen with High-Tech Processor Light-Speed Lines Animation */
         #intro-screen {
             position: fixed;
             top: 0;
@@ -353,52 +278,52 @@
             transition: width 0.05s linear;
         }
 
-        /* Top Header */
+        /* FIXED HEADER */
         header {
-            background: rgba(11, 15, 25, 0.95);
+            background: rgba(11, 15, 25, 0.98);
             backdrop-filter: blur(15px);
-            padding: 12px 20px;
+            padding: 10px 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             border-bottom: 1px solid #1e293b;
-            position: sticky;
+            position: fixed;
             top: 0;
-            z-index: 100;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
         }
 
         @media screen and (min-width: 768px) {
             header { padding: 15px 40px; }
         }
 
-        /* Header Brand Title */
-        .header-brand-title {
-            font-size: 1.2rem;
-            font-weight: 900;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
-            user-select: none;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 60%;
+        .header-left { 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            cursor: pointer; 
+            user-select: none; 
+            -webkit-user-select: none; 
         }
+        .header-banner { height: 35px; width: auto; border-radius: 6px; border: 1px solid #334155; }
+        .brand-name { font-size: 1.15rem; font-weight: 800; background: linear-gradient(45deg, var(--primary-color), var(--secondary-color)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px; }
 
         @media screen and (min-width: 768px) {
-            .header-brand-title { font-size: 1.6rem; letter-spacing: 2px; max-width: none; }
+            .brand-name { font-size: 1.4rem; }
+            .header-banner { height: 42px; }
         }
 
-        .header-right-controls { display: flex; align-items: center; gap: 10px; position: relative; flex-shrink: 0; }
+        .header-right-controls { display: flex; align-items: center; gap: 10px; position: relative; }
+        .header-refresh-btn { background: #111827; border: 1px solid var(--border-color); color: var(--primary-color); width: 38px; height: 38px; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1rem; }
+        .header-refresh-btn.spinning { animation: spinRefresh 0.8s linear infinite; }
+        @keyframes spinRefresh { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         .header-menu-btn { background: #111827; border: 1px solid var(--border-color); color: var(--primary-color); width: 38px; height: 38px; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer; }
         .header-menu-btn span { display: block; width: 16px; height: 2px; background-color: var(--primary-color); border-radius: 1px; }
 
         @media screen and (min-width: 768px) {
-            .header-menu-btn { width: 42px; height: 42px; }
+            .header-refresh-btn, .header-menu-btn { width: 42px; height: 42px; font-size: 1.1rem; }
             .header-menu-btn span { width: 18px; }
         }
 
@@ -418,6 +343,60 @@
             .page-section { padding: 35px 30px; }
         }
 
+        /* SCROLLABLE TOP NAVIGATION BAR */
+        .top-nav-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 12px 20px;
+            background: rgba(17, 24, 39, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 2px solid var(--primary-color);
+            box-shadow: 0 4px 25px rgba(0, 210, 255, 0.35);
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .nav-btn { 
+            background: #0f172a; 
+            border: 1.5px solid rgba(0, 210, 255, 0.4); 
+            color: #9ca3af; 
+            padding: 8px 16px; 
+            border-radius: 8px; 
+            font-size: 0.85rem; 
+            font-weight: 700; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            gap: 8px; 
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 210, 255, 0.1);
+        }
+
+        .nav-btn:hover {
+            border-color: var(--primary-color);
+            color: #fff;
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
+        }
+
+        .nav-btn.active { 
+            border-color: var(--accent-color); 
+            background: linear-gradient(135deg, rgba(0, 210, 255, 0.25), rgba(58, 123, 213, 0.35)); 
+            color: var(--primary-color); 
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.6); 
+        }
+
+        .nav-btn.active-gold { 
+            border-color: var(--gold-color); 
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.25), rgba(184, 134, 11, 0.35)); 
+            color: var(--gold-color); 
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.6); 
+        }
+        
+        .nav-logo-icon { height: 18px; width: auto; border-radius: 3px; vertical-align: middle; }
+
         /* Hero Banner */
         .hero-banner-section {
             background: linear-gradient(135deg, rgba(0, 210, 255, 0.15) 0%, rgba(58, 123, 213, 0.2) 50%, rgba(17, 24, 39, 0.95) 100%);
@@ -427,6 +406,7 @@
             padding: 18px 20px;
             margin-bottom: 20px;
             box-shadow: 0 0 25px rgba(0, 210, 255, 0.3);
+            margin-top: 5px;
         }
 
         .hero-banner-section.premium-banner {
@@ -587,8 +567,6 @@
             gap: 3px;
             padding: 6px;
             user-select: none;
-            -webkit-user-select: none;
-            touch-action: manipulation;
             outline: none;
         }
         .admin-unlocked .card-menu-dots {
@@ -702,15 +680,6 @@
         .save-config-btn { background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: #0b0f19; font-weight: 700; padding: 12px 20px; border: none; font-size: 0.95rem; cursor: pointer; width: 100%; display: block; position: relative; z-index: 2; }
         .save-config-btn.gold-btn-sync { background: linear-gradient(135deg, var(--gold-color), #b8860b); color: #000; }
         .btn-progress-line { position: absolute; bottom: 0; left: 0; height: 4px; width: 0%; background: var(--accent-color); z-index: 3; transition: width 0.3s ease; }
-
-        /* Mobile Responsive adjustment for Left Sidebar */
-        @media screen and (max-width: 768px) {
-            :root { --sidebar-width: 70px; }
-            .sidebar-brand-name { display: none; }
-            .nav-btn span.nav-label { display: none; }
-            .nav-btn { justify-content: center; padding: 12px 8px; }
-            .main-content-wrapper { width: calc(100% - 70px); }
-        }
     </style>
 </head>
 <body id="mainBody">
@@ -747,46 +716,38 @@
         </div>
     </div>
 
-    <!-- GITHUB STYLE LEFT SIDEBAR -->
-    <aside class="left-sidebar">
-        <div class="sidebar-brand" id="brandLogoTrigger" title="Logo">
-            <img src="aass.jpg" alt="Logo" class="sidebar-logo">
-            <span class="sidebar-brand-name">VSF Studio</span>
+    <!-- FIXED HEADER -->
+    <header>
+        <div class="header-left" id="brandLogoTrigger" title="Logo">
+            <img src="aass.jpg" alt="Logo" class="header-banner">
+            <span class="brand-name">VSF Studio</span>
         </div>
-        <div class="sidebar-nav-menu">
-            <button class="nav-btn active" id="navHomeBtn" onclick="switchSection('home')">
-                <span class="nav-icon">🏠</span> <span class="nav-label">Home</span>
-            </button>
-            <button class="nav-btn" id="navPremiumBtn" onclick="switchSection('premium')">
-                <img src="aass.jpg" alt="Logo" class="nav-logo-icon"> <span class="nav-label">Premium</span>
-            </button>
-            <button class="nav-btn" id="navSearchBtn" onclick="switchSection('search')">
-                <span class="nav-icon">🔍</span> <span class="nav-label">Search</span>
-            </button>
-        </div>
-    </aside>
-
-    <!-- MAIN CONTENT AREA -->
-    <div class="main-content-wrapper">
-        <header>
-            <div class="header-brand-title">VSF Studio</div>
-            <div class="header-right-controls">
-                <button class="header-menu-btn" id="menuToggleBtn" onclick="toggleDropdownMenu(event)"><span></span><span></span><span></span></button>
-                <div class="dropdown-menu-box" id="dropdownMenu" onclick="event.stopPropagation()">
-                    <div class="menu-widget-box">
-                        <div class="menu-widget-title">🔗 Share App Hub Link</div>
-                        <div class="share-link-input-group">
-                            <input type="text" id="shareLinkInput" class="share-link-input" readonly>
-                            <button class="copy-link-btn" onclick="copyShareLink()">Copy</button>
-                        </div>
-                    </div>
-                    <div class="menu-widget-box">
-                        <div class="menu-widget-title">📱 Scan QR Code</div>
-                        <div id="qrcode-container"></div>
+        <div class="header-right-controls">
+            <button class="header-refresh-btn" id="refreshServerBtn" title="Refresh Live Data" onclick="refreshFromServer()">🔄</button>
+            <button class="header-menu-btn" id="menuToggleBtn" onclick="toggleDropdownMenu(event)"><span></span><span></span><span></span></button>
+            <div class="dropdown-menu-box" id="dropdownMenu" onclick="event.stopPropagation()">
+                <div class="menu-widget-box">
+                    <div class="menu-widget-title">🔗 Share App Hub Link</div>
+                    <div class="share-link-input-group">
+                        <input type="text" id="shareLinkInput" class="share-link-input" readonly>
+                        <button class="copy-link-btn" onclick="copyShareLink()">Copy</button>
                     </div>
                 </div>
+                <div class="menu-widget-box">
+                    <div class="menu-widget-title">📱 Scan QR Code</div>
+                    <div id="qrcode-container"></div>
+                </div>
             </div>
-        </header>
+        </div>
+    </header>
+
+    <div class="main-content-wrapper">
+        <!-- SCROLLABLE TOP NAVIGATION BAR -->
+        <div class="top-nav-bar">
+            <button class="nav-btn active" id="navHomeBtn" onclick="switchSection('home')"><span class="nav-icon">🏠</span> Home</button>
+            <button class="nav-btn" id="navPremiumBtn" onclick="switchSection('premium')"><img src="aass.jpg" alt="Logo" class="nav-logo-icon"> Premium</button>
+            <button class="nav-btn" id="navSearchBtn" onclick="switchSection('search')"><span class="nav-icon">🔍</span> Search</button>
+        </div>
 
         <!-- SECTION 1: HOME -->
         <div id="section-home" class="page-section active-page">
@@ -915,7 +876,7 @@
 
     <script>
         const REPO_OWNER = "vsfstudioofficial";
-        const REPO_NAME = "Viktor-Studio-flash-";
+        const REPO_NAME = "Viktor-Studio-flash";
         const FILE_PATH = "apps.json";
         const GITHUB_JSON_URL = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/refs/heads/main/${FILE_PATH}`;
         const GITHUB_API_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`;
@@ -936,6 +897,35 @@
 
         let currentProgress = 0;
         let isDataFetched = false;
+
+        // AUTO ONLINE / OFFLINE STATUS DETECTOR
+        window.addEventListener('online', updateOnlineStatus);
+        window.addEventListener('offline', updateOnlineStatus);
+
+        function updateOnlineStatus() {
+            const banner = document.getElementById('offline-banner');
+            if (navigator.onLine) {
+                banner.style.display = 'none';
+            } else {
+                banner.style.display = 'block';
+            }
+        }
+
+        // PREVENT DOUBLE TAP ZOOM VIA JAVASCRIPT FOR APK ENGINE
+        document.addEventListener('touchstart', function(event) {
+            if (event.touches.length > 1) {
+                event.preventDefault();
+            }
+        }, { passive: false });
+
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(event) {
+            const now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
 
         function runFastIntroLoader(onComplete) {
             currentProgress = 0;
@@ -964,8 +954,15 @@
             }, 30);
         }
 
+        // FIX BUG #2: CHUNKED SAFE BASE64 ENCODING TO PREVENT STACK OVERFLOW & CRASH
         function packUnicodeBase64(str) {
-            return btoa(new TextEncoder().encode(str).reduce((data, byte) => data + String.fromCharCode(byte), ''));
+            const bytes = new TextEncoder().encode(str);
+            let binString = "";
+            const chunkSize = 8192;
+            for (let i = 0; i < bytes.length; i += chunkSize) {
+                binString += String.fromCharCode.apply(null, bytes.subarray(i, i + chunkSize));
+            }
+            return btoa(binString);
         }
 
         function unpackUnicodeBase64(base64Str) {
@@ -1004,6 +1001,7 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
+            updateOnlineStatus();
             document.getElementById('shareLinkInput').value = LIVE_DOMAIN_URL;
             
             const savedToken = localStorage.getItem('VSF_GITHUB_TOKEN');
@@ -1013,6 +1011,7 @@
             qrContainer.innerHTML = "";
             new QRCode(qrContainer, { text: LIVE_DOMAIN_URL, width: 100, height: 100 });
 
+            // FIX BUG #4: LOCAL STORAGE TRY-CATCH WRAPPER
             const cachedData = localStorage.getItem('VSF_CACHED_APPS');
             if (cachedData) {
                 try {
@@ -1061,6 +1060,15 @@
             }
         }
 
+        function refreshFromServer() {
+            const refreshBtn = document.getElementById('refreshServerBtn');
+            refreshBtn.classList.add('spinning');
+            fetchAppsFromGitHub(() => {
+                alert("Data successfully refreshed live from GitHub!");
+                refreshBtn.classList.remove('spinning');
+            });
+        }
+
         function renderAllSections() {
             const homeApps = allAppsData.filter(app => !app.isPremium);
             const premiumApps = allAppsData.filter(app => app.isPremium);
@@ -1080,7 +1088,9 @@
             })
             .then(data => {
                 allAppsData = Array.isArray(data) ? data : (data.apps || []);
-                localStorage.setItem('VSF_CACHED_APPS', JSON.stringify(allAppsData));
+                try {
+                    localStorage.setItem('VSF_CACHED_APPS', JSON.stringify(allAppsData));
+                } catch(err) {}
                 renderAllSections();
 
                 isDataFetched = true;
@@ -1089,13 +1099,18 @@
             })
             .catch(() => {
                 fetch(GITHUB_API_URL + "?t=" + Date.now())
-                .then(res => res.json())
+                .then(res => {
+                    if (!res.ok) throw new Error("API fetch failed");
+                    return res.json();
+                })
                 .then(data => {
                     if(data.sha) currentFileSHA = data.sha;
                     const content = unpackUnicodeBase64(data.content);
                     const jsonParsed = JSON.parse(content);
                     allAppsData = Array.isArray(jsonParsed) ? jsonParsed : (jsonParsed.apps || []);
-                    localStorage.setItem('VSF_CACHED_APPS', JSON.stringify(allAppsData));
+                    try {
+                        localStorage.setItem('VSF_CACHED_APPS', JSON.stringify(allAppsData));
+                    } catch(err) {}
                     renderAllSections();
 
                     isDataFetched = true;
@@ -1174,7 +1189,12 @@
                 });
             }
 
-            localStorage.setItem('VSF_CACHED_APPS', JSON.stringify(allAppsData));
+            try {
+                localStorage.setItem('VSF_CACHED_APPS', JSON.stringify(allAppsData));
+            } catch(e) {
+                console.warn("Local storage full, pushing directly to cloud.");
+            }
+
             const packedJSONString = JSON.stringify({ apps: allAppsData }, null, 2);
             const encodedContent = packUnicodeBase64(packedJSONString);
 
@@ -1267,6 +1287,7 @@
             } else if (pwd !== null) { alert("Incorrect Password!"); }
         }
 
+        // FIX BUG #1: LIVE SHA FETCH BEFORE DELETION TO PREVENT 409 CONFLICT
         async function deleteApp(appId) {
             const pwd = prompt("Enter Master Password to Delete:");
             if (pwd === "109888977VMJ") {
@@ -1274,12 +1295,16 @@
                 if(!token) { alert("⚠️ Enter your GitHub Token in Admin Panel first!"); return; }
 
                 allAppsData = allAppsData.filter(app => app.id != appId);
-                localStorage.setItem('VSF_CACHED_APPS', JSON.stringify(allAppsData));
+                try {
+                    localStorage.setItem('VSF_CACHED_APPS', JSON.stringify(allAppsData));
+                } catch(e) {}
+
                 const packedJSONString = JSON.stringify({ apps: allAppsData }, null, 2);
                 const encodedContent = packUnicodeBase64(packedJSONString);
 
                 try {
-                    const getFileRes = await fetch(GITHUB_API_URL, { headers: { 'Authorization': `Bearer ${token}` } });
+                    const getFileRes = await fetch(GITHUB_API_URL + "?t=" + Date.now(), { headers: { 'Authorization': `Bearer ${token}` } });
+                    if(!getFileRes.ok) throw new Error("Could not fetch file SHA from GitHub.");
                     const getFileData = await getFileRes.json();
 
                     const putRes = await fetch(GITHUB_API_URL, {
@@ -1291,8 +1316,12 @@
                     if(putRes.ok) {
                         renderAllSections();
                         alert("App deleted and synced live on GitHub!");
-                    } else { alert("Delete Sync Failed!"); }
-                } catch(e) { alert("Network Error during deletion."); }
+                        fetchAppsFromGitHub();
+                    } else { 
+                        const errData = await putRes.json();
+                        alert("Delete Sync Failed: " + (errData.message || "Unknown error")); 
+                    }
+                } catch(e) { alert("Network Error during deletion: " + e.message); }
             } else if (pwd !== null) { alert("Incorrect Password!"); }
         }
 
@@ -1318,6 +1347,7 @@
             window.open(`https://api.whatsapp.com/send?text=${message}`, '_blank');
         }
 
+        // FIX BUG #3: SAFE HOLD TIMER WITH SCROLL CANCEL LEAK FIX
         let cardHoldTimer = null;
         
         function startCardHoldTimer(event, appId) {
@@ -1473,6 +1503,7 @@
                                     ontouchstart="startCardHoldTimer(event, '${app.id}')" 
                                     ontouchend="cancelCardHoldTimer()" 
                                     ontouchcancel="cancelCardHoldTimer()"
+                                    touchmove="cancelCardHoldTimer()"
                                     onclick="event.stopPropagation()"
                                     title="Hold for 3 seconds to open Options">
                                 <span></span><span></span><span></span>
