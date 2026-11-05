@@ -1,0 +1,52 @@
+name: Live Stats Auto-Sync
+
+on:
+  repository_dispatch:
+    types: [update_stats]
+
+permissions:
+  contents: write
+
+jobs:
+  sync-stats:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Update Stats Script
+        env:
+          EVENT_PAYLOAD: ${{ toJson(github.event.client_payload) }}
+        run: |
+          python3 -c "
+          import json, os
+          payload = json.loads(os.environ['EVENT_PAYLOAD'])
+          app_id = str(payload.get('app_id'))
+          action_type = payload.get('action')
+          
+          with open('apps.json', 'r') as f:
+              data = json.load(f)
+              
+          apps = data.get('apps', data) if isinstance(data, dict) else data
+          for app in apps:
+              if str(app.get('id')) == app_id:
+                  if action_type == 'like':
+                      app['likes'] = app.get('likes', 0) + 1
+                  elif action_type == 'dislike':
+                      app['dislikes'] = app.get('dislikes', 0) + 1
+                  elif action_type == 'download':
+                      app['downloads'] = app.get('downloads', 0) + 1
+                  elif action_type == 'view':
+                      app['views'] = app.get('views', 0) + 1
+                  break
+                  
+          with open('apps.json', 'w') as f:
+              json.dump(data, f, indent=2)
+          "
+
+      - name: Commit and Push Changes Live
+        run: |
+          git config --global user.name "VSF Bot"
+          git config --global user.email "bot@users.noreply.github.com"
+          git commit -am "Auto-sync live interaction stats [skip ci]"
+          git push
