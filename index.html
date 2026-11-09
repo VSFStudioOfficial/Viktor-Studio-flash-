@@ -445,7 +445,7 @@
         .apk-grid { 
             display: grid; 
             grid-template-columns: repeat(2, 1fr); 
-            gap: 10px; 
+            gap: 12px; 
             width: 100%; 
         }
         @media screen and (min-width: 640px) { 
@@ -458,7 +458,7 @@
             .apk-grid { grid-template-columns: repeat(4, 1fr); gap: 25px; } 
         }
 
-        /* APK CARD - SHARP RECTANGULAR CORNERS (0px) */
+        /* 🌟 BLUE FOG & GLOW EFFECT FOR CARDS 🌟 */
         .apk-card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -466,20 +466,53 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 210, 255, 0.12);
             height: 100%;
             position: relative;
             transition: all 0.4s ease;
+            z-index: 1;
+        }
+
+        /* Animated Blue Fog Background Layer inside Card */
+        .apk-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 210, 255, 0.15) 0%, rgba(58, 123, 213, 0.08) 40%, transparent 70%);
+            z-index: 0;
+            pointer-events: none;
+            animation: blueFogDrift 8s infinite linear alternate;
+        }
+
+        @keyframes blueFogDrift {
+            0% { transform: translate(-10%, -10%) scale(1); opacity: 0.6; }
+            50% { transform: translate(10%, 15%) scale(1.15); opacity: 0.9; }
+            100% { transform: translate(-5%, 10%) scale(1); opacity: 0.6; }
         }
 
         .apk-card.premium-card {
             border: 1px solid rgba(255, 215, 0, 0.4);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 215, 0, 0.15);
             border-radius: 0px !important; 
+        }
+
+        .apk-card.premium-card::before {
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.15) 0%, rgba(184, 134, 11, 0.08) 40%, transparent 70%);
+            animation: goldFogDrift 8s infinite linear alternate;
+        }
+
+        @keyframes goldFogDrift {
+            0% { transform: translate(-10%, -10%) scale(1); opacity: 0.6; }
+            50% { transform: translate(10%, 15%) scale(1.15); opacity: 0.9; }
+            100% { transform: translate(-5%, 10%) scale(1); opacity: 0.6; }
         }
 
         .apk-card.highlighted-card {
             border: 2px solid var(--accent-color) !important;
-            box-shadow: 0 0 30px rgba(0, 255, 204, 0.8) !important;
+            box-shadow: 0 0 35px rgba(0, 255, 204, 0.8) !important;
             transform: scale(1.02);
         }
 
@@ -491,6 +524,7 @@
             background: #000;
             border-radius: 0px !important; 
             overflow: hidden;
+            z-index: 2;
         }
 
         .media-poster-box {
@@ -565,7 +599,7 @@
             outline: none !important;
         }
 
-        .card-content-area { padding: 10px; display: flex; flex-direction: column; justify-content: space-between; flex-grow: 1; }
+        .card-content-area { padding: 12px; display: flex; flex-direction: column; justify-content: space-between; flex-grow: 1; z-index: 2; position: relative; }
         @media screen and (min-width: 768px) { .card-content-area { padding: 16px; } }
         
         .card-top-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; gap: 4px; position: relative; }
@@ -968,7 +1002,7 @@
                         }, 300);
                     }, 150);
                 }
-            }, 30);
+            }, 20);
         }
 
         function packUnicodeBase64(str) {
@@ -1074,7 +1108,6 @@
             const refreshBtn = document.getElementById('refreshServerBtn');
             refreshBtn.classList.add('spinning');
             fetchAppsFromGitHub(() => {
-                alert("Data successfully refreshed live from GitHub!");
                 refreshBtn.classList.remove('spinning');
             });
         }
@@ -1162,8 +1195,8 @@
             const btn = document.getElementById('btnSyncGithub');
             const progressLine = document.getElementById('btnProgressLine');
             
-            btn.innerText = "⏳ Packing Data...";
-            progressLine.style.width = "30%";
+            btn.innerText = "⏳ Fast Syncing to GitHub...";
+            progressLine.style.width = "40%";
             btn.disabled = true;
 
             const zoomVal = (document.getElementById('photoSlider2').value / 100);
@@ -1203,23 +1236,22 @@
             const encodedContent = packUnicodeBase64(packedJSONString);
 
             try {
-                btn.innerText = "⏳ Connecting to GitHub API...";
-                progressLine.style.width = "60%";
+                progressLine.style.width = "75%";
 
                 let fileSHA = currentFileSHA;
-                try {
+                if (!fileSHA) {
                     const getFileRes = await fetch(GITHUB_API_URL, { headers: { 'Authorization': `Bearer ${token}` } });
                     if(getFileRes.ok) {
                         const getFileData = await getFileRes.json();
                         if(getFileData.sha) fileSHA = getFileData.sha;
                     }
-                } catch(e) {}
-
-                btn.innerText = "⏳ Syncing Live to Repository...";
-                progressLine.style.width = "85%";
+                }
 
                 const targetName = isPremiumFlag ? "Premium Zone" : "Home Section";
-                const putBody = { message: editingAppId ? `Update app (${targetName}): ${name}` : `Add packed app (${targetName}): ${name}`, content: encodedContent };
+                const putBody = { 
+                    message: editingAppId ? `Update app (${targetName}): ${name}` : `Add app (${targetName}): ${name}`, 
+                    content: encodedContent 
+                };
                 if(fileSHA) putBody.sha = fileSHA;
 
                 const putRes = await fetch(GITHUB_API_URL, {
@@ -1229,8 +1261,14 @@
                 });
 
                 if (putRes.ok) {
+                    const resData = await putRes.json();
+                    if(resData.content && resData.content.sha) {
+                        currentFileSHA = resData.content.sha;
+                    }
+                    
                     progressLine.style.width = "100%";
-                    alert(`🎉 Success! Packed data for "${name}" synced DIRECTLY to GitHub Live (${targetName})!`);
+                    alert(`🎉 Success! Synced directly to GitHub (${targetName})!`);
+                    
                     document.getElementById('appNameInput').value = "";
                     document.getElementById('appDescInput').value = "";
                     document.getElementById('gdriveLinkInput').value = "";
@@ -1242,13 +1280,14 @@
                     editingAppId = null;
 
                     switchSection(isPremiumFlag ? 'premium' : 'home');
-                    fetchAppsFromGitHub();
+                    renderAllSections();
                 } else {
                     const err = await putRes.json();
                     alert("❌ Sync Failed: " + (err.message || "Check Token Permission"));
                 }
-            } catch (err) { alert("❌ Network Error!"); }
-            finally {
+            } catch (err) { 
+                alert("❌ Network Error during sync!"); 
+            } finally {
                 btn.innerText = "⚡ Pack Data & Direct Sync To GitHub Live";
                 progressLine.style.width = "0%";
                 btn.disabled = false;
@@ -1312,14 +1351,19 @@
                 const encodedContent = packUnicodeBase64(packedJSONString);
 
                 try {
-                    const getFileRes = await fetch(GITHUB_API_URL + "?t=" + Date.now(), { headers: { 'Authorization': `Bearer ${token}` } });
-                    if(!getFileRes.ok) throw new Error("Could not fetch file SHA from GitHub.");
-                    const getFileData = await getFileRes.json();
+                    let fileSHA = currentFileSHA;
+                    if (!fileSHA) {
+                        const getFileRes = await fetch(GITHUB_API_URL + "?t=" + Date.now(), { headers: { 'Authorization': `Bearer ${token}` } });
+                        if(getFileRes.ok) {
+                            const getFileData = await getFileRes.json();
+                            fileSHA = getFileData.sha;
+                        }
+                    }
 
                     const putRes = await fetch(GITHUB_API_URL, {
                         method: 'PUT',
                         headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ message: `Delete app ID: ${appId}`, content: encodedContent, sha: getFileData.sha })
+                        body: JSON.stringify({ message: `Delete app ID: ${appId}`, content: encodedContent, sha: fileSHA })
                     });
 
                     if(putRes.ok) {
@@ -1455,7 +1499,7 @@
             }
 
             activeDownloadInterval = setInterval(() => {
-                progress += Math.floor(Math.random() * 12) + 8;
+                progress += Math.floor(Math.random() * 15) + 10;
                 if (progress > 100) progress = 100;
 
                 modalProgressFill.style.width = progress + '%';
@@ -1474,9 +1518,9 @@
                         document.body.appendChild(anchor);
                         anchor.click();
                         document.body.removeChild(anchor);
-                    }, 400);
+                    }, 300);
                 }
-            }, 120);
+            }, 80);
         }
 
         function buildCardHTML(app, isPremiumCard = false) {
