@@ -867,8 +867,8 @@
             </div>
 
             <div class="form-group">
-                <label for="gdriveLinkInput">Google Drive Link:</label>
-                <input type="url" id="gdriveLinkInput" class="form-control" placeholder="https://drive.google.com/...">
+                <label for="gdriveLinkInput">File / Download Link (MediaFire, Mega, GDrive, Direct, etc.):</label>
+                <input type="url" id="gdriveLinkInput" class="form-control" placeholder="https://...">
             </div>
             <div class="form-group">
                 <label for="videoLinkInput">External Smart Video Link (YouTube / Instagram / Web):</label>
@@ -1157,7 +1157,7 @@
             const link = document.getElementById('gdriveLinkInput').value.trim();
             const videoLink = document.getElementById('videoLinkInput').value.trim();
 
-            if (!name || !link) { alert("Please fill App Name and Google Drive Link!"); return; }
+            if (!name || !link) { alert("Please fill App Name and File/Download Link!"); return; }
 
             const btn = document.getElementById('btnSyncGithub');
             const progressLine = document.getElementById('btnProgressLine');
