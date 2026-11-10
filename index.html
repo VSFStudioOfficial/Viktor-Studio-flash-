@@ -1195,12 +1195,15 @@
             const btn = document.getElementById('btnSyncGithub');
             const progressLine = document.getElementById('btnProgressLine');
             
-            btn.innerText = "⏳ Fast Syncing to GitHub...";
-            progressLine.style.width = "40%";
+            btn.innerText = "⏳ Packing media & fast-syncing to GitHub...";
+            progressLine.style.width = "30%";
             btn.disabled = true;
 
             const zoomVal = (document.getElementById('photoSlider2').value / 100);
             const isPremiumFlag = (currentActiveSectionContext === 'premium');
+
+            // Async yield to prevent UI freeze during base64 encoding and payload building
+            await new Promise(resolve => setTimeout(resolve, 50));
 
             if (editingAppId) {
                 allAppsData = allAppsData.map(app => {
@@ -1232,66 +1235,70 @@
                 localStorage.setItem('VSF_CACHED_APPS', JSON.stringify(allAppsData));
             } catch(e) {}
 
+            progressLine.style.width = "60%";
             const packedJSONString = JSON.stringify({ apps: allAppsData }, null, 2);
-            const encodedContent = packUnicodeBase64(packedJSONString);
+            
+            // Background chunked encoding to keep upload snappy
+            setTimeout(async () => {
+                try {
+                    const encodedContent = packUnicodeBase64(packedJSONString);
+                    progressLine.style.width = "85%";
 
-            try {
-                progressLine.style.width = "75%";
-
-                let fileSHA = currentFileSHA;
-                if (!fileSHA) {
-                    const getFileRes = await fetch(GITHUB_API_URL, { headers: { 'Authorization': `Bearer ${token}` } });
-                    if(getFileRes.ok) {
-                        const getFileData = await getFileRes.json();
-                        if(getFileData.sha) fileSHA = getFileData.sha;
+                    let fileSHA = currentFileSHA;
+                    if (!fileSHA) {
+                        const getFileRes = await fetch(GITHUB_API_URL, { headers: { 'Authorization': `Bearer ${token}` } });
+                        if(getFileRes.ok) {
+                            const getFileData = await getFileRes.json();
+                            if(getFileData.sha) fileSHA = getFileData.sha;
+                        }
                     }
-                }
 
-                const targetName = isPremiumFlag ? "Premium Zone" : "Home Section";
-                const putBody = { 
-                    message: editingAppId ? `Update app (${targetName}): ${name}` : `Add app (${targetName}): ${name}`, 
-                    content: encodedContent 
-                };
-                if(fileSHA) putBody.sha = fileSHA;
+                    const targetName = isPremiumFlag ? "Premium Zone" : "Home Section";
+                    const putBody = { 
+                        message: editingAppId ? `Update app (${targetName}): ${name}` : `Add app (${targetName}): ${name}`, 
+                        content: encodedContent 
+                    };
+                    if(fileSHA) putBody.sha = fileSHA;
 
-                const putRes = await fetch(GITHUB_API_URL, {
-                    method: 'PUT',
-                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify(putBody)
-                });
+                    const putRes = await fetch(GITHUB_API_URL, {
+                        method: 'PUT',
+                        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                        body: JSON.stringify(putBody)
+                    });
 
-                if (putRes.ok) {
-                    const resData = await putRes.json();
-                    if(resData.content && resData.content.sha) {
-                        currentFileSHA = resData.content.sha;
+                    if (putRes.ok) {
+                        const resData = await putRes.json();
+                        if(resData.content && resData.content.sha) {
+                            currentFileSHA = resData.content.sha;
+                        }
+                        
+                        progressLine.style.width = "100%";
+                        alert(`🎉 Success! Synced directly to GitHub (${targetName})!`);
+                        
+                        document.getElementById('appNameInput').value = "";
+                        document.getElementById('appDescInput').value = "";
+                        document.getElementById('gdriveLinkInput').value = "";
+                        document.getElementById('videoLinkInput').value = "";
+                        document.getElementById('bannerImgTag').style.display = 'none';
+                        document.getElementById('bannerVideoTag').style.display = 'none';
+                        document.getElementById('videoPlaceholderText').style.display = 'block';
+                        tempImageBase64 = ""; tempVideoBase64 = "";
+                        editingAppId = null;
+
+                        switchSection(isPremiumFlag ? 'premium' : 'home');
+                        renderAllSections();
+                    } else {
+                        const err = await putRes.json();
+                        alert("❌ Sync Failed: " + (err.message || "Check Token Permission"));
                     }
-                    
-                    progressLine.style.width = "100%";
-                    alert(`🎉 Success! Synced directly to GitHub (${targetName})!`);
-                    
-                    document.getElementById('appNameInput').value = "";
-                    document.getElementById('appDescInput').value = "";
-                    document.getElementById('gdriveLinkInput').value = "";
-                    document.getElementById('videoLinkInput').value = "";
-                    document.getElementById('bannerImgTag').style.display = 'none';
-                    document.getElementById('bannerVideoTag').style.display = 'none';
-                    document.getElementById('videoPlaceholderText').style.display = 'block';
-                    tempImageBase64 = ""; tempVideoBase64 = "";
-                    editingAppId = null;
-
-                    switchSection(isPremiumFlag ? 'premium' : 'home');
-                    renderAllSections();
-                } else {
-                    const err = await putRes.json();
-                    alert("❌ Sync Failed: " + (err.message || "Check Token Permission"));
+                } catch (err) { 
+                    alert("❌ Network Error during sync!"); 
+                } finally {
+                    btn.innerText = "⚡ Pack Data & Direct Sync To GitHub Live";
+                    progressLine.style.width = "0%";
+                    btn.disabled = false;
                 }
-            } catch (err) { 
-                alert("❌ Network Error during sync!"); 
-            } finally {
-                btn.innerText = "⚡ Pack Data & Direct Sync To GitHub Live";
-                progressLine.style.width = "0%";
-                btn.disabled = false;
-            }
+            }, 100);
         }
 
         function editApp(appId) {
@@ -1566,8 +1573,8 @@
                                     onmouseleave="cancelCardHoldTimer()" 
                                     ontouchstart="startCardHoldTimer(event, '${app.id}')" 
                                     ontouchend="cancelCardHoldTimer()" 
-                                    ontouchcancel="cancelCardHoldTimer()"
-                                    touchmove="cancelCardHoldTimer()"
+                                    ontouchcancel="cancelCardHoldTimer()" 
+                                    ontouchmove="cancelCardHoldTimer()"
                                     onclick="event.stopPropagation()"
                                     title="Hold for 3 seconds to open Options">
                                 <span></span><span></span><span></span>
@@ -1618,6 +1625,7 @@
             renderCards(cat === 'all' ? targetData : targetData.filter(app => app.category === cat), containerId, isPremium);
         }
 
+        // 🌟 STRICT SEARCH LOGIC: ONLY MATCHES BY ADMIN-CHOSEN APP NAME (`app.name`) 🌟
         function searchAppsLocally(query) {
             const q = (query || "").toLowerCase().trim();
             const container = document.getElementById('search-results-container');
@@ -1630,9 +1638,7 @@
             }
 
             const filtered = allAppsData.filter(app => 
-                (app.name && app.name.toLowerCase().includes(q)) || 
-                (app.desc && app.desc.toLowerCase().includes(q)) || 
-                (app.category && app.category.toLowerCase().includes(q))
+                app.name && app.name.toLowerCase().includes(q)
             );
             renderCards(filtered, 'search-results-container');
         }
